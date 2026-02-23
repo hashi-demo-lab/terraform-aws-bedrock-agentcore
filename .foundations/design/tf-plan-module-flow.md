@@ -156,7 +156,7 @@ Mapping of the `tf-plan-module` orchestrator skill and its interaction with the 
 │                             ▼                                            │
 │  DONE                                                                    │
 │  Design approved at specs/{FEATURE}/design.md                            │
-│  Run /tf-implement $FEATURE to build.                                    │
+│  Run /tf-implement-module $FEATURE to build.                                    │
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -197,14 +197,14 @@ tf-plan-module orchestrator
     └──▶ User approval gate (AskUserQuestion)
               │
               ▼
-         /tf-implement picks up from here
+         /tf-implement-module picks up from here
 ```
 
-## Handoff to tf-implement
+## Handoff to tf-implement-module
 
 ```
 ┌─────────────┐                              ┌──────────────┐
-│ tf-plan-module  │  produces                    │ tf-implement  │
+│ tf-plan-module  │  produces                    │ tf-implement-module  │
 │ (Phases 1-2)│ ──────▶ design.md ──────▶    │ (Phases 3-4)  │
 │             │         (approved)           │               │
 └─────────────┘                              └──────────────┘
@@ -232,7 +232,7 @@ No other files, no shared state, no intermediate research artifacts.
 
 4. **Orchestrator directs, doesn't accumulate (P6)**: The orchestrator passes short context (requirements, findings summary, file paths) to agents. It verifies design.md exists via Glob and checks section presence via Grep. It never reads the full design content itself.
 
-5. **Phase order is fixed (P8)**: Understand must complete before Design starts. Research agents must all return before sdd-design launches. User must approve before /tf-implement can run.
+5. **Phase order is fixed (P8)**: Understand must complete before Design starts. Research agents must all return before sdd-design launches. User must approve before /tf-implement-module can run.
 
 6. **Agents have one job (P5)**: Each sdd-research agent answers exactly ONE question. The sdd-design agent takes requirements + findings and produces exactly ONE file.
 

@@ -3,7 +3,7 @@
 # Checkpoint commit script for orchestrator artifact commits
 #
 # Abstracts the repeating git add/commit/push pattern used by tf-plan-module and
-# tf-implement after each workflow step. Handles empty-commit detection,
+# tf-implement-module after each workflow step. Handles empty-commit detection,
 # deterministic commit messages, and push failures.
 #
 # Usage: ./checkpoint-commit.sh [OPTIONS] <step_name>

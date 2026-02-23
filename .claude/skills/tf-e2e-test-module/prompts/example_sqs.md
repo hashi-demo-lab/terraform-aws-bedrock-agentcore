@@ -1,17 +1,16 @@
-# Example: Auto-Scaling Group with ALB
+# Example: SQS with Lambda and SNS
 
 **IMPORTANT** - Do not prompt me, make best practice decisions independently (this is for prompt eval)
 
-Using the **tf-e2e-tester** skill non-interactively.
+Using the **tf-e2e-test-module** skill non-interactively.
 
 ## Infrastructure Requirements
 
 Provision using Terraform:
-- Auto-scaling group with launch template
-- Target tracking policies
-- create basic static content for testing
-- ALB with health checks across 2 AZs
-- CloudWatch dashboards
+- SQS queue with dead letter queue
+- Lambda function triggered by SQS messages
+- SNS topic for notifications
+- CloudWatch alarms
 - AWS Region: `ap-southeast-2`
 - Environment: Development (minimal cost)
 - Use existing default VPC always
@@ -20,7 +19,7 @@ Provision using Terraform:
 
 - **Organization**: `hashi-demos-apj`
 - **Project**: `sandbox`
-- **Workspace**: `sandbox_asg<GITHUB_REPO_NAME>`
+- **Workspace**: `sandbox_sqs<GITHUB_REPO_NAME>`
 
 ## Workflow Instructions
 

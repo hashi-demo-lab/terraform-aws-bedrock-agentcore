@@ -1,6 +1,6 @@
 ---
 name: tf-task-executor
-description: Execute individual implementation checklist items from design.md with Terraform module code. Invoked by tf-implement orchestrator with checklist item context from specs/{FEATURE}/design.md.
+description: Execute individual implementation checklist items from design.md with Terraform module code. Invoked by tf-implement-module orchestrator with checklist item context from specs/{FEATURE}/design.md.
 model: opus
 color: orange
 skills:

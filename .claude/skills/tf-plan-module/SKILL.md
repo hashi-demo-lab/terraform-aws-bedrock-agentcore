@@ -31,4 +31,4 @@ Post progress at key steps: `bash .foundations/scripts/bash/post-issue-progress.
 
 ## Done
 
-Design approved at `specs/{FEATURE}/design.md`. Run `/tf-implement $FEATURE` to build.
+Design approved at `specs/{FEATURE}/design.md`. Run `/tf-implement-module $FEATURE` to build.

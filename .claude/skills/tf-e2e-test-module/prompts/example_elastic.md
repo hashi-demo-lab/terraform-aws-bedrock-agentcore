@@ -1,25 +1,24 @@
-# Example: SQS with Lambda and SNS
+# Example: ElastiCache Redis with Application Tier
 
 **IMPORTANT** - Do not prompt me, make best practice decisions independently (this is for prompt eval)
 
-Using the **tf-e2e-tester** skill non-interactively.
+Using the **tf-e2e-test-module** skill non-interactively.
 
 ## Infrastructure Requirements
 
 Provision using Terraform:
-- SQS queue with dead letter queue
-- Lambda function triggered by SQS messages
-- SNS topic for notifications
-- CloudWatch alarms
+- ElastiCache Redis cluster in private subnets
+- ECS across 2 AZs for application tier
+- ALB with HTTPS
 - AWS Region: `ap-southeast-2`
+- Use existing default VPC
 - Environment: Development (minimal cost)
-- Use existing default VPC always
 
 ## HCP Terraform Configuration
 
 - **Organization**: `hashi-demos-apj`
 - **Project**: `sandbox`
-- **Workspace**: `sandbox_sqs<GITHUB_REPO_NAME>`
+- **Workspace**: `sandbox_elastic<GITHUB_REPO_NAME>`
 
 ## Workflow Instructions
 

@@ -34,7 +34,7 @@ echo $TFE_TOKEN       # HCP Terraform token set
 /tf-plan-module my-module aws - Creates an S3 bucket with encryption and versioning
 
 # Or implement from an existing design document
-/tf-implement my-module
+/tf-implement-module my-module
 ```
 
 ## Prerequisites
@@ -62,8 +62,8 @@ echo $TFE_TOKEN       # HCP Terraform token set
 │   │   └── tf-task-executor.md           # Implements one checklist item from design.md
 │   └── skills/                           # Skill definitions (8 skills + 3 orchestrators)
 │       ├── tf-plan-module/              # Orchestrator: full 4-phase workflow
-│       ├── tf-implement/                 # Orchestrator: TDD-aware implementation
-│       ├── tf-e2e-tester/               # Orchestrator: automated E2E test harness
+│       ├── tf-implement-module/           # Orchestrator: TDD-aware implementation
+│       ├── tf-e2e-test-module/           # Orchestrator: automated E2E test harness
 │       ├── tf-domain-taxonomy/           # 8-category requirement scanning
 │       ├── tf-research-heuristics/       # MCP research strategies
 │       ├── tf-architecture-patterns/     # Module architecture patterns
@@ -128,8 +128,8 @@ Skills provide domain knowledge and orchestration logic, loaded into agent conte
 | Skill | Purpose |
 |-------|---------|
 | `tf-plan-module` | Full 4-phase workflow entry point: Understand, Design, Build+Test, Validate |
-| `tf-implement` | TDD-aware implementation: write tests first, run after each phase |
-| `tf-e2e-tester` | Automated E2E test harness: runs full workflow cycle with test defaults |
+| `tf-implement-module` | TDD-aware implementation: write tests first, run after each phase |
+| `tf-e2e-test-module` | Automated E2E test harness: runs full workflow cycle with test defaults |
 
 ### Domain Knowledge — User-Invocable
 

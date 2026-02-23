@@ -42,8 +42,8 @@ Skills provide domain knowledge and orchestration logic. They are loaded into ag
 | Skill           | Purpose                                                                      |
 | --------------- | ---------------------------------------------------------------------------- |
 | `tf-plan-module` | 4-phase workflow entry point: Understand -> Design -> Build+Test -> Validate |
-| `tf-implement`  | TDD-aware implementation: write tests first, run after each phase            |
-| `tf-e2e-tester` | Automated E2E test harness: runs full workflow cycle with test defaults      |
+| `tf-implement-module`  | TDD-aware implementation: write tests first, run after each phase            |
+| `tf-e2e-test-module` | Automated E2E test harness: runs full workflow cycle with test defaults      |
 
 ### Domain Knowledge — User-Invocable
 
@@ -69,7 +69,7 @@ See constitution Section 2 (`.foundations/memory/constitution.md`) for environme
 
 ## Testing Strategy
 
-See constitution Section 6.3 (`.foundations/memory/constitution.md`) for TDD rules and test file conventions. See `tf-implement` skill for the test-first implementation workflow.
+See constitution Section 6.3 (`.foundations/memory/constitution.md`) for TDD rules and test file conventions. See `tf-implement-module` skill for the test-first implementation workflow.
 
 ## Operational Notes
 

@@ -1,12 +1,12 @@
-# tf-implement Flow Diagram
+# tf-implement-module Flow Diagram
 
-Mapping of the `tf-implement` orchestrator skill and its interaction with the `tf-test-writer` and `tf-task-executor` agents.
+Mapping of the `tf-implement-module` orchestrator skill and its interaction with the `tf-test-writer` and `tf-task-executor` agents.
 
 ## Full Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                     tf-implement (Orchestrator Skill)               │
+│                     tf-implement-module (Orchestrator Skill)               │
 │                        Phases 3 + 4                                 │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
@@ -123,7 +123,7 @@ design.md ──────────────┬────────�
                         │                                  │
                         └──────────┬───────────────────────┘
                                    ▼
-                        tf-implement orchestrator
+                        tf-implement-module orchestrator
                         (validates, tests, commits)
 ```
 
@@ -139,7 +139,7 @@ design.md ──────────────┬────────�
 
 3. **Agent single-responsibility (P5)**: tf-test-writer reads design and produces tests + scaffolding. tf-task-executor reads design + checklist item and produces .tf code. Clean separation.
 
-4. **Orchestrator directs, doesn't accumulate (P6)**: tf-implement checks file existence via Glob, passes file paths and item descriptions to agents, and runs validation commands. It doesn't read/merge agent outputs.
+4. **Orchestrator directs, doesn't accumulate (P6)**: tf-implement-module checks file existence via Glob, passes file paths and item descriptions to agents, and runs validation commands. It doesn't read/merge agent outputs.
 
 5. **Fix cycle at step 10**: If tests still fail after all items, tf-test-writer is re-launched with error context. This handles the case where task executors introduce data sources that tests didn't originally mock.
 

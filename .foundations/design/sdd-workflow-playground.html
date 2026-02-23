@@ -555,7 +555,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
   <div class="nav-tabs">
     <button class="nav-tab active" data-view="overview">Overview</button>
     <button class="nav-tab" data-view="plan">/tf-plan-module</button>
-    <button class="nav-tab" data-view="implement">/tf-implement</button>
+    <button class="nav-tab" data-view="implement">/tf-implement-module</button>
     <button class="nav-tab" data-view="design">Design Document</button>
   </div>
 </div>
@@ -593,7 +593,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
   </div>
   <div style="text-align:center;padding:2px 0 0">
     <span style="font-family:var(--mono);font-size:8px;letter-spacing:1px;color:#444">
-      &#9472;&#9472; /tf-plan-module &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472; /tf-implement &#9472;&#9472;&#9472;
+      &#9472;&#9472; /tf-plan-module &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472; /tf-implement-module &#9472;&#9472;&#9472;
     </span>
   </div>
 
@@ -647,7 +647,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 
     <!-- Implement card -->
     <div class="card" data-nav="implement" role="button" tabindex="0">
-      <div class="card-cmd" style="color:var(--green)">/tf-implement</div>
+      <div class="card-cmd" style="color:var(--green)">/tf-implement-module</div>
       <h2>Implementation Orchestrator</h2>
       <div class="card-desc">Writes tests first (TDD), builds module code from the checklist, runs validation in parallel, and ships a PR. The only input is <code style="color:var(--orange)">design.md</code>.</div>
       <div class="card-steps">
@@ -799,7 +799,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
         <div class="node-row">
           <div class="node node-artifact" data-id="design-md" data-type="artifact">design.md<span class="pref">P1</span></div>
         </div>
-        <div style="margin-top:6px;font-size:10px;color:#999;font-style:italic">"Run /tf-implement {FEATURE} when ready."</div>
+        <div style="margin-top:6px;font-size:10px;color:#999;font-style:italic">"Run /tf-implement-module {FEATURE} when ready."</div>
       </div>
     </div>
   </div>
@@ -814,7 +814,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 <!-- ==================== IMPLEMENT VIEW ==================== -->
 <div id="view-implement" class="view">
   <div class="view-header">
-    <h1>/tf-implement</h1>
+    <h1>/tf-implement-module</h1>
     <p>Phases 3 &amp; 4 &mdash; Build + Test + Validate</p>
   </div>
 
@@ -1258,7 +1258,7 @@ const nodeDesc = {
   'mcp-aws-docs':       'AWS Knowledge MCP: search_documentation, read_documentation, recommend, get_regional_availability. Used by sdd-research agents and tf-task-executor.',
   'mcp-terraform':      'Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies. Used by sdd-research for patterns and tf-task-executor for resource details.',
   'constitution':       'Module code standards: file structure (\u00a72.1), naming (\u00a72.2), variable conventions (\u00a72.3), security defaults (\u00a71.2, \u00a73), tags (\u00a73.3), provider constraints. Read by sdd-design directly \u2014 not interpreted by orchestrator (P9).',
-  'design-md':          'The SINGLE planning artifact (P1). 7 sections: Purpose, Interface Contract (variables + outputs), Resources & Architecture (resource inventory + architectural decisions), Security Controls (6 domains with CIS/WA references), Test Scenarios (5 groups with HCL assertions), Implementation Checklist (4-8 items), Open Questions. Handoff point between /tf-plan-module and /tf-implement.',
+  'design-md':          'The SINGLE planning artifact (P1). 7 sections: Purpose, Interface Contract (variables + outputs), Resources & Architecture (resource inventory + architectural decisions), Security Controls (6 domains with CIS/WA references), Test Scenarios (5 groups with HCL assertions), Implementation Checklist (4-8 items), Open Questions. Handoff point between /tf-plan-module and /tf-implement-module.',
   'gh-issue':           'GitHub issue tracking module development. Created from issue-body-template.md at Step 3. Updated after clarification (Step 6) with security decisions and scope boundary. Progress posted throughout.',
   'tf-scaffolding':     'versions.tf (terraform + provider version constraints) and variables.tf (all variable declarations from design.md \u00a72). Written by tf-test-writer as part of TDD scaffolding before implementation.',
   'tf-code':            'Terraform module files: main.tf, outputs.tf, locals.tf, and edits to existing files. Written by tf-task-executor agents during Phase 3 checklist execution.',

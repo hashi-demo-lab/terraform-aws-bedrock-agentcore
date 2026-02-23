@@ -1,24 +1,26 @@
-# Example: ElastiCache Redis with Application Tier
+# Example: Auto-Scaling Group with ALB
 
 **IMPORTANT** - Do not prompt me, make best practice decisions independently (this is for prompt eval)
 
-Using the **tf-e2e-tester** skill non-interactively.
+Using the **tf-e2e-test-module** skill non-interactively.
 
 ## Infrastructure Requirements
 
 Provision using Terraform:
-- ElastiCache Redis cluster in private subnets
-- ECS across 2 AZs for application tier
-- ALB with HTTPS
+- Auto-scaling group with launch template
+- Target tracking policies
+- create basic static content for testing
+- ALB with health checks across 2 AZs
+- CloudWatch dashboards
 - AWS Region: `ap-southeast-2`
-- Use existing default VPC
 - Environment: Development (minimal cost)
+- Use existing default VPC always
 
 ## HCP Terraform Configuration
 
 - **Organization**: `hashi-demos-apj`
 - **Project**: `sandbox`
-- **Workspace**: `sandbox_elastic<GITHUB_REPO_NAME>`
+- **Workspace**: `sandbox_asg<GITHUB_REPO_NAME>`
 
 ## Workflow Instructions
 
