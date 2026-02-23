@@ -1,5 +1,5 @@
 ---
-name: tf-plan
+name: tf-plan-module
 description: SDD Phases 1-2. Clarify requirements, research, produce design.md, and await human approval before any code is written.
 user-invocable: true
 argument-hint: "[module-name] [provider] - Brief description of what the module should create"

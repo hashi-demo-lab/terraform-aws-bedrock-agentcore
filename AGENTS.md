@@ -16,7 +16,7 @@ AI-assisted development of enterprise-ready Terraform modules via spec-driven de
 
 ## Workflow
 
-See `tf-plan` SKILL.md (`.claude/skills/tf-plan.md`) for the full 4-phase workflow: Understand, Design, Build+Test, Validate. See `tf-research-heuristics` skill for MCP tool priority and research strategies.
+See `tf-plan-module` SKILL.md (`.claude/skills/tf-plan-module/SKILL.md`) for the full 4-phase workflow: Understand, Design, Build+Test, Validate. See `tf-research-heuristics` skill for MCP tool priority and research strategies.
 
 ## Directory Layout
 
@@ -41,7 +41,7 @@ Skills provide domain knowledge and orchestration logic. They are loaded into ag
 
 | Skill           | Purpose                                                                      |
 | --------------- | ---------------------------------------------------------------------------- |
-| `tf-plan`       | 4-phase workflow entry point: Understand -> Design -> Build+Test -> Validate |
+| `tf-plan-module` | 4-phase workflow entry point: Understand -> Design -> Build+Test -> Validate |
 | `tf-implement`  | TDD-aware implementation: write tests first, run after each phase            |
 | `tf-e2e-tester` | Automated E2E test harness: runs full workflow cycle with test defaults      |
 

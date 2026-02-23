@@ -1,12 +1,12 @@
-# tf-plan Flow Diagram
+# tf-plan-module Flow Diagram
 
-Mapping of the `tf-plan` orchestrator skill and its interaction with the `sdd-research` and `sdd-design` agents.
+Mapping of the `tf-plan-module` orchestrator skill and its interaction with the `sdd-research` and `sdd-design` agents.
 
 ## Full Flow
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                      tf-plan (Orchestrator Skill)                     │
+│                      tf-plan-module (Orchestrator Skill)                     │
 │                           Phases 1 + 2                                   │
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
@@ -166,7 +166,7 @@ Mapping of the `tf-plan` orchestrator skill and its interaction with the `sdd-re
 User prompt
     │
     ▼
-tf-plan orchestrator
+tf-plan-module orchestrator
     │
     ├──▶ Parse arguments + AskUserQuestion (clarifications)
     │         │
@@ -204,7 +204,7 @@ tf-plan orchestrator
 
 ```
 ┌─────────────┐                              ┌──────────────┐
-│ tf-plan  │  produces                    │ tf-implement  │
+│ tf-plan-module  │  produces                    │ tf-implement  │
 │ (Phases 1-2)│ ──────▶ design.md ──────▶    │ (Phases 3-4)  │
 │             │         (approved)           │               │
 └─────────────┘                              └──────────────┘
