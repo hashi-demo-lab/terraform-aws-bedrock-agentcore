@@ -21,16 +21,16 @@ Checkpoint after each phase: `bash .foundations/scripts/bash/checkpoint-commit.s
 
 ## Phase 3: Build + Test
 
-5. Launch `tf-test-writer` agent with FEATURE path. Verify `versions.tf`, `variables.tf`, and `tests/*.tftest.hcl` exist via Glob.
+5. Launch `tf-module-test-writer` agent with FEATURE path. Verify `versions.tf`, `variables.tf`, and `tests/*.tftest.hcl` exist via Glob.
 6. Run `terraform init -backend=false`.
 7. Run `terraform validate` to confirm test files and scaffolding are valid HCL. This is the red TDD baseline — tests parse but resources don't exist yet, so `terraform test` will report errors on missing resource references. That is expected. Do NOT run `terraform test` here — it will fail with reference errors, not meaningful assertion failures. Checkpoint commit.
 8. Extract checklist items from design.md Section 6 via Grep.
 9. For each checklist item:
-   - Launch `tf-task-executor` agent with FEATURE path and item description.
+   - Launch `tf-module-developer` agent with FEATURE path and item description.
    - When it completes, run `terraform validate` and `terraform test`.
    - Checkpoint commit.
    Use concurrent subagents for independent items only when their outputs do not overlap.
-10. After all items: run `terraform test`. If failures remain, re-launch `tf-test-writer` agent with the error output and any data sources reported by task executors as context.
+10. After all items: run `terraform test`. If failures remain, re-launch `tf-module-test-writer` agent with the error output and any data sources reported by task executors as context.
 11. Verify all checklist items in design.md Section 6 are marked `[x]` via Grep. If any remain `[ ]`, either mark them (if the work was done by a prior item) or flag the gap before proceeding.
 
 ## Phase 4: Validate
