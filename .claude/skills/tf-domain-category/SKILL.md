@@ -79,7 +79,7 @@ Rank by `Impact x Uncertainty`:
 
 ## Question Constraints
 
-- Maximum 4 questions per session, 10 across full session
+- Maximum 6 questions per session, 10 across full session
 - One question slot is **mandatory** and reserved for the security-defaults question: confirming which security defaults (encryption, IAM boundaries, logging) the user wants applied vs. customized. This counts toward the per-session maximum.
 - Each question must be answerable with:
   - Multiple-choice (2-5 options), OR

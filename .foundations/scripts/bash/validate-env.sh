@@ -131,10 +131,10 @@ else
     fi
     TF_MAJOR=$(echo "$TF_VERSION" | cut -d. -f1)
     TF_MINOR=$(echo "$TF_VERSION" | cut -d. -f2)
-    if [[ "$TF_MAJOR" -gt 1 ]] || { [[ "$TF_MAJOR" -eq 1 ]] && [[ "$TF_MINOR" -ge 5 ]]; }; then
+    if [[ "$TF_MAJOR" -gt 1 ]] || { [[ "$TF_MAJOR" -eq 1 ]] && [[ "$TF_MINOR" -ge 14 ]]; }; then
         add_check "TERRAFORM" "GATE" "true" "INSTALLED (v${TF_VERSION})"
     else
-        add_check "TERRAFORM" "GATE" "false" "VERSION TOO OLD (v${TF_VERSION}) — requires >= 1.5. See: https://developer.hashicorp.com/terraform/install"
+        add_check "TERRAFORM" "GATE" "false" "VERSION TOO OLD (v${TF_VERSION}) — requires >= 1.14. See: https://developer.hashicorp.com/terraform/install"
     fi
 fi
 

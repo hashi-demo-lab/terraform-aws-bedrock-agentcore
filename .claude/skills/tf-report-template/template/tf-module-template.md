@@ -12,6 +12,7 @@
 | --------------------- | ------------- |
 | basic.tftest.hcl      | {{PASS/FAIL}} |
 | complete.tftest.hcl   | {{PASS/FAIL}} |
+| edge_cases.tftest.hcl | {{PASS/FAIL}} |
 | validation.tftest.hcl | {{PASS/FAIL}} |
 
 **Summary**: {{PASSED}}/{{TOTAL}} passed

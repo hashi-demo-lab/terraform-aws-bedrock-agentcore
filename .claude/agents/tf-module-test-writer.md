@@ -19,7 +19,7 @@ Convert design.md Section 5 (Test Scenarios) into `.tftest.hcl` test files and w
 
 ## Instructions
 
-1. **Read Design**: Load `specs/{FEATURE}/design.md`. Extract Section 3 (Interface Contract) for variables and provider requirements, and Section 5 (Test Scenarios) for test generation. Parse every scenario group, scenario name, input variables, and assertion list.
+1. **Read Design**: Load `specs/{FEATURE}/design.md`. Extract Section 2 (Resource Inventory) for provider versions, data sources, and Schema Notes; Section 3 (Interface Contract) for variables and provider requirements; and Section 5 (Test Scenarios) for test generation. Parse every scenario group, scenario name, input variables, and assertion list.
 2. **Write Scaffolding**: Before writing tests, create the minimal `.tf` files that tests need to parse:
    - `versions.tf` — `terraform {}` block with `required_version` and `required_providers` from the design's architectural decisions (Section 2) or constitution defaults (`>= 1.7` for Terraform, `>= 5.0` for AWS provider)
    - `variables.tf` — All variable declarations from design.md Section 3 (Interface Contract): name, type, description, default, sensitive flag, and validation blocks. This file defines the interface — implementation code references these variables later.

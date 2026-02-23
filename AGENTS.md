@@ -4,7 +4,7 @@ Operational rules for the orchestrator during `/tf-plan-module` and `/tf-impleme
 
 ## Context Management
 
-1. **NEVER call TaskOutput** to read subagent results — EXCEPT for research agents (`sdd-research`), whose findings are collected and forwarded to the design agent. All other agents write artifacts to disk.
+1. **NEVER call TaskOutput** to read subagent results — EXCEPT for research agents (`tf-module-research`), whose findings are collected and forwarded to the design agent. All other agents write artifacts to disk.
 2. **Verify file existence with Glob** after each agent completes — do NOT read file contents into the orchestrator.
 3. **Downstream agents read their own inputs from disk.** The orchestrator passes the FEATURE path plus scope via `$ARGUMENTS`. For the design agent, `$ARGUMENTS` also includes research findings collected from research agents.
 4. **Research agents: parallel foreground Task calls** (NOT `run_in_background`). Launch ALL research agents in a single message with multiple Task tool calls, then collect their in-memory findings to pass to the design agent.
@@ -27,4 +27,4 @@ Authentication requires `gh auth login --hostname <hostname>` — standard `gh a
 
 ### Agent Output Persistence
 
-Most agents persist output artifacts to disk. The orchestrator verifies expected files exist after each dispatch. **Exception**: Research agents (`sdd-research`) return findings in-memory — the orchestrator collects these and passes them to the design agent via `$ARGUMENTS`.
+Most agents persist output artifacts to disk. The orchestrator verifies expected files exist after each dispatch. **Exception**: Research agents (`tf-module-research`) return findings in-memory — the orchestrator collects these and passes them to the design agent via `$ARGUMENTS`.

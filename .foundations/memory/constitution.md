@@ -178,7 +178,7 @@ These rules apply to all AWS modules. Non-AWS providers MUST add equivalent rule
 
 ```hcl
 terraform {
-  required_version = ">= 1.7"
+  required_version = ">= 1.14"
 
   required_providers {
     aws = {
@@ -242,7 +242,8 @@ Pre-commit hooks MUST enforce these checks.
 tests/
   basic.tftest.hcl         # Secure defaults, features disabled, core outputs
   complete.tftest.hcl       # All features enabled, security assertions
-  validation.tftest.hcl     # Invalid input cases (expect_failures)
+  edge_cases.tftest.hcl     # Feature toggle combinations, disabled-feature suppression
+  validation.tftest.hcl     # Invalid input cases (expect_failures) + boundary-pass acceptance
 ```
 
 Each test file maps to a scenario group in `design.md` Section 5.
