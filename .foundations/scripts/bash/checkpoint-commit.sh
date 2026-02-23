@@ -6,6 +6,10 @@
 # tf-implement-module after each workflow step. Handles empty-commit detection,
 # deterministic commit messages, and push failures.
 #
+# Commits use --no-verify to skip pre-commit hooks. These are intermediate
+# workflow saves on in-progress code — hooks like tflint would reject partial
+# modules. Phase 4 runs `pre-commit run --all-files` as the explicit quality gate.
+#
 # Usage: ./checkpoint-commit.sh [OPTIONS] <step_name>
 #
 # ARGUMENTS:
@@ -18,7 +22,6 @@
 #   --dir <path>        Directory to stage (default: . i.e. all changes)
 #   --prefix <type>     Commit type prefix: docs, feat, compound (default: docs)
 #   --json              Output result as JSON
-#   --quiet             Suppress output (exit code only)
 #   --help, -h          Show help message
 #
 # EXIT CODES:
@@ -41,7 +44,6 @@ source "$SCRIPT_DIR/common.sh"
 STAGE_DIR="."
 COMMIT_PREFIX="docs"
 JSON_MODE=false
-QUIET_MODE=false
 STEP_NAME=""
 
 # --- Parse arguments ---
@@ -59,10 +61,6 @@ while [[ $# -gt 0 ]]; do
             JSON_MODE=true
             shift
             ;;
-        --quiet)
-            QUIET_MODE=true
-            shift
-            ;;
         --help|-h)
             cat << 'EOF'
 Usage: checkpoint-commit.sh [OPTIONS] <step_name>
@@ -76,7 +74,6 @@ OPTIONS:
   --dir <path>        Directory to stage (default: . i.e. all changes)
   --prefix <type>     Commit type prefix: docs, feat, compound (default: docs)
   --json              Output result as JSON
-  --quiet             Suppress output (exit code only)
   --help, -h          Show this help message
 
 EXIT CODES:
@@ -128,20 +125,23 @@ if git diff --cached --quiet; then
     # Nothing staged — success with no-op
     if $JSON_MODE; then
         printf '{"committed":false,"pushed":false,"reason":"nothing_to_commit","message":""}\n'
-    elif ! $QUIET_MODE; then
+    else
         echo "Nothing to commit in ${STAGE_DIR} — skipping."
     fi
     exit 0
 fi
 
-# --- Commit ---
-if ! git commit -m "$COMMIT_MSG"; then
-    if $JSON_MODE; then
+# --- Commit (skip hooks — see header comment) ---
+if $JSON_MODE; then
+    if ! git commit --no-verify -m "$COMMIT_MSG" >/dev/null 2>&1; then
         printf '{"committed":false,"pushed":false,"reason":"commit_failed","message":"%s"}\n' "$COMMIT_MSG"
-    elif ! $QUIET_MODE; then
-        echo "ERROR: git commit failed." >&2
+        exit 1
     fi
-    exit 1
+else
+    if ! git commit --no-verify -m "$COMMIT_MSG"; then
+        echo "ERROR: git commit failed." >&2
+        exit 1
+    fi
 fi
 
 # --- Push (try plain push first, fall back to setting upstream) ---
@@ -151,7 +151,7 @@ if ! git push 2>/dev/null; then
     if ! git push -u origin HEAD 2>/dev/null; then
         if $JSON_MODE; then
             printf '{"committed":true,"pushed":false,"reason":"push_failed","message":"%s"}\n' "$COMMIT_MSG"
-        elif ! $QUIET_MODE; then
+        else
             echo "Warning: git push failed. Commit was created locally: $COMMIT_MSG" >&2
         fi
         exit 0
@@ -161,7 +161,7 @@ fi
 # --- Success ---
 if $JSON_MODE; then
     printf '{"committed":true,"pushed":true,"reason":"success","message":"%s"}\n' "$COMMIT_MSG"
-elif ! $QUIET_MODE; then
+else
     echo "Committed and pushed: $COMMIT_MSG"
 fi
 
