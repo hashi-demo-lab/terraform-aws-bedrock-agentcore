@@ -59,7 +59,7 @@ Expert in cloud security architecture and AWS Well-Architected Framework's Secur
 - CIS AWS Benchmark
 - NIST Cybersecurity Framework
 - OWASP Cloud Security
-- Organizational Constitution (`.foundations/memory/constitution.md`)
+- Organizational Constitution (`.foundations/memory/module-constitution.md`)
 
 ## MCP Tool Usage
 

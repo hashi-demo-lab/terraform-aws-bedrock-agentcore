@@ -28,7 +28,7 @@ Produce a single `specs/{FEATURE}/design.md` from clarified requirements and res
 
 ## Instructions
 
-1. **Read Context**: Load `.foundations/memory/constitution.md` (for security defaults §1.2, file layout §2.1, naming §2.2, variable conventions §2.3, security §3, tags §3.3) and `.foundations/templates/design-template.md` (for the authoritative section structure and template rules).
+1. **Read Context**: Load `.foundations/memory/module-constitution.md` (for security defaults §1.2, file layout §2.1, naming §2.2, variable conventions §2.3, security §3, tags §3.3) and `.foundations/templates/design-template.md` (for the authoritative section structure and template rules).
 
 2. **Parse Input**: Extract from `$ARGUMENTS`:
    - The FEATURE path (e.g., `specs/vpc/`)

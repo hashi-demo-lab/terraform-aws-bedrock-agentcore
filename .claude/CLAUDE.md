@@ -25,7 +25,7 @@ See the root `./AGENTS.md` for the main project documentation, workflow phases, 
 
 Non-negotiable rules for all code generation live in the constitutions. Read the relevant one before generating code.
 
-- **Module constitution**: `.foundations/memory/constitution.md`
+- **Module constitution**: `.foundations/memory/module-constitution.md`
 - **Provider constitution**: `.foundations/memory/provider-constitution.md`
 
 ## Design Templates

@@ -90,7 +90,7 @@ Mapping of the `tf-plan-module` orchestrator skill and its interaction with the 
 │  │  │  - Research findings summary                                 │  │  │
 │  │  │                                                              │  │  │
 │  │  │  READS ITSELF:                                               │  │  │
-│  │  │  - .foundations/memory/constitution.md                        │  │  │
+│  │  │  - .foundations/memory/module-constitution.md                        │  │  │
 │  │  │  - .foundations/templates/design-template.md                  │  │  │
 │  │  │                                                              │  │  │
 │  │  │  PRODUCES 7 SECTIONS:                                        │  │  │

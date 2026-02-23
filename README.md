@@ -168,7 +168,7 @@ tests/
 
 ## Contributing
 
-Follow the constitution at `.foundations/memory/constitution.md`. Use `/tf-plan-module` for new modules. All agents and skills follow the conventions documented in `AGENTS.md`.
+Follow the constitution at `.foundations/memory/module-constitution.md`. Use `/tf-plan-module` for new modules. All agents and skills follow the conventions documented in `AGENTS.md`.
 
 When adding new agents or skills:
 - Agent definitions go in `.claude/agents/` as Markdown files
