@@ -12,26 +12,32 @@ See the root `./AGENTS.md` for the main project documentation, workflow phases, 
 
 @/workspace/AGENTS.md
 
-## Constitution
-
-Non-negotiable rules for all code generation live in the constitution. Read it before generating any Terraform code.
-
-`.foundations/memory/constitution.md`
-
 ## Workflow Entry Points
 
 | Command         | Purpose                                                           |
 | --------------- | ----------------------------------------------------------------- |
 | `/tf-plan-module` | Full 4-phase workflow: Clarify, Design, Implement (TDD), Validate |
 | `/tf-implement-module` | Implementation only — starts from an existing `design.md`         |
+| `/tf-provider-plan` | Full 4-phase workflow for provider resources: Clarify, Design, Implement, Validate |
+| `/tf-provider-implement` | Implementation only — starts from an existing provider `design.md` |
 
-## Design Template
+## Constitutions
 
-When creating design documents, use the canonical template at `.foundations/templates/design-template.md`.
+Non-negotiable rules for all code generation live in the constitutions. Read the relevant one before generating code.
+
+- **Module constitution**: `.foundations/memory/constitution.md`
+- **Provider constitution**: `.foundations/memory/provider-constitution.md`
+
+## Design Templates
+
+When creating design documents, use the canonical template for the relevant workflow:
+
+- **Module design**: `.foundations/templates/design-template.md`
+- **Provider design**: `.foundations/templates/provider-design-template.md`
 
 ## Key Conventions
 
-- Workflow conventions are defined in the orchestrator skills (`tf-plan-module`, `tf-implement-module`). Follow AGENTS.md `## Context Management` for subagent rules.
+- Workflow conventions are defined in the orchestrator skills (`tf-plan-module`, `tf-implement-module`, `tf-provider-plan`, `tf-provider-implement`). Follow AGENTS.md `## Context Management` for subagent rules.
 - Key scripts: `validate-env.sh` (environment checks), `post-issue-progress.sh` (GitHub updates), `checkpoint-commit.sh` (git automation) — all in `.foundations/scripts/bash/`.
 
 ## Updating AGENTS.md Files
