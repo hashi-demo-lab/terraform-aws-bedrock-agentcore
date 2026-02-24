@@ -42,40 +42,6 @@ website/docs/d/
 
 ## Resource Structure
 
-### SDKv2 Resource Pattern
-
-```go
-func ResourceExample() *schema.Resource {
-    return &schema.Resource{
-        CreateWithoutTimeout: resourceExampleCreate,
-        ReadWithoutTimeout:   resourceExampleRead,
-        UpdateWithoutTimeout: resourceExampleUpdate,
-        DeleteWithoutTimeout: resourceExampleDelete,
-
-        Importer: &schema.ResourceImporter{
-            StateContext: schema.ImportStatePassthroughContext,
-        },
-
-        Schema: map[string]*schema.Schema{
-            "name": {
-                Type:         schema.TypeString,
-                Required:     true,
-                ForceNew:     true,
-                ValidateFunc: validation.StringLenBetween(1, 255),
-            },
-            "arn": {
-                Type:     schema.TypeString,
-                Computed: true,
-            },
-            "tags":     tftags.TagsSchema(),
-            "tags_all": tftags.TagsSchemaComputed(),
-        },
-
-        CustomizeDiff: verify.SetTagsDiff,
-    }
-}
-```
-
 ### Plugin Framework Resource Pattern
 
 ```go
@@ -106,6 +72,41 @@ func (r *resourceExample) Schema(ctx context.Context, req resource.SchemaRequest
                     stringplanmodifier.UseStateForUnknown(),
                 },
             },
+        },
+    }
+}
+```
+
+### Constructor & Service Registration
+
+Every resource requires an exported constructor and service registration wiring:
+
+```go
+// In <resource_name>.go — exported constructor per constitution §2.2
+func NewResourceExample() resource.Resource {
+    return &resourceExample{}
+}
+```
+
+```go
+// In exports_test.go — re-exports the constructor for use in acceptance tests
+// (e.g., CheckResourceDisappears needs the resource constructor)
+package <service>_test
+
+import <service> "github.com/<org>/<provider>/internal/service/<service>"
+
+var (
+    ResourceExample = <service>.NewResourceExample
+)
+```
+
+```go
+// In service_package_gen.go — registers the resource with the provider.
+// This file is typically auto-generated. Each resource gets one entry.
+func (p *servicePackage) FrameworkResources(ctx context.Context) []*types.ServicePackageFrameworkResource {
+    return []*types.ServicePackageFrameworkResource{
+        {
+            Factory: NewResourceExample,
         },
     }
 }
@@ -159,10 +160,6 @@ func (r *resourceExample) Read(ctx context.Context, req resource.ReadRequest, re
 
     output, err := findExampleByID(ctx, conn, data.ID.ValueString())
     if tfresource.NotFound(err) {
-        resp.Diagnostics.AddWarning(
-            "Resource not found",
-            fmt.Sprintf("Example %s not found, removing from state", data.ID.ValueString()),
-        )
         resp.State.RemoveResource(ctx)
         return
     }
@@ -329,6 +326,10 @@ func findExampleByID(ctx context.Context, conn *example.Client, id string) (*exa
         return nil, err
     }
 
+    // Guard against nil output — the API may return success with an empty body.
+    // NewEmptyResultError returns a retry.NotFoundError variant, consistent
+    // with the constitution §2.5 requirement that finders wrap NotFound using
+    // retry.NotFoundError.
     if output == nil || output.Example == nil {
         return nil, tfresource.NewEmptyResultError(input)
     }
@@ -375,7 +376,7 @@ func statusExample(ctx context.Context, conn *example.Client, id string) retry.S
 ### Basic Acceptance Test
 
 ```go
-func TestAccExampleResource_basic(t *testing.T) {
+func TestAccExample_basic(t *testing.T) {
     ctx := acctest.Context(t)
     rName := sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)
     resourceName := "provider_example.test"
@@ -406,7 +407,7 @@ func TestAccExampleResource_basic(t *testing.T) {
 ### Disappears Test
 
 ```go
-func TestAccExampleResource_disappears(t *testing.T) {
+func TestAccExample_disappears(t *testing.T) {
     ctx := acctest.Context(t)
     rName := sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)
     resourceName := "provider_example.test"
@@ -594,6 +595,5 @@ $ terraform import provider_example.example example-id-12345
 ## References
 
 - [Terraform Plugin Framework](https://developer.hashicorp.com/terraform/plugin/framework)
-- [Terraform Plugin SDKv2](https://developer.hashicorp.com/terraform/plugin/sdkv2)
 - [Acceptance Testing](https://developer.hashicorp.com/terraform/plugin/testing/acceptance-tests)
 - [terraform-plugin-framework GitHub](https://github.com/hashicorp/terraform-plugin-framework)

@@ -69,9 +69,9 @@ func (a *actionType) Schema(ctx context.Context, req action.SchemaRequest, resp 
 **Pay special attention to the schema definition** - common issues after a first draft:
 
 1. **Type Mismatches**
-   - Using `types.String` instead of `fwtypes.String` in model structs
-   - Using `types.StringType` instead of `fwtypes.StringType` in schema
-   - Mixing framework types with plugin-framework types
+   - By default, use `types.*` values (e.g., `types.String`) in model structs per the provider constitution §2.3
+   - Some providers define a custom `fwtypes` package for flexible/auto-flattening types — use `fwtypes.*` ONLY when the provider's action framework explicitly requires it and document the deviation
+   - Do not mix `types.*` and `fwtypes.*` in the same model struct
 
 2. **List/Map Element Types**
    ```go
@@ -83,7 +83,7 @@ func (a *actionType) Schema(ctx context.Context, req action.SchemaRequest, resp 
    // CORRECT
    "items": schema.ListAttribute{
        Optional:    true,
-       ElementType: fwtypes.StringType,
+       ElementType: types.StringType,
    }
    ```
 

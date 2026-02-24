@@ -31,14 +31,15 @@ Provider code MUST never expose secrets or sensitive data in error messages, dia
 - Log output MUST NOT contain request/response bodies with sensitive fields
 - Provider configuration credentials MUST be inherited from consumer configuration
 
-### 1.3 Tests Before Code
+### 1.3 Test Stubs Before Implementation
 
-Acceptance test stubs MUST be written before CRUD implementation.
+Acceptance test stubs MUST be written and compile before CRUD implementation begins. Stubs define the test contract (function signatures, config functions, check functions) with `t.Skip("not implemented")` bodies. CRUD implementation then fills in the stubs incrementally. Full test execution (`TF_ACC=1`) occurs during validation (Phase 4).
 
 - Every resource MUST have test files in `internal/service/<service>/`
 - Test stubs MUST cover: basic, disappears, full features, update, validation, error handling
 - Test function signatures and config functions MUST be defined before implementation
-- Tests MUST use random prefixes (`acctest.RandomWithPrefix`) for resource isolation
+- Test compilation (`go test -c`) MUST pass from the first checklist item onward
+- Tests MUST use random prefixes (`sdkacctest.RandomWithPrefix(acctest.ResourcePrefix)`) for resource isolation
 - Sweep functions MUST be provided for test resource cleanup
 
 ### 1.4 Single Design Document
