@@ -167,7 +167,7 @@ interactive_menu() {
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
-GITHUB_HOST=""
+GITHUB_HOST="${GITHUB_HOST:-github.com}"
 GITHUB_ACCOUNT=""
 CLONE_BASE_PATH="${CLONE_BASE_PATH:-$HOME/Documents/repos}"
 DRY_RUN=false
@@ -175,10 +175,15 @@ SKIP_CONFIRM=false
 REPO_LIST=()
 
 # Known host/account pairs — driven by DEMO_REPO_TARGETS env var
-# Format: comma-separated HOST::ACCOUNT entries
+# Accepts "ACCOUNT" (defaults to github.com) or "HOST::ACCOUNT"
 KNOWN_TARGETS=()
 if [[ -n "$DEMO_REPO_TARGETS" ]]; then
-    IFS=',' read -rA KNOWN_TARGETS <<< "$DEMO_REPO_TARGETS"
+    IFS=',' read -rA _raw_targets <<< "$DEMO_REPO_TARGETS"
+    for _entry in "${_raw_targets[@]}"; do
+        [[ "$_entry" != *"::"* ]] && _entry="${GITHUB_HOST}::${_entry}"
+        KNOWN_TARGETS+=("$_entry")
+    done
+    unset _raw_targets _entry
 else
     printf "\n  ${C_RED}✗${C_RESET} ${C_WHITE}DEMO_REPO_TARGETS${C_RESET} env var is not set.\n" >&2
     printf "    ${C_DIM}Run: ./setup-demo-env.zsh${C_RESET}\n\n" >&2

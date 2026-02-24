@@ -9,7 +9,7 @@
 body {
   background: #0a0a12; color: #e0dfe6;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  min-height: 100vh; padding-top: 48px;
+  min-height: 100vh; padding-top: 88px;
 }
 :root {
   --pink: #ff2d7b; --cyan: #00f0ff; --purple: #b44dff;
@@ -19,7 +19,7 @@ body {
   --mono: 'SF Mono','Fira Code','Cascadia Code',monospace;
 }
 
-/* === NAV === */
+/* === TOP NAV === */
 #nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 20;
   display: flex; align-items: center; background: rgba(10,10,18,0.97);
@@ -32,8 +32,7 @@ body {
   background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   margin-right: 32px; white-space: nowrap;
 }
-.nav-tabs { display: flex; gap: 2px; height: 100%; align-items: stretch; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tabs { display: flex; gap: 2px; height: 100%; align-items: stretch; }
 .nav-tab {
   display: flex; align-items: center; padding: 0 20px; font-size: 11.5px;
   letter-spacing: 1.2px; text-transform: uppercase; color: #555; cursor: pointer;
@@ -47,6 +46,31 @@ body {
   background: var(--cyan); border-radius: 2px 2px 0 0; box-shadow: 0 0 8px rgba(0,240,255,0.4);
 }
 
+/* === SUB NAV === */
+#sub-nav {
+  position: fixed; top: 48px; left: 0; right: 0; z-index: 19;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10,10,18,0.95); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border); height: 40px; gap: 4px;
+}
+.sub-tab {
+  display: flex; align-items: center; padding: 0 20px; font-size: 11px;
+  letter-spacing: 0.8px; font-family: var(--mono); color: #444; cursor: pointer;
+  border: none; background: transparent; position: relative;
+  transition: all 0.2s ease; height: 100%; white-space: nowrap;
+}
+.sub-tab:hover { color: #888; background: rgba(255,255,255,0.02); }
+.sub-tab[data-stage="plan"].active { color: var(--pink); }
+.sub-tab[data-stage="plan"].active::after {
+  content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 2px;
+  background: var(--pink); border-radius: 2px 2px 0 0; box-shadow: 0 0 8px rgba(255,45,123,0.4);
+}
+.sub-tab[data-stage="impl"].active { color: var(--green); }
+.sub-tab[data-stage="impl"].active::after {
+  content: ''; position: absolute; bottom: 0; left: 15%; right: 15%; height: 2px;
+  background: var(--green); border-radius: 2px 2px 0 0; box-shadow: 0 0 8px rgba(57,255,142,0.4);
+}
+
 /* === VIEWS === */
 .view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
@@ -54,23 +78,22 @@ body {
 @keyframes gradient-shift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 @keyframes dash-flow { from{stroke-dashoffset:0}to{stroke-dashoffset:-20} }
 
-/* === OVERVIEW === */
-.overview-bg { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-.overview-bg canvas { width: 100%; height: 100%; opacity: 0.4; }
-#view-overview { position: relative; z-index: 1; }
-.hero { text-align: center; padding: 48px 24px 8px; }
+/* === BACKGROUND === */
+.bg-canvas { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.bg-canvas canvas { width: 100%; height: 100%; opacity: 0.35; }
+
+/* === HERO === */
+.hero { text-align: center; padding: 28px 24px 4px; position: relative; z-index: 1; }
 .hero h1 {
-  font-family: var(--mono); font-size: 2.2rem; font-weight: 700;
-  background: linear-gradient(135deg,#ff2d7b,#b44dff,#00f0ff,#39ff8e);
-  background-size: 300% 300%; -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; animation: gradient-shift 6s ease infinite;
+  font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
 }
-.hero p { font-family: var(--mono); font-size: 1rem; color: #666; margin-top: 6px; letter-spacing: 0.04em; }
+.hero p { font-family: var(--mono); font-size: 0.85rem; color: #555; margin-top: 4px; letter-spacing: 0.04em; }
 
 /* Pipeline mini-diagram */
 .pipeline {
   display: flex; align-items: center; justify-content: center; gap: 0;
-  padding: 20px 24px 4px; max-width: 700px; margin: 0 auto;
+  padding: 14px 24px 2px; max-width: 660px; margin: 0 auto; position: relative; z-index: 1;
 }
 .pipe-phase {
   font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
@@ -81,89 +104,24 @@ body {
   font-family: var(--mono); font-size: 7px; letter-spacing: 0.5px; text-transform: uppercase;
   color: #444; text-align: center; margin-top: 2px;
 }
+.pipe-dim { opacity: 0.25; }
 
-/* Overview cards */
-.cards-row {
-  display: flex; align-items: stretch; justify-content: center; gap: 0;
-  padding: 20px 24px 16px; max-width: 1100px; margin: 0 auto;
-}
-.card {
-  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-  border-radius: 14px; padding: 24px 28px 20px; flex: 1; max-width: 440px;
-  cursor: pointer; position: relative; overflow: hidden;
-  transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-}
-.card:hover { transform: translateY(-3px); }
-.card[data-nav="plan"]:hover { border-color: rgba(255,45,123,0.4); box-shadow: 0 8px 40px rgba(255,45,123,0.1); }
-.card[data-nav="implement"]:hover { border-color: rgba(57,255,142,0.4); box-shadow: 0 8px 40px rgba(57,255,142,0.1); }
-.card-cmd { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-.card h2 { font-size: 1.15rem; font-weight: 600; color: #e0dfe6; margin: 4px 0 10px; }
-.card-desc { font-size: 12px; color: #888; line-height: 1.55; margin-bottom: 12px; }
-.card-steps {
-  display: flex; align-items: center; gap: 0; width: 100%; margin: 8px 0;
-}
-.card-step-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.card-step-line { height: 2px; flex-grow: 1; min-width: 8px; border-radius: 1px; }
-.card-step-label { font-size: 7px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; white-space: nowrap; margin-top: 2px; }
-.card-stats { display: flex; gap: 16px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
-.card-stat { font-size: 10px; color: #666; display: flex; align-items: center; gap: 5px; }
-.card-stat-dot { width: 6px; height: 6px; border-radius: 50%; }
-.card-cta {
-  font-family: var(--mono); font-size: 12px; letter-spacing: 0.05em;
-  margin-top: 14px; display: flex; align-items: center; gap: 6px;
-  transition: gap 0.3s ease;
-}
-.card:hover .card-cta { gap: 10px; }
-
-/* Bridge between cards */
-.card-bridge {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 0 8px; min-width: 80px; gap: 6px; flex-shrink: 0;
-}
-.bridge-line { position: relative; width: 60px; height: 2px; }
-.bridge-line::before {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(90deg, rgba(0,240,255,0.3) 0, rgba(0,240,255,0.3) 5px, transparent 5px, transparent 9px);
-}
-.bridge-line::after {
-  content: ''; position: absolute; right: -4px; top: -3px;
-  border: 4px solid transparent; border-left: 5px solid rgba(0,240,255,0.5);
-}
-.bridge-label {
-  font-family: var(--mono); font-size: 10px; color: var(--orange);
-  background: rgba(255,157,46,0.06); border: 1px solid rgba(255,157,46,0.18);
-  border-radius: 4px; padding: 2px 8px; white-space: nowrap;
-}
-
-/* Principles bar */
-.principles {
-  max-width: 900px; margin: 0 auto 32px; padding: 0 24px;
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-}
-.principle {
-  background: rgba(255,255,255,0.015); border: 1px solid var(--border);
-  border-radius: 8px; padding: 12px 14px; font-size: 11px; color: #777; line-height: 1.5;
-}
-.principle strong { color: #bbb; display: block; margin-bottom: 3px; font-size: 10px; letter-spacing: 0.5px; }
-
-/* === DETAIL VIEWS (plan + implement) === */
-.view-header { text-align: center; padding: 20px 0 4px; }
+/* === DETAIL VIEWS === */
+.view-header { text-align: center; padding: 20px 0 4px; position: relative; z-index: 1; }
 .view-header h1 { font-size: 20px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; }
 .view-header p { font-size: 11px; color: #555; margin-top: 2px; letter-spacing: 1px; }
-#view-plan .view-header h1 { color: var(--pink); }
-#view-implement .view-header h1 { color: var(--green); }
 
 /* Legend */
 .legend {
-  display: flex; justify-content: center; gap: 16px; padding: 8px 0 12px; flex-wrap: wrap; opacity: 0.6;
+  display: flex; justify-content: center; gap: 16px; padding: 8px 0 12px; flex-wrap: wrap; opacity: 0.6; position: relative; z-index: 1;
 }
 .legend-item { display: flex; align-items: center; gap: 4px; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: #777; }
 .legend-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-/* Flow container — vertical */
+/* Flow container */
 .flow-container {
   max-width: 760px; margin: 0 auto; padding: 0 24px 24px;
-  display: flex; flex-direction: column; align-items: stretch;
+  display: flex; flex-direction: column; align-items: stretch; position: relative; z-index: 1;
 }
 
 /* Phase box */
@@ -176,7 +134,7 @@ body.has-selection .phase-box.dimmed { opacity: var(--dim); }
 .phase-label { font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: #888; margin-bottom: 2px; }
 .phase-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
 
-/* Step groups within a phase */
+/* Step groups */
 .step-group { margin-top: 8px; }
 .step-group-title {
   font-size: 9.5px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
@@ -207,7 +165,6 @@ body.has-selection .phase-box.dimmed { opacity: var(--dim); }
 .node-ref:hover,.node-ref.active { background: rgba(168,200,255,0.18); border-color: var(--ice); box-shadow: 0 0 12px rgba(168,200,255,0.3); }
 .node-cmd { background: rgba(255,68,68,0.07); border-color: rgba(255,68,68,0.22); color: var(--red); }
 .node-cmd:hover,.node-cmd.active { background: rgba(255,68,68,0.17); border-color: var(--red); box-shadow: 0 0 12px rgba(255,68,68,0.3); }
-.node-gate { background: rgba(255,68,68,0.05); border-color: rgba(255,68,68,0.15); color: #cc6666; border-style: dashed; }
 body.has-selection .node.dimmed { opacity: var(--dim); }
 
 .node-row { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
@@ -215,7 +172,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 .pref { font-size: 7px; opacity: 0.6; margin-left: 2px; vertical-align: super; }
 .artifacts-label { font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-top: 6px; margin-bottom: 1px; }
 
-/* Flow connector (tiny) */
+/* Flow connector */
 .flow-conn {
   display: flex; flex-direction: column; align-items: center; padding: 3px 0;
 }
@@ -224,7 +181,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 
 /* === DETAIL PANEL === */
 #detail {
-  position: fixed; top: 56px; right: 24px; max-width: 380px; width: auto;
+  position: fixed; top: 96px; right: 24px; max-width: 380px; width: auto;
   background: rgba(10,10,18,0.97); border: 1px solid var(--border);
   border-right: 3px solid var(--cyan); border-radius: 10px;
   padding: 16px 20px; z-index: 10; display: flex; flex-direction: column; gap: 8px;
@@ -252,11 +209,11 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 #detail-hint { font-size: 9px; color: #383838; letter-spacing: 0.5px; }
 
 /* Edge SVG overlay */
-.flow-section { position: relative; }
+.flow-section { position: relative; z-index: 1; }
 .flow-section svg.edges { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4; }
 
 /* Edge legend */
-.edge-legend { display: flex; justify-content: center; gap: 20px; padding: 4px 0 8px; opacity: 0.45; }
+.edge-legend { display: flex; justify-content: center; gap: 20px; padding: 4px 0 8px; opacity: 0.45; position: relative; z-index: 1; }
 .edge-legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; color: #555; }
 .edge-legend-line { width: 28px; height: 2px; border-radius: 1px; }
 .edge-legend-line.el-input { background: repeating-linear-gradient(90deg,rgba(0,240,255,0.5) 0,rgba(0,240,255,0.5) 5px,transparent 5px,transparent 9px); }
@@ -265,314 +222,46 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 .edge-legend-tri.el-input { border-left: 5px solid rgba(0,240,255,0.6); }
 .edge-legend-tri.el-output { border-left: 5px solid rgba(255,157,46,0.7); }
 
-/* === DESIGN DOCUMENT VIEW === */
-#view-design { position: relative; z-index: 1; }
-.design-doc-container {
-  max-width: 820px; margin: 0 auto; padding: 0 24px 48px;
-}
-.design-doc-hero {
-  text-align: center; padding: 32px 0 24px;
-}
-.design-doc-hero h1 {
-  font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
-  background: linear-gradient(135deg, var(--orange), var(--pink), var(--purple));
-  background-size: 200% 200%; -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; animation: gradient-shift 4s ease infinite;
-}
-.design-doc-hero p { font-size: 12px; color: #555; margin-top: 6px; letter-spacing: 1px; }
-
-.design-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(255,157,46,0.08); border: 1px solid rgba(255,157,46,0.25);
-  border-radius: 20px; padding: 6px 16px; margin-top: 12px;
-  font-family: var(--mono); font-size: 11px; color: var(--orange);
-  animation: badge-pulse 3s ease-in-out infinite;
-}
-@keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,157,46,0); }
-  50% { box-shadow: 0 0 20px 4px rgba(255,157,46,0.12); }
-}
-.badge-dot {
-  width: 8px; height: 8px; border-radius: 50%; background: var(--orange);
-  box-shadow: 0 0 8px rgba(255,157,46,0.6);
-  animation: dot-blink 2s ease-in-out infinite;
-}
-@keyframes dot-blink {
-  0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
-}
-
-/* Design doc paper */
-.design-paper {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  position: relative;
-}
-.design-paper::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--orange), var(--pink), var(--purple), var(--cyan));
-  background-size: 300% 100%; animation: gradient-shift 5s ease infinite;
-}
-
-/* Paper header */
-.paper-header {
-  padding: 28px 32px 20px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.01);
-}
-.paper-header-title {
-  font-family: var(--mono); font-size: 16px; font-weight: 700; color: #ccc;
-  letter-spacing: 0.5px;
-}
-.paper-header-meta {
-  display: flex; gap: 16px; margin-top: 10px; flex-wrap: wrap;
-}
-.paper-meta-tag {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-family: var(--mono); font-size: 10px; color: #666;
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-  border-radius: 4px; padding: 3px 10px;
-}
-.paper-meta-tag .meta-label { color: #444; }
-.paper-meta-tag .meta-value { color: #999; }
-.paper-status {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-family: var(--mono); font-size: 10px;
-  background: rgba(57,255,142,0.06); border: 1px solid rgba(57,255,142,0.2);
-  border-radius: 4px; padding: 3px 10px; color: var(--green);
-}
-.paper-status-dot {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--green);
-  box-shadow: 0 0 6px rgba(57,255,142,0.5);
-}
-
-/* TOC */
-.paper-toc {
-  padding: 24px 32px;
-}
-.toc-title {
-  font-family: var(--mono); font-size: 9px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase; color: #555; margin-bottom: 16px;
-}
-.toc-list { list-style: none; }
-.toc-item {
-  display: flex; align-items: center; gap: 0;
-  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
-  transition: all 0.2s ease; cursor: default;
-}
-.toc-item:last-child { border-bottom: none; }
-.toc-item:hover { background: rgba(255,255,255,0.015); margin: 0 -12px; padding: 10px 12px; border-radius: 6px; }
-.toc-number {
-  font-family: var(--mono); font-size: 18px; font-weight: 800;
-  width: 36px; flex-shrink: 0; text-align: center;
-}
-.toc-connector {
-  width: 24px; height: 1px; flex-shrink: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1));
-  margin: 0 8px;
-}
-.toc-content { flex: 1; min-width: 0; }
-.toc-section-name {
-  font-family: var(--mono); font-size: 13px; font-weight: 600; color: #ddd;
-  letter-spacing: 0.3px;
-}
-.toc-section-desc {
-  font-size: 11px; color: #555; margin-top: 2px; line-height: 1.4;
-}
-.toc-icon {
-  flex-shrink: 0; width: 28px; height: 28px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 6px; font-size: 13px;
-  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
-  margin-left: 12px;
-}
-
-/* Section colors */
-.toc-s1 .toc-number { color: var(--pink); }
-.toc-s1 .toc-icon { color: var(--pink); border-color: rgba(255,45,123,0.2); }
-.toc-s2 .toc-number { color: var(--cyan); }
-.toc-s2 .toc-icon { color: var(--cyan); border-color: rgba(0,240,255,0.2); }
-.toc-s3 .toc-number { color: var(--purple); }
-.toc-s3 .toc-icon { color: var(--purple); border-color: rgba(180,77,255,0.2); }
-.toc-s4 .toc-number { color: var(--red); }
-.toc-s4 .toc-icon { color: var(--red); border-color: rgba(255,68,68,0.2); }
-.toc-s5 .toc-number { color: var(--green); }
-.toc-s5 .toc-icon { color: var(--green); border-color: rgba(57,255,142,0.2); }
-.toc-s6 .toc-number { color: var(--orange); }
-.toc-s6 .toc-icon { color: var(--orange); border-color: rgba(255,157,46,0.2); }
-.toc-s7 .toc-number { color: var(--ice); }
-.toc-s7 .toc-icon { color: var(--ice); border-color: rgba(168,200,255,0.2); }
-
-/* Section preview cards */
-.section-previews {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-  padding: 0 32px 28px;
-}
-.section-preview {
-  background: rgba(255,255,255,0.015);
-  border: 1px solid var(--border);
-  border-radius: 8px; padding: 16px;
-  position: relative; overflow: hidden;
-  transition: all 0.25s ease;
-}
-.section-preview:hover {
-  border-color: rgba(255,255,255,0.12);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
-}
-.section-preview::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
-  border-radius: 3px 0 0 3px;
-}
-.sp-1::before { background: var(--pink); }
-.sp-2::before { background: var(--cyan); }
-.sp-3::before { background: var(--purple); }
-.sp-4::before { background: var(--red); }
-.sp-5::before { background: var(--green); }
-.sp-6::before { background: var(--orange); }
-.sp-preview-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px;
-  text-transform: uppercase; color: #555; margin-bottom: 8px;
-}
-.sp-mock-line {
-  height: 5px; border-radius: 2px; margin: 4px 0;
-  background: rgba(255,255,255,0.04);
-}
-.sp-mock-table {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-top: 6px;
-}
-.sp-mock-cell {
-  height: 10px; border-radius: 2px; background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.02);
-}
-.sp-mock-cell.header {
-  background: rgba(255,255,255,0.06);
-}
-.sp-mock-hcl {
-  font-family: var(--mono); font-size: 9px; color: #444;
-  background: rgba(0,0,0,0.3); border-radius: 4px; padding: 8px 10px;
-  margin-top: 6px; line-height: 1.6; border: 1px solid rgba(255,255,255,0.03);
-}
-.sp-mock-check {
-  display: flex; align-items: center; gap: 6px;
-  font-family: var(--mono); font-size: 10px; color: #555; margin: 3px 0;
-}
-.sp-check-box {
-  width: 12px; height: 12px; border-radius: 3px;
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 8px; color: var(--green);
-}
-
-/* Full-width section preview */
-.section-preview.sp-full { grid-column: 1 / -1; }
-
-/* Mini data tables */
-.sp-data-table {
-  width: 100%; border-collapse: collapse; margin-top: 6px;
-  font-family: var(--mono); font-size: 9px;
-}
-.sp-data-table th {
-  text-align: left; padding: 4px 6px; font-weight: 600;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  color: #666; font-size: 8px; letter-spacing: 0.8px; text-transform: uppercase;
-}
-.sp-data-table td {
-  padding: 3px 6px; border-bottom: 1px solid rgba(255,255,255,0.025);
-  color: #777; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  max-width: 0;
-}
-.sp-data-table tr:last-child td { border-bottom: none; }
-.sp-data-table tr:hover td { background: rgba(255,255,255,0.015); }
-.sp-data-table .td-resource { color: var(--cyan); }
-.sp-data-table .td-name { color: #aaa; }
-.sp-data-table .td-cond { color: var(--orange); font-style: italic; }
-.sp-data-table .td-always { color: #555; }
-.sp-data-table .td-var { color: var(--purple); }
-.sp-data-table .td-type { color: #888; }
-.sp-data-table .td-default { color: var(--green); }
-.sp-data-table .td-req { color: var(--pink); font-weight: 600; }
-.sp-data-table .td-control { color: #ccc; }
-.sp-data-table .td-enforcement { color: #888; }
-.sp-data-table .td-ref { color: var(--ice); }
-.sp-data-table .td-no { color: var(--red); font-size: 8px; }
-.sp-data-table .td-yes { color: var(--green); font-size: 8px; }
-.sp-data-table .td-na { color: #444; font-style: italic; }
-.sp-data-table .td-dots { color: #333; }
-.sp-table-fade {
-  position: relative; overflow: hidden;
-}
-.sp-table-fade::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 24px;
-  background: linear-gradient(transparent, rgba(255,255,255,0.02));
-  pointer-events: none;
-}
-
-/* Generated watermark */
-.paper-footer {
-  padding: 16px 32px; border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255,255,255,0.01);
-}
-.paper-generated {
-  font-family: var(--mono); font-size: 10px; color: #333;
-  display: flex; align-items: center; gap: 6px;
-}
-.paper-generated-icon {
-  width: 16px; height: 16px; border-radius: 50%;
-  background: linear-gradient(135deg, var(--purple), var(--cyan));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 8px; color: #000; font-weight: bold;
-}
-.paper-file {
-  font-family: var(--mono); font-size: 10px; color: #444;
-  display: flex; align-items: center; gap: 4px;
-}
-
 @media (max-width:900px) {
   #nav { padding: 0 12px; }
   .nav-title { margin-right: 12px; font-size: 9px; letter-spacing: 2px; }
   .nav-tab { padding: 0 10px; font-size: 10px; letter-spacing: 0.8px; }
-  .cards-row { flex-direction: column; align-items: center; }
-  .card { max-width: 100%; }
-  .card-bridge { flex-direction: row; min-width: auto; padding: 8px 0; }
-  .bridge-line { width: 2px; height: 30px; }
-  .bridge-line::before { background: repeating-linear-gradient(180deg,rgba(0,240,255,0.3) 0,rgba(0,240,255,0.3) 5px,transparent 5px,transparent 9px); }
-  .bridge-line::after { right: auto; bottom: -4px; top: auto; border: 4px solid transparent; border-top: 5px solid rgba(0,240,255,0.5); border-left: none; }
-  .principles { grid-template-columns: 1fr 1fr; }
+  .sub-tab { padding: 0 12px; font-size: 10px; }
   .pipeline { flex-wrap: wrap; }
-  .section-previews { grid-template-columns: 1fr; }
-  .section-preview.sp-full { grid-column: 1; }
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- TOP NAV -->
 <div id="nav">
   <span class="nav-title">SDD Workflow</span>
   <div class="nav-tabs">
-    <button class="nav-tab active" data-view="overview">Overview</button>
-    <button class="nav-tab" data-view="plan">/tf-module-plan</button>
-    <button class="nav-tab" data-view="implement">/tf-module-implement</button>
-    <button class="nav-tab" data-view="design">Design Document</button>
+    <button class="nav-tab active" data-workflow="module">Module</button>
+    <button class="nav-tab" data-workflow="provider">Provider</button>
+    <button class="nav-tab" data-workflow="consumer">Consumer</button>
   </div>
 </div>
 
-<!-- ==================== OVERVIEW ==================== -->
-<div id="view-overview" class="view active">
-  <div class="overview-bg"><canvas id="grid-canvas"></canvas></div>
+<!-- SUB NAV -->
+<div id="sub-nav">
+  <button class="sub-tab active" data-stage="plan">/tf-module-plan</button>
+  <button class="sub-tab" data-stage="impl">/tf-module-implement</button>
+</div>
 
+<!-- BACKGROUND -->
+<div class="bg-canvas"><canvas id="grid-canvas"></canvas></div>
+
+<!-- ==================== MODULE PLAN ==================== -->
+<div id="view-module-plan" class="view active">
   <div class="hero">
-    <h1>SDD Workflow</h1>
-    <p>Spec-Driven Development for Terraform Modules</p>
+    <h1 style="color:var(--pink)">/tf-module-plan</h1>
+    <p>Phases 1 &amp; 2 &mdash; Requirements + Design</p>
   </div>
 
-  <!-- Mini pipeline -->
   <div class="pipeline">
     <div style="text-align:center">
-      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.3)">Requirements</div>
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.3)">Clarify</div>
       <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
     </div>
     <span class="pipe-arrow">&rarr;</span>
@@ -581,124 +270,15 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
       <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
     </div>
     <span class="pipe-arrow">&rarr;</span>
-    <div style="text-align:center">
-      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.3)">Build + Test</div>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.15)">Build + Test</div>
       <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
     </div>
-    <span class="pipe-arrow">&rarr;</span>
-    <div style="text-align:center">
-      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.3)">Validate</div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.15)">Validate</div>
       <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
     </div>
-  </div>
-  <div style="text-align:center;padding:2px 0 0">
-    <span style="font-family:var(--mono);font-size:8px;letter-spacing:1px;color:#444">
-      &#9472;&#9472; /tf-module-plan &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9508;&#9472;&#9472;&#9472; /tf-module-implement &#9472;&#9472;&#9472;
-    </span>
-  </div>
-
-  <!-- Cards -->
-  <div class="cards-row">
-    <!-- Plan card -->
-    <div class="card" data-nav="plan" role="button" tabindex="0">
-      <div class="card-cmd" style="color:var(--pink)">/tf-module-plan</div>
-      <h2>Planning Orchestrator</h2>
-      <div class="card-desc">Clarifies requirements, runs concurrent research via MCP, and produces a single <code style="color:var(--orange)">design.md</code> with all 7 sections. Stops for human approval before any code is written.</div>
-      <div class="card-steps">
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--green);box-shadow:0 0 6px rgba(57,255,142,0.4)"></div>
-          <span class="card-step-label">Validate</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--green),var(--pink));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--pink);box-shadow:0 0 6px rgba(255,45,123,0.4)"></div>
-          <span class="card-step-label">Clarify</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--pink),var(--cyan));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--cyan);box-shadow:0 0 6px rgba(0,240,255,0.4)"></div>
-          <span class="card-step-label">Research</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--cyan),var(--purple));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--purple);box-shadow:0 0 6px rgba(180,77,255,0.4)"></div>
-          <span class="card-step-label">Design</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--purple),var(--orange));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--orange);box-shadow:0 0 6px rgba(255,157,46,0.4)"></div>
-          <span class="card-step-label">Approve</span>
-        </div>
-      </div>
-      <div class="card-stats">
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--pink)"></div>2 agents</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--cyan)"></div>4 skills</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--yellow)"></div>2 MCP servers</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--orange)"></div>1 artifact</div>
-      </div>
-      <div class="card-cta" style="color:var(--pink)">Explore planning <span>&rarr;</span></div>
-    </div>
-
-    <!-- Bridge -->
-    <div class="card-bridge">
-      <div class="bridge-line"></div>
-      <div class="bridge-label">design.md</div>
-    </div>
-
-    <!-- Implement card -->
-    <div class="card" data-nav="implement" role="button" tabindex="0">
-      <div class="card-cmd" style="color:var(--green)">/tf-module-implement</div>
-      <h2>Implementation Orchestrator</h2>
-      <div class="card-desc">Writes tests first (TDD), builds module code from the checklist, runs validation in parallel, and ships a PR. The only input is <code style="color:var(--orange)">design.md</code>.</div>
-      <div class="card-steps">
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--cyan);box-shadow:0 0 6px rgba(0,240,255,0.4)"></div>
-          <span class="card-step-label">Prereqs</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--cyan),var(--purple));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--purple);box-shadow:0 0 6px rgba(180,77,255,0.4)"></div>
-          <span class="card-step-label">Tests</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--purple),var(--green));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--green);box-shadow:0 0 6px rgba(57,255,142,0.4)"></div>
-          <span class="card-step-label">Build</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--green),var(--orange));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--orange);box-shadow:0 0 6px rgba(255,157,46,0.4)"></div>
-          <span class="card-step-label">Validate</span>
-        </div>
-        <div class="card-step-line" style="background:linear-gradient(90deg,var(--orange),var(--pink));margin-top:-8px"></div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
-          <div class="card-step-dot" style="background:var(--pink);box-shadow:0 0 6px rgba(255,45,123,0.4)"></div>
-          <span class="card-step-label">PR</span>
-        </div>
-      </div>
-      <div class="card-stats">
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--pink)"></div>2 agents</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--cyan)"></div>4 skills</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--yellow)"></div>2 MCP servers</div>
-        <div class="card-stat"><div class="card-stat-dot" style="background:var(--orange)"></div>6 artifacts</div>
-      </div>
-      <div class="card-cta" style="color:var(--green)">Explore implementation <span>&rarr;</span></div>
-    </div>
-  </div>
-
-  <!-- Principles -->
-  <div class="principles">
-    <div class="principle"><strong>P1 Design</strong>Planning produces one file: design.md. No scattered specs or task files.</div>
-    <div class="principle"><strong>P2 Tests Before Code</strong>TDD: .tftest.hcl files are written before the module .tf files they validate.</div>
-    <div class="principle"><strong>P3 Security Embedded</strong>Security controls live in the design, not a separate review. Every control maps to a test.</div>
-  </div>
-</div>
-
-<!-- ==================== PLAN VIEW ==================== -->
-<div id="view-plan" class="view">
-  <div class="view-header">
-    <h1>/tf-module-plan</h1>
-    <p>Phases 1 &amp; 2 &mdash; Requirements + Design</p>
   </div>
 
   <div class="legend">
@@ -708,12 +288,13 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
     <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Script</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Artifact</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--ice)"></div>Reference</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
   </div>
 
-  <div id="plan-flow-section" class="flow-section">
-    <svg id="plan-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div class="flow-container" id="plan-flow">
+  <div id="module-plan-flow-section" class="flow-section">
+    <svg id="module-plan-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="module-plan-flow">
 
       <!-- Phase 1: Requirements -->
       <div class="phase-box" data-phase="1">
@@ -736,20 +317,20 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
           <div class="node-row">
             <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
           </div>
-          <div class="step-note">Step 5: scan requirements against 8-category ambiguity taxonomy. Always flag security-configurable features. Step 6: AskUserQuestion (up to 4 questions, MUST include security-defaults). GH issue updated after clarification.</div>
+          <div class="step-note">Step 5: scan requirements against 8-category ambiguity taxonomy. Step 6: AskUserQuestion (up to 4 questions, MUST include security-defaults).</div>
         </div>
 
         <div class="step-group">
           <div class="step-group-title">Research &mdash; Step 7</div>
           <div class="node-row">
             <div class="node node-agent" data-id="tf-module-research" data-type="agent">tf-module-research<span class="pref">&times;3-4</span></div>
-            <div class="node node-skill" data-id="tf-research-heuristics" data-type="skill">tf-research-heuristics</div>
+            <div class="node node-skill" data-id="tf-research" data-type="skill">tf-research</div>
           </div>
           <div class="node-row">
             <div class="node node-mcp" data-id="mcp-aws-docs" data-type="mcp">aws-knowledge-mcp</div>
             <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp</div>
           </div>
-          <div class="step-note">3-4 concurrent agents, each answers ONE research question. Findings returned in-memory (&lt;500 tokens each). Nothing written to disk (P4).</div>
+          <div class="step-note">3-4 concurrent agents, each answers ONE research question. Findings returned in-memory (&lt;500 tokens).</div>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           </div>
@@ -763,7 +344,6 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
         </div>
       </div>
 
-      <!-- Connector -->
       <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
 
       <!-- Phase 2: Design -->
@@ -782,24 +362,19 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-template" data-id="module-design-template" data-type="template">module-design-template.md</div>
             <div class="node node-ref" data-id="module-constitution" data-type="ref">module-constitution.md</div>
           </div>
-          <div class="step-note">tf-module-design receives requirements + findings via $ARGUMENTS. Reads constitution and template itself (P9). Produces all 7 sections. Validates completeness before writing.</div>
+          <div class="step-note">Receives requirements + findings via $ARGUMENTS. Reads constitution and template itself (P9). Produces all 7 sections.</div>
         </div>
 
         <div class="step-group">
-          <div class="step-group-title">Verify &mdash; Steps 9-10</div>
-          <div class="step-note">Step 9: Glob &mdash; verify specs/{FEATURE}/design.md exists (re-launch once if missing). Step 10: Grep &mdash; confirm all 7 sections present (fix inline if any missing).</div>
-        </div>
-
-        <div class="step-group">
-          <div class="step-group-title">Approve &mdash; Steps 11-12</div>
-          <div class="step-note">Step 11: AskUserQuestion &mdash; present design summary (input/output counts, resource count, security controls, test scenarios, checklist items). Options: Approve, Review file first, Request changes. Step 12: if changes requested, apply and re-present until approved.</div>
+          <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
+          <div class="step-note">Step 9: Glob &mdash; verify design.md exists. Step 10: Grep &mdash; confirm all 7 sections present. Step 11: AskUserQuestion for approval. Step 12: iterate if changes requested.</div>
         </div>
 
         <div class="artifacts-label">Output</div>
         <div class="node-row">
           <div class="node node-artifact" data-id="design-md" data-type="artifact">design.md<span class="pref">P1</span></div>
         </div>
-        <div style="margin-top:6px;font-size:10px;color:#999;font-style:italic">"Run /tf-module-implement {FEATURE} when ready."</div>
+        <div style="margin-top:4px;font-size:10px;color:#666;font-style:italic">"Run /tf-module-implement {FEATURE} when ready."</div>
       </div>
     </div>
   </div>
@@ -811,11 +386,33 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
   </div>
 </div>
 
-<!-- ==================== IMPLEMENT VIEW ==================== -->
-<div id="view-implement" class="view">
-  <div class="view-header">
-    <h1>/tf-module-implement</h1>
+<!-- ==================== MODULE IMPLEMENT ==================== -->
+<div id="view-module-impl" class="view">
+  <div class="hero">
+    <h1 style="color:var(--green)">/tf-module-implement</h1>
     <p>Phases 3 &amp; 4 &mdash; Build + Test + Validate</p>
+  </div>
+
+  <div class="pipeline">
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.15)">Clarify</div>
+      <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
+    </div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--purple);border-color:rgba(180,77,255,0.15)">Design</div>
+      <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.3)">Build + Test</div>
+      <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.3)">Validate</div>
+      <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
+    </div>
   </div>
 
   <div class="legend">
@@ -827,9 +424,9 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
     <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
   </div>
 
-  <div id="impl-flow-section" class="flow-section">
-    <svg id="impl-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div class="flow-container" id="impl-flow">
+  <div id="module-impl-flow-section" class="flow-section">
+    <svg id="module-impl-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="module-impl-flow">
 
       <!-- Prerequisites -->
       <div class="phase-box" data-phase="0">
@@ -840,14 +437,13 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
           <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
         </div>
-        <div class="step-note">Steps 1-4: Resolve $FEATURE from args or branch name. Run validate-env.sh (gate). Verify specs/{FEATURE}/design.md exists via Glob (stop if missing). Find $ISSUE_NUMBER.</div>
+        <div class="step-note">Steps 1-4: Resolve $FEATURE. Run validate-env.sh (gate). Verify design.md exists. Find $ISSUE_NUMBER.</div>
         <div class="artifacts-label">Reads (from /tf-module-plan)</div>
         <div class="node-row">
           <div class="node node-artifact" data-id="design-md" data-type="artifact">design.md<span class="pref">P1</span></div>
         </div>
       </div>
 
-      <!-- Connector -->
       <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
 
       <!-- Phase 3: Build + Test -->
@@ -861,7 +457,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-agent" data-id="tf-module-test-writer" data-type="agent">tf-module-test-writer</div>
             <div class="node node-skill" data-id="terraform-test" data-type="skill">terraform-test</div>
           </div>
-          <div class="step-note">Reads design.md Sections 2 (Interface Contract), 3 (Resources), 5 (Test Scenarios). Writes scaffolding (versions.tf, variables.tf) and 4 test files (basic, complete, edge_cases, validation). 1:1 mapping from design assertions to HCL assert blocks.</div>
+          <div class="step-note">Reads design.md Sections 2, 3, 5. Writes scaffolding (versions.tf, variables.tf) and 4 test files. 1:1 mapping from design assertions to HCL assert blocks.</div>
         </div>
 
         <div class="step-group">
@@ -870,7 +466,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-cmd" data-id="tf-init" data-type="cmd">terraform init -backend=false</div>
             <div class="node node-cmd" data-id="tf-validate-baseline" data-type="cmd">terraform validate</div>
           </div>
-          <div class="step-note">terraform validate confirms test files and scaffolding parse as valid HCL. Do NOT run terraform test here &mdash; resources don't exist yet, so reference errors are expected (not meaningful failures). Checkpoint commit.</div>
+          <div class="step-note">Confirms test files and scaffolding parse as valid HCL. Do NOT run terraform test here &mdash; RED baseline.</div>
         </div>
 
         <div class="step-group">
@@ -888,7 +484,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-cmd" data-id="tf-validate-loop" data-type="cmd">terraform validate</div>
             <div class="node node-cmd" data-id="tf-test-loop" data-type="cmd">terraform test</div>
           </div>
-          <div class="step-note">Step 8: Grep design.md Section 6 to extract checklist items. Step 9: for each item, launch tf-module-developer (reads Sections 2, 3, 4). Developer runs fmt + validate + test internally, marks item [x]. Orchestrator runs validate + test as trust-but-verify gate. Checkpoint commit per item. Concurrent for independent items only.</div>
+          <div class="step-note">For each checklist item: launch tf-module-developer. Orchestrator runs validate + test as trust-but-verify gate. Checkpoint commit per item.</div>
         </div>
 
         <div class="step-group">
@@ -896,7 +492,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
           <div class="node-row">
             <div class="node node-cmd" data-id="tf-test-final" data-type="cmd">terraform test (final)</div>
           </div>
-          <div class="step-note">Step 10: final terraform test. If failures remain, re-launch tf-module-test-writer with error output and any data sources reported by developers. Step 11: Grep to verify all checklist items in Section 6 are marked [x].</div>
+          <div class="step-note">Final terraform test. If failures: re-launch tf-module-test-writer with error output. Verify all checklist items marked [x].</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -907,7 +503,6 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
         </div>
       </div>
 
-      <!-- Connector -->
       <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
 
       <!-- Phase 4: Validate -->
@@ -924,7 +519,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-cmd" data-id="trivy" data-type="cmd">trivy config .</div>
             <div class="node node-cmd" data-id="tf-docs" data-type="cmd">terraform-docs</div>
           </div>
-          <div class="step-note">All 5 tools run in parallel. Step 13: fix failures iteratively (max 3 rounds). Run terraform fmt -recursive for format issues.</div>
+          <div class="step-note">All 5 tools run in parallel. Fix failures iteratively (max 3 rounds).</div>
         </div>
 
         <div class="step-group">
@@ -933,7 +528,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
             <div class="node node-skill" data-id="tf-report-template" data-type="skill">tf-report-template</div>
             <div class="node node-cmd" data-id="gh-pr-create" data-type="cmd">gh pr create</div>
           </div>
-          <div class="step-note">Step 14: write validation report to specs/{FEATURE}/reports/ using tf-report-template format (inline, not a subagent). Step 15: checkpoint commit, push branch, create PR linking to $ISSUE_NUMBER.</div>
+          <div class="step-note">Write validation report using tf-report-template. Push branch, create PR linking to $ISSUE_NUMBER.</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -954,192 +549,535 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
   </div>
 </div>
 
-<!-- ==================== DESIGN DOCUMENT VIEW ==================== -->
-<div id="view-design" class="view">
-  <div class="overview-bg"><canvas id="grid-canvas-design"></canvas></div>
-  <div class="design-doc-container">
-    <div class="design-doc-hero">
-      <h1>Generated Design Document</h1>
-      <p>The single artifact produced by /tf-module-plan</p>
-      <div class="design-badge">
-        <div class="badge-dot"></div>
-        AI-Generated &mdash; specs/{feature}/design.md
+<!-- ==================== PROVIDER PLAN ==================== -->
+<div id="view-provider-plan" class="view">
+  <div class="hero">
+    <h1 style="color:var(--pink)">/tf-provider-plan</h1>
+    <p>Phases 1 &amp; 2 &mdash; Requirements + Design</p>
+  </div>
+
+  <div class="pipeline">
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.3)">Clarify</div>
+      <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--purple);border-color:rgba(180,77,255,0.3)">Design</div>
+      <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.15)">Build</div>
+      <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
+    </div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.15)">Validate</div>
+      <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Skill</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Template</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Script</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Artifact</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--ice)"></div>Reference</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
+  </div>
+
+  <div id="provider-plan-flow-section" class="flow-section">
+    <svg id="provider-plan-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="provider-plan-flow">
+
+      <!-- Phase 1: Requirements -->
+      <div class="phase-box" data-phase="1">
+        <div class="phase-label">Phase 1</div>
+        <div class="phase-title" style="color:var(--pink)">Requirements</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Setup &mdash; Steps 1-4</div>
+          <div class="node-row">
+            <div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div>
+            <div class="node node-cmd" data-id="gh-issue-create" data-type="cmd">gh issue create</div>
+            <div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div>
+            <div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div>
+          </div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Clarify &mdash; Steps 5-6</div>
+          <div class="node-row">
+            <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
+          </div>
+          <div class="step-note">Scan requirements against ambiguity taxonomy. AskUserQuestion for provider-specific clarifications (CRUD semantics, API patterns, state mapping).</div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Research &mdash; Step 7</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-provider-research" data-type="agent">tf-provider-research<span class="pref">&times;3-4</span></div>
+          </div>
+          <div class="node-row">
+            <div class="node node-cmd" data-id="web-search" data-type="cmd">WebSearch</div>
+            <div class="node node-cmd" data-id="web-fetch" data-type="cmd">WebFetch</div>
+          </div>
+          <div class="step-note">3-4 concurrent agents. Uses WebSearch/WebFetch (not MCP) for cloud API docs, Plugin Framework patterns, and existing provider implementations.</div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
+          </div>
+        </div>
+
+        <div class="artifacts-label">Output</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="gh-issue" data-type="artifact">GH Issue</div>
+          <span style="font-size:9px;color:#777;padding:0 4px">+</span>
+          <span style="font-size:9px;color:#999;font-style:italic">research findings (in-memory)</span>
+        </div>
+      </div>
+
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
+
+      <!-- Phase 2: Design -->
+      <div class="phase-box" data-phase="2">
+        <div class="phase-label">Phase 2</div>
+        <div class="phase-title" style="color:var(--purple)">Design</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Author &mdash; Step 8</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-provider-design" data-type="agent">tf-provider-design</div>
+            <div class="node node-skill" data-id="provider-resources" data-type="skill">provider-resources</div>
+            <div class="node node-skill" data-id="provider-actions" data-type="skill">provider-actions</div>
+          </div>
+          <div class="node-row">
+            <div class="node node-template" data-id="provider-design-template" data-type="template">provider-design-template.md</div>
+            <div class="node node-ref" data-id="provider-constitution" data-type="ref">provider-constitution.md</div>
+          </div>
+          <div class="step-note">Produces provider-design-{resource}.md covering schema, CRUD operations, state management, and acceptance tests.</div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
+          <div class="step-note">Verify design file exists and contains all required sections. Present summary for human approval.</div>
+        </div>
+
+        <div class="artifacts-label">Output</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="provider-design-md" data-type="artifact">provider-design-{resource}.md<span class="pref">P1</span></div>
+        </div>
+        <div style="margin-top:4px;font-size:10px;color:#666;font-style:italic">"Run /tf-provider-implement {FEATURE} when ready."</div>
       </div>
     </div>
+  </div>
 
-    <div class="design-paper">
-      <!-- Gradient top bar via ::before -->
+  <div class="edge-legend">
+    <div class="edge-legend-item"><div class="edge-legend-line el-input"></div><div class="edge-legend-tri el-input"></div><span style="color:var(--cyan)">Reads</span></div>
+    <div class="edge-legend-item"><div class="edge-legend-line el-output"></div><div class="edge-legend-tri el-output"></div><span style="color:var(--orange)">Writes</span></div>
+    <div class="edge-legend-item"><span style="font-size:8px;color:#444;font-style:italic">Click any node for details</span></div>
+  </div>
+</div>
 
-      <!-- Paper header -->
-      <div class="paper-header">
-        <div class="paper-header-title">Module Design: terraform-aws-{module-name}</div>
-        <div class="paper-header-meta">
-          <div class="paper-meta-tag"><span class="meta-label">Branch</span><span class="meta-value">feat/{name}</span></div>
-          <div class="paper-meta-tag"><span class="meta-label">Provider</span><span class="meta-value">aws &gt;= 5.0</span></div>
-          <div class="paper-meta-tag"><span class="meta-label">Terraform</span><span class="meta-value">&gt;= 1.6</span></div>
-          <div class="paper-status"><div class="paper-status-dot"></div>Approved</div>
+<!-- ==================== PROVIDER IMPLEMENT ==================== -->
+<div id="view-provider-impl" class="view">
+  <div class="hero">
+    <h1 style="color:var(--green)">/tf-provider-implement</h1>
+    <p>Phases 3 &amp; 4 &mdash; Build + Validate</p>
+  </div>
+
+  <div class="pipeline">
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.15)">Clarify</div>
+      <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
+    </div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--purple);border-color:rgba(180,77,255,0.15)">Design</div>
+      <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.3)">Build</div>
+      <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.3)">Validate</div>
+      <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Skill</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Script</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Artifact</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
+  </div>
+
+  <div id="provider-impl-flow-section" class="flow-section">
+    <svg id="provider-impl-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="provider-impl-flow">
+
+      <!-- Prerequisites -->
+      <div class="phase-box" data-phase="0">
+        <div class="phase-label">Prerequisites</div>
+        <div class="phase-title" style="color:var(--cyan)">Setup</div>
+        <div class="node-row">
+          <div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div>
+          <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
+          <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
+        </div>
+        <div class="step-note">Resolve $FEATURE. Run validate-env.sh (gate). Verify provider-design-{resource}.md exists.</div>
+        <div class="artifacts-label">Reads (from /tf-provider-plan)</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="provider-design-md" data-type="artifact">provider-design-{resource}.md<span class="pref">P1</span></div>
         </div>
       </div>
 
-      <!-- Table of Contents -->
-      <div class="paper-toc">
-        <div class="toc-title">Table of Contents</div>
-        <ul class="toc-list">
-          <li class="toc-item toc-s1">
-            <span class="toc-number">1</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Purpose & Requirements</div>
-              <div class="toc-section-desc">What it does, who consumes it, scope boundary, functional & non-functional reqs</div>
-            </div>
-            <div class="toc-icon">&#9881;</div>
-          </li>
-          <li class="toc-item toc-s2">
-            <span class="toc-number">2</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Resources & Architecture</div>
-              <div class="toc-section-desc">Architectural decisions with rationale, resource inventory table</div>
-            </div>
-            <div class="toc-icon">&#9645;</div>
-          </li>
-          <li class="toc-item toc-s3">
-            <span class="toc-number">3</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Interface Contract</div>
-              <div class="toc-section-desc">Variables (type, default, validation), outputs &mdash; single source of truth</div>
-            </div>
-            <div class="toc-icon">&#8644;</div>
-          </li>
-          <li class="toc-item toc-s4">
-            <span class="toc-number">4</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Security Controls</div>
-              <div class="toc-section-desc">6 domains: encryption, access, IAM, logging, tagging &mdash; CIS/WA references</div>
-            </div>
-            <div class="toc-icon">&#9888;</div>
-          </li>
-          <li class="toc-item toc-s5">
-            <span class="toc-number">5</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Test Scenarios</div>
-              <div class="toc-section-desc">5 groups: defaults, full features, interactions, validation errors, boundaries</div>
-            </div>
-            <div class="toc-icon">&#10003;</div>
-          </li>
-          <li class="toc-item toc-s6">
-            <span class="toc-number">6</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Implementation Checklist</div>
-              <div class="toc-section-desc">4-8 coarse-grained items, each completable in one agent turn</div>
-            </div>
-            <div class="toc-icon">&#9744;</div>
-          </li>
-          <li class="toc-item toc-s7">
-            <span class="toc-number">7</span>
-            <span class="toc-connector"></span>
-            <div class="toc-content">
-              <div class="toc-section-name">Open Questions</div>
-              <div class="toc-section-desc">Deferred decisions with context &mdash; empty if all resolved</div>
-            </div>
-            <div class="toc-icon">?</div>
-          </li>
-        </ul>
-      </div>
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
 
-      <!-- Section previews -->
-      <div class="section-previews">
-        <!-- Resources & Architecture preview -->
-        <div class="section-preview sp-2">
-          <div class="sp-preview-label">&#167;2 Resource Inventory</div>
-          <div class="sp-table-fade">
-            <table class="sp-data-table">
-              <tr><th>Resource Type</th><th>Logical Name</th><th>Conditional</th><th>Key Config</th></tr>
-              <tr><td class="td-resource">aws_s3_bucket</td><td class="td-name">this</td><td class="td-always">always</td><td>bucket, force_destroy, tags</td></tr>
-              <tr><td class="td-resource">aws_s3_bucket_versioning</td><td class="td-name">this</td><td class="td-always">always</td><td>status = Enabled | Suspended</td></tr>
-              <tr><td class="td-resource">aws_s3_bucket_encryption</td><td class="td-name">this</td><td class="td-always">always</td><td>sse_algorithm = AES256</td></tr>
-              <tr><td class="td-resource">aws_s3_bucket_website</td><td class="td-name">this</td><td class="td-cond">enable_website</td><td>index_document, error_document</td></tr>
-              <tr><td class="td-resource">aws_s3_bucket_policy</td><td class="td-name">this</td><td class="td-cond">enable_website</td><td>TLS enforce + public read</td></tr>
-              <tr><td class="td-resource">aws_s3_bucket_lifecycle</td><td class="td-name">this</td><td class="td-cond">local.enable_lifecycle</td><td>GLACIER transition</td></tr>
-              <tr><td class="td-dots">...</td><td class="td-dots"></td><td class="td-dots"></td><td class="td-dots"></td></tr>
-            </table>
+      <!-- Phase 3: Build -->
+      <div class="phase-box" data-phase="3">
+        <div class="phase-label">Phase 3</div>
+        <div class="phase-title" style="color:var(--green)">Build (Go + Plugin Framework)</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Implementation Loop</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-provider-developer" data-type="agent">tf-provider-developer<span class="pref">&times;N</span></div>
+            <div class="node node-skill" data-id="provider-resources" data-type="skill">provider-resources</div>
+            <div class="node node-skill" data-id="provider-actions" data-type="skill">provider-actions</div>
           </div>
+          <div class="node-row">
+            <div class="node node-cmd" data-id="web-search" data-type="cmd">WebSearch</div>
+            <div class="node node-cmd" data-id="web-fetch" data-type="cmd">WebFetch</div>
+          </div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-cmd" data-id="go-build" data-type="cmd">go build</div>
+            <div class="node node-cmd" data-id="go-vet" data-type="cmd">go vet</div>
+          </div>
+          <div class="step-note">For each checklist item: launch tf-provider-developer. Uses WebSearch/WebFetch for API reference. Runs go build + go vet for verification. Checkpoint commit per item.</div>
         </div>
 
-        <!-- Interface Contract preview -->
-        <div class="section-preview sp-3">
-          <div class="sp-preview-label">&#167;3 Interface Contract</div>
-          <div class="sp-table-fade">
-            <table class="sp-data-table">
-              <tr><th>Variable</th><th>Type</th><th>Required</th><th>Default</th><th>Validation</th></tr>
-              <tr><td class="td-var">bucket_name</td><td class="td-type">string</td><td class="td-req">Yes</td><td class="td-dots">&mdash;</td><td>regex ^[a-z0-9]...</td></tr>
-              <tr><td class="td-var">environment</td><td class="td-type">string</td><td class="td-req">Yes</td><td class="td-dots">&mdash;</td><td>dev | staging | prod</td></tr>
-              <tr><td class="td-var">versioning_enabled</td><td class="td-type">bool</td><td>No</td><td class="td-default">true</td><td class="td-dots">&mdash;</td></tr>
-              <tr><td class="td-var">enable_website</td><td class="td-type">bool</td><td>No</td><td class="td-default">true</td><td class="td-dots">&mdash;</td></tr>
-              <tr><td class="td-var">enable_lifecycle</td><td class="td-type">bool</td><td>No</td><td class="td-default">null</td><td>computed default</td></tr>
-              <tr><td class="td-var">block_public_access</td><td class="td-type">bool</td><td>No</td><td class="td-default">true</td><td class="td-dots">&mdash;</td></tr>
-              <tr><td class="td-dots">...</td><td class="td-dots"></td><td class="td-dots"></td><td class="td-dots"></td><td class="td-dots"></td></tr>
-            </table>
-          </div>
-        </div>
-
-        <!-- Security Controls preview -->
-        <div class="section-preview sp-4 sp-full">
-          <div class="sp-preview-label">&#167;4 Security Controls</div>
-          <div class="sp-table-fade">
-            <table class="sp-data-table">
-              <tr><th>Control</th><th>Enforcement</th><th>Configurable?</th><th>Reference</th></tr>
-              <tr><td class="td-control">Encryption at rest</td><td class="td-enforcement">AES256 (SSE-S3) on all objects</td><td class="td-no">No</td><td class="td-ref">CIS 2.1.2</td></tr>
-              <tr><td class="td-control">Encryption in transit</td><td class="td-enforcement">TLS deny on SecureTransport=false</td><td class="td-no">No</td><td class="td-ref">CIS 2.1.1</td></tr>
-              <tr><td class="td-control">Public access</td><td class="td-enforcement">4 block flags, auto-relax for website</td><td class="td-yes">Yes</td><td class="td-ref">CIS 2.1.4</td></tr>
-              <tr><td class="td-control">IAM least privilege</td><td class="td-enforcement">s3:GetObject only on object ARNs</td><td class="td-no">No</td><td class="td-ref">WA SEC03-BP06</td></tr>
-              <tr><td class="td-control">Tagging</td><td class="td-enforcement">Name, ManagedBy, Env, Owner, Cost</td><td class="td-yes">Yes</td><td class="td-ref">WA COST02-BP03</td></tr>
-              <tr><td class="td-control">Ownership</td><td class="td-enforcement">BucketOwnerEnforced (ACLs off)</td><td class="td-no">No</td><td class="td-ref">WA SEC03-BP07</td></tr>
-              <tr><td class="td-dots">...</td><td class="td-dots"></td><td class="td-dots"></td><td class="td-dots"></td></tr>
-            </table>
-          </div>
-        </div>
-
-        <!-- Test Scenarios preview -->
-        <div class="section-preview sp-5">
-          <div class="sp-preview-label">&#167;5 Test Scenarios</div>
-          <div class="sp-mock-hcl">
-            <span style="color:var(--purple)">run</span> <span style="color:#666">"secure_defaults"</span> {<br>
-            &nbsp;&nbsp;<span style="color:var(--cyan)">command</span> = <span style="color:var(--green)">plan</span><br>
-            &nbsp;&nbsp;<span style="color:var(--purple)">assert</span> {<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;condition = <span style="color:#666">...</span><br>
-            &nbsp;&nbsp;}<br>
-            }
-          </div>
-        </div>
-
-        <!-- Implementation Checklist preview -->
-        <div class="section-preview sp-6 sp-full">
-          <div class="sp-preview-label">&#167;6 Implementation Checklist</div>
-          <div class="sp-mock-check"><div class="sp-check-box">&#10003;</div><span style="color:var(--green)">A: Scaffold</span> <span style="color:#333">&mdash; file structure, versions.tf, variables, base resource</span></div>
-          <div class="sp-mock-check"><div class="sp-check-box">&#10003;</div><span style="color:var(--green)">B: Security core</span> <span style="color:#333">&mdash; encryption, access controls, policy</span></div>
-          <div class="sp-mock-check"><div class="sp-check-box" style="color:#333;border-color:rgba(255,255,255,0.06)">&#8212;</div><span>C: Feature set</span> <span style="color:#333">&mdash; conditional resources, dynamic blocks</span></div>
-          <div class="sp-mock-check"><div class="sp-check-box" style="color:#333;border-color:rgba(255,255,255,0.06)">&#8212;</div><span>D: Examples</span> <span style="color:#333">&mdash; basic/ and complete/</span></div>
-          <div class="sp-mock-check"><div class="sp-check-box" style="color:#333;border-color:rgba(255,255,255,0.06)">&#8212;</div><span>E: Tests</span> <span style="color:#333">&mdash; .tftest.hcl from scenarios</span></div>
-          <div class="sp-mock-check"><div class="sp-check-box" style="color:#333;border-color:rgba(255,255,255,0.06)">&#8212;</div><span>F: Polish</span> <span style="color:#333">&mdash; README, formatting, validation</span></div>
+        <div class="artifacts-label">Outputs</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="go-source" data-type="artifact">*.go source files</div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="paper-footer">
-        <div class="paper-generated">
-          <div class="paper-generated-icon">&#9889;</div>
-          Generated by /tf-module-plan
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
+
+      <!-- Phase 4: Validate -->
+      <div class="phase-box" data-phase="4">
+        <div class="phase-label">Phase 4</div>
+        <div class="phase-title" style="color:var(--orange)">Validate</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Acceptance Testing</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-provider-validator" data-type="agent">tf-provider-validator</div>
+            <div class="node node-skill" data-id="provider-run-acc-tests" data-type="skill">provider-run-acceptance-tests</div>
+          </div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-cmd" data-id="go-test-acc" data-type="cmd">go test -run TestAcc</div>
+          </div>
+          <div class="step-note">Dedicated validator agent runs acceptance tests against real cloud APIs. Validates design compliance and auto-fixes issues.</div>
         </div>
-        <div class="paper-file">
-          &#128196; specs/{feature}/design.md
+
+        <div class="step-group">
+          <div class="step-group-title">Report &amp; Ship</div>
+          <div class="node-row">
+            <div class="node node-skill" data-id="tf-report-template" data-type="skill">tf-report-template</div>
+            <div class="node node-cmd" data-id="gh-pr-create" data-type="cmd">gh pr create</div>
+          </div>
+        </div>
+
+        <div class="artifacts-label">Outputs</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="validation-report" data-type="artifact">validation report</div>
+          <div class="node node-artifact" data-id="pr" data-type="artifact">Pull Request</div>
+          <div class="node node-artifact" data-id="gh-issue-updated" data-type="artifact">GH Issue (updated)</div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="edge-legend">
+    <div class="edge-legend-item"><div class="edge-legend-line el-input"></div><div class="edge-legend-tri el-input"></div><span style="color:var(--cyan)">Reads</span></div>
+    <div class="edge-legend-item"><div class="edge-legend-line el-output"></div><div class="edge-legend-tri el-output"></div><span style="color:var(--orange)">Writes</span></div>
+    <div class="edge-legend-item"><span style="font-size:8px;color:#444;font-style:italic">Click any node for details</span></div>
+  </div>
+</div>
+
+<!-- ==================== CONSUMER PLAN ==================== -->
+<div id="view-consumer-plan" class="view">
+  <div class="hero">
+    <h1 style="color:var(--pink)">/tf-consumer-plan</h1>
+    <p>Phases 1 &amp; 2 &mdash; Requirements + Design</p>
+  </div>
+
+  <div class="pipeline">
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.3)">Clarify</div>
+      <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--purple);border-color:rgba(180,77,255,0.3)">Design</div>
+      <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.15)">Build</div>
+      <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
+    </div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.15)">Validate</div>
+      <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Skill</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Template</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Script</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Artifact</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--ice)"></div>Reference</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
+  </div>
+
+  <div id="consumer-plan-flow-section" class="flow-section">
+    <svg id="consumer-plan-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="consumer-plan-flow">
+
+      <!-- Phase 1: Requirements -->
+      <div class="phase-box" data-phase="1">
+        <div class="phase-label">Phase 1</div>
+        <div class="phase-title" style="color:var(--pink)">Requirements</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Setup &mdash; Steps 1-4</div>
+          <div class="node-row">
+            <div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div>
+            <div class="node node-cmd" data-id="gh-issue-create" data-type="cmd">gh issue create</div>
+            <div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div>
+            <div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div>
+          </div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Clarify &mdash; Steps 5-6</div>
+          <div class="node-row">
+            <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
+          </div>
+          <div class="step-note">Scan requirements for module selection ambiguities, environment boundaries, and security decisions.</div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Research &mdash; Step 7</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-consumer-research" data-type="agent">tf-consumer-research<span class="pref">&times;3-4</span></div>
+            <div class="node node-skill" data-id="tf-research" data-type="skill">tf-research</div>
+            <div class="node node-skill" data-id="tf-security-baselines" data-type="skill">tf-security-baselines</div>
+          </div>
+          <div class="node-row">
+            <div class="node node-mcp" data-id="mcp-aws-docs" data-type="mcp">aws-knowledge-mcp</div>
+            <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp<span class="pref">private</span></div>
+          </div>
+          <div class="step-note">3-4 concurrent agents. Searches private registry modules via terraform-mcp. Investigates module interfaces and composition patterns.</div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
+          </div>
+        </div>
+
+        <div class="artifacts-label">Output</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="gh-issue" data-type="artifact">GH Issue</div>
+          <span style="font-size:9px;color:#777;padding:0 4px">+</span>
+          <span style="font-size:9px;color:#999;font-style:italic">research findings (in-memory)</span>
+        </div>
+      </div>
+
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
+
+      <!-- Phase 2: Design -->
+      <div class="phase-box" data-phase="2">
+        <div class="phase-label">Phase 2</div>
+        <div class="phase-title" style="color:var(--purple)">Design</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Author &mdash; Step 8</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-consumer-design" data-type="agent">tf-consumer-design</div>
+            <div class="node node-skill" data-id="tf-architecture-patterns" data-type="skill">tf-architecture-patterns</div>
+            <div class="node node-skill" data-id="tf-security-baselines" data-type="skill">tf-security-baselines</div>
+          </div>
+          <div class="node-row">
+            <div class="node node-template" data-id="consumer-design-template" data-type="template">consumer-design-template.md</div>
+            <div class="node node-ref" data-id="consumer-constitution" data-type="ref">consumer-constitution.md</div>
+          </div>
+          <div class="step-note">Produces consumer-design.md covering module selection, wiring architecture, security controls, and implementation checklist.</div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
+          <div class="step-note">Verify design file exists and contains all required sections. Present summary for human approval.</div>
+        </div>
+
+        <div class="artifacts-label">Output</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="consumer-design-md" data-type="artifact">consumer-design.md<span class="pref">P1</span></div>
+        </div>
+        <div style="margin-top:4px;font-size:10px;color:#666;font-style:italic">"Run /tf-consumer-implement {FEATURE} when ready."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edge-legend">
+    <div class="edge-legend-item"><div class="edge-legend-line el-input"></div><div class="edge-legend-tri el-input"></div><span style="color:var(--cyan)">Reads</span></div>
+    <div class="edge-legend-item"><div class="edge-legend-line el-output"></div><div class="edge-legend-tri el-output"></div><span style="color:var(--orange)">Writes</span></div>
+    <div class="edge-legend-item"><span style="font-size:8px;color:#444;font-style:italic">Click any node for details</span></div>
+  </div>
+</div>
+
+<!-- ==================== CONSUMER IMPLEMENT ==================== -->
+<div id="view-consumer-impl" class="view">
+  <div class="hero">
+    <h1 style="color:var(--green)">/tf-consumer-implement</h1>
+    <p>Phases 3 &amp; 4 &mdash; Build + Validate + Deploy</p>
+  </div>
+
+  <div class="pipeline">
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--pink);border-color:rgba(255,45,123,0.15)">Clarify</div>
+      <div class="pipe-brace" style="color:var(--pink)">Phase 1</div>
+    </div>
+    <span class="pipe-arrow pipe-dim">&rarr;</span>
+    <div style="text-align:center" class="pipe-dim">
+      <div class="pipe-phase" style="color:var(--purple);border-color:rgba(180,77,255,0.15)">Design</div>
+      <div class="pipe-brace" style="color:var(--purple)">Phase 2</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--green);border-color:rgba(57,255,142,0.3)">Build</div>
+      <div class="pipe-brace" style="color:var(--green)">Phase 3</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div style="text-align:center">
+      <div class="pipe-phase" style="color:var(--orange);border-color:rgba(255,157,46,0.3)">Validate</div>
+      <div class="pipe-brace" style="color:var(--orange)">Phase 4</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Agent</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Skill</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Script</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div>Artifact</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>MCP</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Command</div>
+  </div>
+
+  <div id="consumer-impl-flow-section" class="flow-section">
+    <svg id="consumer-impl-edges" class="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="flow-container" id="consumer-impl-flow">
+
+      <!-- Prerequisites -->
+      <div class="phase-box" data-phase="0">
+        <div class="phase-label">Prerequisites</div>
+        <div class="phase-title" style="color:var(--cyan)">Setup</div>
+        <div class="node-row">
+          <div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div>
+          <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
+          <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
+        </div>
+        <div class="step-note">Resolve $FEATURE. Run validate-env.sh (gate). Verify consumer-design.md exists.</div>
+        <div class="artifacts-label">Reads (from /tf-consumer-plan)</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="consumer-design-md" data-type="artifact">consumer-design.md<span class="pref">P1</span></div>
+        </div>
+      </div>
+
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
+
+      <!-- Phase 3: Build -->
+      <div class="phase-box" data-phase="3">
+        <div class="phase-label">Phase 3</div>
+        <div class="phase-title" style="color:var(--green)">Build (Module Composition)</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Implementation Loop</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-consumer-developer" data-type="agent">tf-consumer-developer<span class="pref">&times;N</span></div>
+            <div class="node node-skill" data-id="terraform-style-guide" data-type="skill">terraform-style-guide</div>
+            <div class="node node-skill" data-id="tf-implementation-patterns" data-type="skill">tf-implementation-patterns</div>
+          </div>
+          <div class="node-row">
+            <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp<span class="pref">private</span></div>
+          </div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-cmd" data-id="tf-init" data-type="cmd">terraform init</div>
+            <div class="node node-cmd" data-id="tf-validate" data-type="cmd">terraform validate</div>
+            <div class="node node-cmd" data-id="tf-plan" data-type="cmd">terraform plan</div>
+          </div>
+          <div class="step-note">For each checklist item: launch tf-consumer-developer. Composes private registry modules. Runs terraform init + validate + plan for verification.</div>
+        </div>
+
+        <div class="artifacts-label">Outputs</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="consumer-tf-code" data-type="artifact">*.tf consumer files</div>
+        </div>
+      </div>
+
+      <div class="flow-conn"><div class="flow-conn-line"></div><div class="flow-conn-dot"></div><div class="flow-conn-line"></div></div>
+
+      <!-- Phase 4: Validate -->
+      <div class="phase-box" data-phase="4">
+        <div class="phase-label">Phase 4</div>
+        <div class="phase-title" style="color:var(--orange)">Validate + Deploy</div>
+
+        <div class="step-group">
+          <div class="step-group-title">Quality Assessment</div>
+          <div class="node-row">
+            <div class="node node-agent" data-id="tf-consumer-validator" data-type="agent">tf-consumer-validator</div>
+            <div class="node node-skill" data-id="tf-judge-criteria" data-type="skill">tf-judge-criteria</div>
+          </div>
+          <div class="node-row" style="margin-top:4px">
+            <div class="node node-cmd" data-id="tf-validate-final" data-type="cmd">terraform validate</div>
+            <div class="node node-cmd" data-id="tf-plan-final" data-type="cmd">terraform plan</div>
+          </div>
+          <div class="step-note">Dedicated validator: security review, quality scoring (1-5 scale), design compliance. Optional sandbox deploy via terraform apply (orchestrator-controlled destroy).</div>
+        </div>
+
+        <div class="step-group">
+          <div class="step-group-title">Report &amp; Ship</div>
+          <div class="node-row">
+            <div class="node node-skill" data-id="tf-report-template" data-type="skill">tf-report-template</div>
+            <div class="node node-cmd" data-id="gh-pr-create" data-type="cmd">gh pr create</div>
+          </div>
+        </div>
+
+        <div class="artifacts-label">Outputs</div>
+        <div class="node-row">
+          <div class="node node-artifact" data-id="validation-report" data-type="artifact">validation report</div>
+          <div class="node node-artifact" data-id="quality-score" data-type="artifact">quality score</div>
+          <div class="node node-artifact" data-id="pr" data-type="artifact">Pull Request</div>
+          <div class="node node-artifact" data-id="gh-issue-updated" data-type="artifact">GH Issue (updated)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="edge-legend">
+    <div class="edge-legend-item"><div class="edge-legend-line el-input"></div><div class="edge-legend-tri el-input"></div><span style="color:var(--cyan)">Reads</span></div>
+    <div class="edge-legend-item"><div class="edge-legend-line el-output"></div><div class="edge-legend-tri el-output"></div><span style="color:var(--orange)">Writes</span></div>
+    <div class="edge-legend-item"><span style="font-size:8px;color:#444;font-style:italic">Click any node for details</span></div>
   </div>
 </div>
 
@@ -1156,69 +1094,173 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 const typeColors = { agent:'#ff2d7b', skill:'#00f0ff', template:'#b44dff', script:'#39ff8e', artifact:'#ff9d2e', mcp:'#ffe14d', ref:'#a8c8ff', cmd:'#ff4444' };
 const typeLabels = { agent:'AGENT', skill:'SKILL', template:'TMPL', script:'SCRIPT', artifact:'OUTPUT', mcp:'MCP', ref:'REFERENCE', cmd:'COMMAND' };
 
-/* === Agent I/O === */
-const planAgentIO = {
-  'tf-module-research': { reads: [], writes: [] },
-  'tf-module-design':   { reads: [], writes: ['design-md'] }
-};
-const implAgentIO = {
-  'tf-module-test-writer':   { reads: ['design-md'], writes: ['tf-scaffolding','tf-tests'] },
-  'tf-module-developer': { reads: ['design-md'], writes: ['tf-code'] }
-};
-
-/* === Connections (highlight graph) === */
-const planConnections = {
-  'validate-env': [],
-  'create-feature': [],
-  'post-issue': ['gh-issue'],
-  'gh-issue-create': ['gh-issue','issue-body-template'],
-  'issue-body-template': ['gh-issue-create'],
-  'tf-domain-category': ['tf-module-research'],
-  'tf-module-research': ['tf-research-heuristics','mcp-aws-docs','mcp-terraform','tf-module-design'],
-  'tf-research-heuristics': ['tf-module-research'],
-  'mcp-aws-docs': ['tf-module-research','tf-module-design'],
-  'mcp-terraform': ['tf-module-research','tf-module-design'],
-  'tf-module-design': ['tf-architecture-patterns','tf-security-baselines','design-template','module-constitution','design-md','tf-module-research'],
-  'tf-architecture-patterns': ['tf-module-design'],
-  'tf-security-baselines': ['tf-module-design'],
-  'design-template': ['tf-module-design'],
-  'module-constitution': ['tf-module-design'],
-  'gh-issue': ['gh-issue-create','post-issue'],
-  'design-md': ['tf-module-design']
-};
-const implConnections = {
-  'validate-env': [],
-  'post-issue': ['gh-issue-updated'],
-  'checkpoint-commit': [],
-  'design-md': ['tf-module-test-writer','tf-module-developer'],
-  'tf-module-test-writer': ['terraform-test','design-md','tf-scaffolding','tf-tests'],
-  'terraform-test': ['tf-module-test-writer'],
-  'tf-init': [],
-  'tf-validate-baseline': ['tf-scaffolding','tf-tests'],
-  'tf-module-developer': ['terraform-style-guide','tf-implementation-patterns','mcp-terraform','mcp-aws-docs','design-md','tf-code'],
-  'terraform-style-guide': ['tf-module-developer'],
-  'tf-implementation-patterns': ['tf-module-developer'],
-  'mcp-terraform': ['tf-module-developer'],
-  'mcp-aws-docs': ['tf-module-developer'],
-  'tf-validate-loop': ['tf-code'],
-  'tf-test-loop': ['tf-code','tf-tests'],
-  'tf-test-final': ['tf-code','tf-tests','tf-module-test-writer'],
-  'tf-scaffolding': ['tf-module-test-writer','tf-validate-baseline'],
-  'tf-tests': ['tf-module-test-writer','tf-test-loop','tf-test-final','tf-test'],
-  'tf-code': ['tf-module-developer','tf-validate-loop','tf-test-loop','tf-test-final','tf-test','tf-validate','tf-fmt','trivy'],
-  'tf-test': ['tf-code','tf-tests'],
-  'tf-validate': ['tf-code'],
-  'tf-fmt': ['tf-code'],
-  'trivy': ['tf-code'],
-  'tf-docs': ['readme'],
-  'tf-report-template': ['validation-report'],
-  'gh-pr-create': ['pr','gh-issue-updated'],
-  'readme': ['tf-docs'],
-  'validation-report': ['tf-report-template'],
-  'pr': ['gh-pr-create'],
-  'gh-issue-updated': ['gh-pr-create','post-issue']
+/* === Agent I/O per view === */
+const agentIO = {
+  'module-plan': {
+    'tf-module-research': { reads: [], writes: [] },
+    'tf-module-design':   { reads: [], writes: ['design-md'] }
+  },
+  'module-impl': {
+    'tf-module-test-writer': { reads: ['design-md'], writes: ['tf-scaffolding','tf-tests'] },
+    'tf-module-developer':   { reads: ['design-md'], writes: ['tf-code'] }
+  },
+  'provider-plan': {
+    'tf-provider-research': { reads: [], writes: [] },
+    'tf-provider-design':   { reads: [], writes: ['provider-design-md'] }
+  },
+  'provider-impl': {
+    'tf-provider-developer': { reads: ['provider-design-md'], writes: ['go-source'] },
+    'tf-provider-validator': { reads: ['go-source','provider-design-md'], writes: ['validation-report'] }
+  },
+  'consumer-plan': {
+    'tf-consumer-research': { reads: [], writes: [] },
+    'tf-consumer-design':   { reads: [], writes: ['consumer-design-md'] }
+  },
+  'consumer-impl': {
+    'tf-consumer-developer': { reads: ['consumer-design-md'], writes: ['consumer-tf-code'] },
+    'tf-consumer-validator': { reads: ['consumer-tf-code','consumer-design-md'], writes: ['validation-report','quality-score'] }
+  }
 };
 
+/* === Connections (highlight graph) per view === */
+const connections = {
+  'module-plan': {
+    'validate-env': [],
+    'create-feature': [],
+    'post-issue': ['gh-issue'],
+    'gh-issue-create': ['gh-issue','issue-body-template'],
+    'issue-body-template': ['gh-issue-create'],
+    'tf-domain-category': ['tf-module-research'],
+    'tf-module-research': ['tf-research','mcp-aws-docs','mcp-terraform','tf-module-design'],
+    'tf-research': ['tf-module-research'],
+    'mcp-aws-docs': ['tf-module-research','tf-module-design'],
+    'mcp-terraform': ['tf-module-research','tf-module-design'],
+    'tf-module-design': ['tf-architecture-patterns','tf-security-baselines','module-design-template','module-constitution','design-md','tf-module-research'],
+    'tf-architecture-patterns': ['tf-module-design'],
+    'tf-security-baselines': ['tf-module-design'],
+    'module-design-template': ['tf-module-design'],
+    'module-constitution': ['tf-module-design'],
+    'gh-issue': ['gh-issue-create','post-issue'],
+    'design-md': ['tf-module-design']
+  },
+  'module-impl': {
+    'validate-env': [],
+    'post-issue': ['gh-issue-updated'],
+    'checkpoint-commit': [],
+    'design-md': ['tf-module-test-writer','tf-module-developer'],
+    'tf-module-test-writer': ['terraform-test','design-md','tf-scaffolding','tf-tests'],
+    'terraform-test': ['tf-module-test-writer'],
+    'tf-init': [],
+    'tf-validate-baseline': ['tf-scaffolding','tf-tests'],
+    'tf-module-developer': ['terraform-style-guide','tf-implementation-patterns','mcp-terraform','mcp-aws-docs','design-md','tf-code'],
+    'terraform-style-guide': ['tf-module-developer'],
+    'tf-implementation-patterns': ['tf-module-developer'],
+    'mcp-terraform': ['tf-module-developer'],
+    'mcp-aws-docs': ['tf-module-developer'],
+    'tf-validate-loop': ['tf-code'],
+    'tf-test-loop': ['tf-code','tf-tests'],
+    'tf-test-final': ['tf-code','tf-tests','tf-module-test-writer'],
+    'tf-scaffolding': ['tf-module-test-writer','tf-validate-baseline'],
+    'tf-tests': ['tf-module-test-writer','tf-test-loop','tf-test-final','tf-test'],
+    'tf-code': ['tf-module-developer','tf-validate-loop','tf-test-loop','tf-test-final','tf-test','tf-validate','tf-fmt','trivy'],
+    'tf-test': ['tf-code','tf-tests'],
+    'tf-validate': ['tf-code'],
+    'tf-fmt': ['tf-code'],
+    'trivy': ['tf-code'],
+    'tf-docs': ['readme'],
+    'tf-report-template': ['validation-report'],
+    'gh-pr-create': ['pr','gh-issue-updated'],
+    'readme': ['tf-docs'],
+    'validation-report': ['tf-report-template'],
+    'pr': ['gh-pr-create'],
+    'gh-issue-updated': ['gh-pr-create','post-issue']
+  },
+  'provider-plan': {
+    'validate-env': [],
+    'create-feature': [],
+    'post-issue': ['gh-issue'],
+    'gh-issue-create': ['gh-issue','issue-body-template'],
+    'issue-body-template': ['gh-issue-create'],
+    'tf-domain-category': ['tf-provider-research'],
+    'tf-provider-research': ['web-search','web-fetch','tf-provider-design'],
+    'web-search': ['tf-provider-research'],
+    'web-fetch': ['tf-provider-research'],
+    'tf-provider-design': ['provider-resources','provider-actions','provider-design-template','provider-constitution','provider-design-md','tf-provider-research'],
+    'provider-resources': ['tf-provider-design'],
+    'provider-actions': ['tf-provider-design'],
+    'provider-design-template': ['tf-provider-design'],
+    'provider-constitution': ['tf-provider-design'],
+    'gh-issue': ['gh-issue-create','post-issue'],
+    'provider-design-md': ['tf-provider-design']
+  },
+  'provider-impl': {
+    'validate-env': [],
+    'post-issue': ['gh-issue-updated'],
+    'checkpoint-commit': [],
+    'provider-design-md': ['tf-provider-developer','tf-provider-validator'],
+    'tf-provider-developer': ['provider-resources','provider-actions','web-search','web-fetch','provider-design-md','go-source'],
+    'provider-resources': ['tf-provider-developer'],
+    'provider-actions': ['tf-provider-developer'],
+    'web-search': ['tf-provider-developer'],
+    'web-fetch': ['tf-provider-developer'],
+    'go-build': ['go-source'],
+    'go-vet': ['go-source'],
+    'go-source': ['tf-provider-developer','go-build','go-vet','tf-provider-validator','go-test-acc'],
+    'tf-provider-validator': ['provider-run-acc-tests','go-source','provider-design-md','validation-report'],
+    'provider-run-acc-tests': ['tf-provider-validator'],
+    'go-test-acc': ['go-source'],
+    'tf-report-template': ['validation-report'],
+    'gh-pr-create': ['pr','gh-issue-updated'],
+    'validation-report': ['tf-provider-validator','tf-report-template'],
+    'pr': ['gh-pr-create'],
+    'gh-issue-updated': ['gh-pr-create','post-issue']
+  },
+  'consumer-plan': {
+    'validate-env': [],
+    'create-feature': [],
+    'post-issue': ['gh-issue'],
+    'gh-issue-create': ['gh-issue','issue-body-template'],
+    'issue-body-template': ['gh-issue-create'],
+    'tf-domain-category': ['tf-consumer-research'],
+    'tf-consumer-research': ['tf-research','tf-security-baselines','mcp-aws-docs','mcp-terraform','tf-consumer-design'],
+    'tf-research': ['tf-consumer-research'],
+    'tf-security-baselines': ['tf-consumer-research','tf-consumer-design'],
+    'mcp-aws-docs': ['tf-consumer-research','tf-consumer-design'],
+    'mcp-terraform': ['tf-consumer-research','tf-consumer-design'],
+    'tf-consumer-design': ['tf-architecture-patterns','tf-security-baselines','consumer-design-template','consumer-constitution','consumer-design-md','tf-consumer-research'],
+    'tf-architecture-patterns': ['tf-consumer-design'],
+    'consumer-design-template': ['tf-consumer-design'],
+    'consumer-constitution': ['tf-consumer-design'],
+    'gh-issue': ['gh-issue-create','post-issue'],
+    'consumer-design-md': ['tf-consumer-design']
+  },
+  'consumer-impl': {
+    'validate-env': [],
+    'post-issue': ['gh-issue-updated'],
+    'checkpoint-commit': [],
+    'consumer-design-md': ['tf-consumer-developer','tf-consumer-validator'],
+    'tf-consumer-developer': ['terraform-style-guide','tf-implementation-patterns','mcp-terraform','consumer-design-md','consumer-tf-code'],
+    'terraform-style-guide': ['tf-consumer-developer'],
+    'tf-implementation-patterns': ['tf-consumer-developer'],
+    'mcp-terraform': ['tf-consumer-developer'],
+    'tf-init': [],
+    'tf-validate': ['consumer-tf-code'],
+    'tf-plan': ['consumer-tf-code'],
+    'consumer-tf-code': ['tf-consumer-developer','tf-validate','tf-plan','tf-consumer-validator','tf-validate-final','tf-plan-final'],
+    'tf-consumer-validator': ['tf-judge-criteria','consumer-tf-code','consumer-design-md','validation-report','quality-score'],
+    'tf-judge-criteria': ['tf-consumer-validator'],
+    'tf-validate-final': ['consumer-tf-code'],
+    'tf-plan-final': ['consumer-tf-code'],
+    'tf-report-template': ['validation-report'],
+    'gh-pr-create': ['pr','gh-issue-updated'],
+    'validation-report': ['tf-consumer-validator','tf-report-template'],
+    'quality-score': ['tf-consumer-validator'],
+    'pr': ['gh-pr-create'],
+    'gh-issue-updated': ['gh-pr-create','post-issue']
+  }
+};
+
+/* === Build artifact I/O index === */
 function buildArtifactIO(m) {
   const r = {};
   for (const [a, io] of Object.entries(m)) {
@@ -1227,58 +1269,119 @@ function buildArtifactIO(m) {
   }
   return r;
 }
-const planArtifactIO = buildArtifactIO(planAgentIO);
-const implArtifactIO = buildArtifactIO(implAgentIO);
 
-const viewConfig = {
-  plan: { agentIO: planAgentIO, artifactIO: planArtifactIO, connections: planConnections, flowSection: 'plan-flow-section', svgId: 'plan-edges', flowId: 'plan-flow', containerId: 'view-plan' },
-  impl: { agentIO: implAgentIO, artifactIO: implArtifactIO, connections: implConnections, flowSection: 'impl-flow-section', svgId: 'impl-edges', flowId: 'impl-flow', containerId: 'view-implement' }
-};
+/* === View config === */
+const viewKeys = ['module-plan','module-impl','provider-plan','provider-impl','consumer-plan','consumer-impl'];
+const viewConfig = {};
+viewKeys.forEach(k => {
+  const aIO = agentIO[k] || {};
+  viewConfig[k] = {
+    agentIO: aIO,
+    artifactIO: buildArtifactIO(aIO),
+    connections: connections[k] || {},
+    flowSection: k + '-flow-section',
+    svgId: k + '-edges',
+    flowId: k + '-flow',
+    containerId: 'view-' + k
+  };
+});
 
 /* === Node descriptions === */
 const nodeDesc = {
-  'tf-module-research':       'Investigates ONE research question per instance via AWS docs, provider docs, and Terraform registry. Runs 3-4 concurrently in Phase 1. Returns findings in-memory (<500 tokens) \u2014 never writes to disk (P4). Uses tf-research-heuristics skill for search strategies.',
-  'tf-module-design':         'Produces specs/{FEATURE}/design.md from clarified requirements and research findings. Reads module-constitution.md and module-design-template.md itself (P9). Populates all 7 mandatory sections. Validates completeness before writing: every variable has type+description, every security control has CIS/WA reference, every test scenario has \u22652 assertions, checklist has 4-8 items.',
-  'tf-module-test-writer':     'Reads design.md Sections 2 (Interface Contract), 3 (Resources & Architecture), and 5 (Test Scenarios). Writes scaffolding (versions.tf, variables.tf) and 4 test files: basic.tftest.hcl, complete.tftest.hcl, edge_cases.tftest.hcl, validation.tftest.hcl. Maps 1:1 from design assertions to HCL assert blocks. Runs BEFORE implementation code (P2).',
-  'tf-module-developer':   'Executes one implementation checklist item from design.md Section 6. Reads Sections 2 (variables), 3 (resources), 4 (security) for context. Writes/edits .tf files, runs terraform fmt + validate + test, marks item [x] in design.md. Reports files modified and test pass/fail counts. Uses MCP for provider and AWS doc lookups.',
-  'tf-domain-category':     '8-category ambiguity taxonomy: resource scope, feature toggles, networking, IAM, encryption, naming, scaling, dependencies. Used by orchestrator at Step 5 to flag underspecified requirements. Always flags security-configurable features.',
-  'tf-research-heuristics': 'Research navigation strategies: start with AWS docs for service behavior, then provider docs for resource arguments, then registry for design patterns. Loaded by tf-module-research agents.',
-  'tf-architecture-patterns':'Module design patterns: conditional creation (count/for_each), resource composition, dynamic blocks, policy patterns. Standard module structure: main.tf, variables.tf, outputs.tf, versions.tf. Loaded by tf-module-design.',
-  'tf-security-baselines':  '6 security domains: encryption at rest, encryption in transit, public access, IAM least privilege, logging, tagging. CIS AWS Benchmark and Well-Architected references. Risk rating P0-P3. Loaded by tf-module-design for Section 4.',
-  'terraform-style-guide':  'HashiCorp HCL style conventions: formatting, naming, file organization, block ordering. Loaded by tf-module-developer.',
-  'tf-implementation-patterns':'AWS resource authoring patterns: VPC, IAM, compute, storage, database. Raw resources with secure defaults, conditional creation, dynamic blocks. Loaded by tf-module-developer.',
-  'terraform-test':         'Guide for .tftest.hcl: run blocks, assert blocks, expect_failures, mock_provider, mock_data, command = plan. Plan-mode limitations and workarounds. Loaded by tf-module-test-writer.',
-  'tf-report-template':     'Validation results report format: terraform test/validate/fmt/trivy results + security checklist. Read inline by orchestrator in Phase 4 \u2014 not a subagent dispatch.',
-  'validate-env':       'Checks TFE_TOKEN, AWS credentials, terraform CLI, trivy, gh CLI. Returns JSON with gate_passed boolean. GATE: stops entire workflow if false.',
-  'create-feature':     'Creates git branch (feat/{FEATURE}) and specs/{FEATURE}/ directory.',
-  'post-issue':         'Posts structured progress update to GitHub issue. Called at key steps with: step name, status (started/in-progress/complete/failed), summary.',
-  'checkpoint-commit':  'Automated git add + commit with structured message. Called after each phase completion and each checklist item.',
-  'design-template':    'Canonical template for design.md. 7 mandatory sections: \u00a71 Purpose, \u00a72 Interface Contract, \u00a73 Resources & Architecture, \u00a74 Security Controls, \u00a75 Test Scenarios, \u00a76 Implementation Checklist (4-8 items), \u00a77 Open Questions.',
-  'issue-body-template':'GitHub issue body template with placeholders for module name, provider, description, resources, features, security decisions, scope boundary, and phase status checklist.',
-  'mcp-aws-docs':       'AWS Knowledge MCP: search_documentation, read_documentation, recommend, get_regional_availability. Used by tf-module-research agents and tf-module-developer.',
-  'mcp-terraform':      'Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies. Used by tf-module-research for patterns and tf-module-developer for resource details.',
-  'module-constitution':       'Module code standards: file structure (\u00a72.1), naming (\u00a72.2), variable conventions (\u00a72.3), security defaults (\u00a71.2, \u00a73), tags (\u00a73.3), provider constraints. Read by tf-module-design directly \u2014 not interpreted by orchestrator (P9).',
-  'design-md':          'The SINGLE planning artifact (P1). 7 sections: Purpose, Interface Contract (variables + outputs), Resources & Architecture (resource inventory + architectural decisions), Security Controls (6 domains with CIS/WA references), Test Scenarios (5 groups with HCL assertions), Implementation Checklist (4-8 items), Open Questions. Handoff point between /tf-module-plan and /tf-module-implement.',
-  'gh-issue':           'GitHub issue tracking module development. Created from issue-body-template.md at Step 3. Updated after clarification (Step 6) with security decisions and scope boundary. Progress posted throughout.',
-  'tf-scaffolding':     'versions.tf (terraform + provider version constraints) and variables.tf (all variable declarations from design.md \u00a72). Written by tf-module-test-writer as part of TDD scaffolding before implementation.',
-  'tf-code':            'Terraform module files: main.tf, outputs.tf, locals.tf, and edits to existing files. Written by tf-module-developer agents during Phase 3 checklist execution.',
-  'tf-tests':           'Test files in tests/: basic.tftest.hcl (secure defaults), complete.tftest.hcl (all features), edge_cases.tftest.hcl (toggle combinations), validation.tftest.hcl (reject + boundary-pass). Written by tf-module-test-writer BEFORE implementation (P2).',
-  'readme':             'Module README auto-generated by terraform-docs in Phase 4.',
-  'validation-report':  'Validation results written to specs/{FEATURE}/reports/ using tf-report-template format. Covers: test results, validate, fmt, trivy, security checklist.',
-  'pr':                 'Pull request via gh pr create. Links to tracking GitHub issue. Contains all module code, tests, README, and validation report.',
-  'gh-issue-updated':   'GitHub issue updated with Phase 3-4 progress and final PR link.',
-  'gh-issue-create':    'gh issue create --title "Module: {name}" using filled issue-body-template.md. Captures $ISSUE_NUMBER for progress tracking.',
-  'tf-init':            'terraform init -backend=false. Local-only initialization \u2014 no remote state backend.',
-  'tf-validate-baseline':'terraform validate after tf-module-test-writer scaffolding. Confirms test files and scaffolding are valid HCL. This is the RED TDD baseline \u2014 do NOT run terraform test here (P2).',
-  'tf-validate-loop':   'terraform validate run by orchestrator after each tf-module-developer completes. Trust-but-verify gate (P6).',
-  'tf-test-loop':       'terraform test run by orchestrator after each tf-module-developer completes. Trust-but-verify gate (P6).',
-  'tf-test-final':      'Final terraform test after all checklist items complete. If failures remain: re-launch tf-module-test-writer with error output + data source info from developers.',
-  'tf-test':            'terraform test in Phase 4 parallel validation.',
-  'tf-validate':        'terraform validate in Phase 4 parallel validation.',
-  'tf-fmt':             'terraform fmt -check -recursive in Phase 4. Auto-fixes with terraform fmt -recursive if issues found.',
-  'trivy':              'trivy config . \u2014 security scanning for misconfigurations in Phase 4.',
-  'tf-docs':            'terraform-docs markdown . > README.md in Phase 4.',
-  'gh-pr-create':       'gh pr create linking to $ISSUE_NUMBER. Final step of Phase 4.'
+  /* Shared */
+  'validate-env':           'Checks TFE_TOKEN, AWS credentials, terraform CLI, trivy, gh CLI. Returns JSON with gate_passed boolean. GATE: stops entire workflow if false.',
+  'create-feature':         'Creates git branch (feat/{FEATURE}) and specs/{FEATURE}/ directory.',
+  'post-issue':             'Posts structured progress update to GitHub issue. Called at key steps with: step name, status (started/in-progress/complete/failed), summary.',
+  'checkpoint-commit':      'Automated git add + commit with structured message. Called after each phase completion and each checklist item.',
+  'gh-issue-create':        'gh issue create --title "Module: {name}" using filled issue-body-template.md. Captures $ISSUE_NUMBER for progress tracking.',
+  'issue-body-template':    'GitHub issue body template with placeholders for module name, provider, description, resources, features, security decisions, scope boundary, and phase status checklist.',
+  'tf-domain-category':     '8-category ambiguity taxonomy: resource scope, feature toggles, networking, IAM, encryption, naming, scaling, dependencies. Scans requirements to flag underspecified areas. Always flags security-configurable features.',
+  'gh-issue':               'GitHub issue tracking development. Created from issue-body-template.md. Updated with clarification decisions and progress throughout.',
+  'gh-pr-create':           'gh pr create linking to $ISSUE_NUMBER. Final step of Phase 4.',
+  'tf-report-template':     'Validation results report format: test/validate/fmt/trivy results + security checklist. Read inline by orchestrator in Phase 4 \u2014 not a subagent dispatch.',
+  'pr':                     'Pull request via gh pr create. Links to tracking GitHub issue. Contains all code, tests, and validation report.',
+  'gh-issue-updated':       'GitHub issue updated with Phase 3-4 progress and final PR link.',
+  'validation-report':      'Validation results written to specs/{FEATURE}/reports/ using tf-report-template format.',
+  'tf-init':                'terraform init -backend=false. Local-only initialization \u2014 no remote state backend.',
+
+  /* Module agents */
+  'tf-module-research':     'Investigates ONE research question per instance via AWS docs, provider docs, and Terraform registry. Runs 3-4 concurrently in Phase 1. Returns findings in-memory (<500 tokens) \u2014 never writes to disk (P4). Uses tf-research skill for search strategies.',
+  'tf-module-design':       'Produces specs/{FEATURE}/design.md from clarified requirements and research findings. Reads module-constitution.md and module-design-template.md itself (P9). Populates all 7 mandatory sections. Validates completeness before writing.',
+  'tf-module-test-writer':  'Reads design.md Sections 2, 3, and 5. Writes scaffolding (versions.tf, variables.tf) and 4 test files: basic, complete, edge_cases, validation. Maps 1:1 from design assertions to HCL assert blocks. Runs BEFORE implementation (TDD).',
+  'tf-module-developer':    'Executes one implementation checklist item from design.md Section 6. Reads Sections 2 (variables), 3 (resources), 4 (security). Writes/edits .tf files, runs fmt + validate + test, marks item [x]. Uses MCP for provider and AWS doc lookups.',
+
+  /* Module skills & references */
+  'tf-research':            'Research navigation strategies: start with AWS docs for service behavior, then provider docs for resource arguments, then registry for design patterns.',
+  'tf-architecture-patterns':'Module design patterns: conditional creation (count/for_each), resource composition, dynamic blocks, policy patterns. Standard module structure.',
+  'tf-security-baselines':  '6 security domains: encryption at rest, encryption in transit, public access, IAM least privilege, logging, tagging. CIS and Well-Architected references.',
+  'terraform-test':         'Guide for .tftest.hcl: run blocks, assert blocks, expect_failures, mock_provider, mock_data, command = plan. Plan-mode limitations and workarounds.',
+  'terraform-style-guide':  'HashiCorp HCL style conventions: formatting, naming, file organization, block ordering.',
+  'tf-implementation-patterns':'AWS resource authoring patterns: VPC, IAM, compute, storage, database. Raw resources with secure defaults, conditional creation.',
+  'module-design-template': 'Canonical template for design.md. 7 mandatory sections: Purpose, Interface Contract, Resources & Architecture, Security Controls, Test Scenarios, Implementation Checklist, Open Questions.',
+  'module-constitution':    'Module code standards: file structure, naming, variable conventions, security defaults, tags, provider constraints. Read by tf-module-design directly (P9).',
+  'design-md':              'The SINGLE planning artifact (P1). 7 sections covering purpose, interface, resources, security, tests, checklist, and open questions. Handoff between /tf-module-plan and /tf-module-implement.',
+
+  /* Module MCP */
+  'mcp-aws-docs':           'AWS Knowledge MCP: search_documentation, read_documentation, recommend, get_regional_availability. Used by research and developer agents.',
+  'mcp-terraform':          'Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies. Used for patterns, resource details, and private module search.',
+
+  /* Module artifacts */
+  'tf-scaffolding':         'versions.tf + variables.tf written by tf-module-test-writer as part of TDD scaffolding before implementation.',
+  'tf-code':                'Terraform module files: main.tf, outputs.tf, locals.tf. Written by tf-module-developer agents during Phase 3.',
+  'tf-tests':               'Test files in tests/: basic, complete, edge_cases, validation .tftest.hcl. Written by tf-module-test-writer BEFORE implementation (P2).',
+  'readme':                 'Module README auto-generated by terraform-docs in Phase 4.',
+
+  /* Module commands */
+  'tf-validate-baseline':   'terraform validate after scaffolding. Confirms test files are valid HCL. RED TDD baseline.',
+  'tf-validate-loop':       'terraform validate run by orchestrator after each developer completes. Trust-but-verify gate.',
+  'tf-test-loop':           'terraform test run by orchestrator after each developer completes. Trust-but-verify gate.',
+  'tf-test-final':          'Final terraform test after all checklist items complete. Re-launches test-writer if failures remain.',
+  'tf-test':                'terraform test in Phase 4 parallel validation.',
+  'tf-validate':            'terraform validate in Phase 4 parallel validation.',
+  'tf-fmt':                 'terraform fmt -check -recursive in Phase 4. Auto-fixes formatting issues.',
+  'trivy':                  'trivy config . \u2014 security scanning for misconfigurations in Phase 4.',
+  'tf-docs':                'terraform-docs markdown . > README.md in Phase 4.',
+
+  /* Provider agents */
+  'tf-provider-research':   'Investigates ONE research question per instance via WebSearch/WebFetch. Researches cloud service APIs, Plugin Framework patterns, and existing provider implementations. Runs 3-4 concurrently.',
+  'tf-provider-design':     'Produces provider-design-{resource}.md from requirements and research. Covers schema design, CRUD operations, state management, and acceptance test scenarios.',
+  'tf-provider-developer':  'Executes one implementation checklist item using Go + Plugin Framework. Reads schema and CRUD specs from design. Writes Go source, runs go build + go vet. Uses WebSearch/WebFetch for API reference.',
+  'tf-provider-validator':  'Validates provider code against design, runs acceptance tests, performs code review, and auto-fixes issues. Dedicated Phase 4 agent.',
+
+  /* Provider skills & references */
+  'provider-resources':     'Plugin Framework resource/data-source patterns: schema design, CRUD operations, state management, acceptance testing. Used by design and developer agents.',
+  'provider-actions':       'Plugin Framework action patterns: imperative operations at lifecycle events (before/after create, update, destroy).',
+  'provider-run-acc-tests': 'Guide for running acceptance tests: go test -run TestAcc, environment setup, real cloud API interaction.',
+  'provider-design-template':'Canonical template for provider-design-{resource}.md. Covers schema, CRUD, state mapping, tests, and checklist.',
+  'provider-constitution':  'Provider code standards: Go conventions, Plugin Framework patterns, testing requirements. Read by tf-provider-design directly.',
+  'provider-design-md':     'Provider design artifact. Covers schema design, CRUD operations, state management, test scenarios, and implementation checklist. Handoff between /tf-provider-plan and /tf-provider-implement.',
+
+  /* Provider tools & commands */
+  'web-search':             'WebSearch tool: searches the web for cloud API documentation, Plugin Framework patterns, and Go library references. Used by provider agents instead of MCP.',
+  'web-fetch':              'WebFetch tool: fetches and processes web pages for API specs, SDK docs, and implementation examples. Used alongside WebSearch.',
+  'go-build':               'go build ./... \u2014 compiles Go source to verify syntax and type correctness.',
+  'go-vet':                 'go vet ./... \u2014 reports suspicious constructs and potential bugs in Go code.',
+  'go-test-acc':            'go test -run TestAcc ./... \u2014 runs acceptance tests against real cloud APIs. Requires valid credentials.',
+  'go-source':              'Go provider source files: resource definitions, data sources, models, and acceptance tests.',
+
+  /* Consumer agents */
+  'tf-consumer-research':   'Investigates ONE question per instance. Searches private registry modules via terraform-mcp, investigates module interfaces, wiring patterns, and composition best practices.',
+  'tf-consumer-design':     'Produces consumer-design.md from requirements and research. Covers module selection, wiring architecture, security controls, and implementation checklist.',
+  'tf-consumer-developer':  'Executes one implementation checklist item. Composes infrastructure from private registry modules. Runs terraform init + validate + plan for verification.',
+  'tf-consumer-validator':  'Validates consumer code: security review, quality scoring (1-5 scale), design compliance. Optionally deploys to sandbox via terraform apply. Orchestrator controls destroy.',
+
+  /* Consumer skills & references */
+  'tf-judge-criteria':      'Scoring rubrics (1-5 scale), severity classification, evaluation methodology, and iterative refinement protocol for Terraform code quality assessment.',
+  'consumer-design-template':'Canonical template for consumer-design.md. Covers module selection, wiring, security, and checklist.',
+  'consumer-constitution':  'Consumer code standards: module sourcing, variable wiring, security defaults, environment boundaries. Read by tf-consumer-design directly.',
+  'consumer-design-md':     'Consumer design artifact. Covers module selection, wiring architecture, security controls, and implementation checklist. Handoff between /tf-consumer-plan and /tf-consumer-implement.',
+
+  /* Consumer artifacts & commands */
+  'consumer-tf-code':       'Terraform consumer files: main.tf, variables.tf, outputs.tf, terraform.tf. Composes private registry modules with wiring.',
+  'quality-score':          'Quality assessment score (1-5 scale) produced by tf-consumer-validator using tf-judge-criteria rubrics.',
+  'tf-plan':                'terraform plan \u2014 generates execution plan to verify module composition and variable wiring.',
+  'tf-validate-final':      'terraform validate run by consumer-validator during Phase 4 quality assessment.',
+  'tf-plan-final':          'terraform plan run by consumer-validator during Phase 4 quality assessment.'
 };
 
 /* === Detail panel === */
@@ -1289,13 +1392,41 @@ const detailDesc = document.getElementById('detail-desc');
 let selectedId = null, activeVP = null;
 
 /* === View switching === */
-function switchView(v) {
+let currentWorkflow = 'module', currentStage = 'plan';
+const planTab = document.querySelector('#sub-nav .sub-tab[data-stage="plan"]');
+const implTab = document.querySelector('#sub-nav .sub-tab[data-stage="impl"]');
+
+function switchView(workflow, stage) {
+  currentWorkflow = workflow;
+  currentStage = stage;
   clearSelection();
-  document.querySelectorAll('#nav .nav-tab').forEach(t => t.classList.toggle('active', t.dataset.view === v));
-  document.querySelectorAll('.view').forEach(el => el.classList.toggle('active', el.id === 'view-' + v));
+
+  /* Top nav */
+  document.querySelectorAll('#nav .nav-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.workflow === workflow)
+  );
+
+  /* Sub nav labels */
+  planTab.textContent = '/tf-' + workflow + '-plan';
+  implTab.textContent = '/tf-' + workflow + '-implement';
+  document.querySelectorAll('#sub-nav .sub-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.stage === stage)
+  );
+
+  /* Show view */
+  const viewId = 'view-' + workflow + '-' + stage;
+  document.querySelectorAll('.view').forEach(el =>
+    el.classList.toggle('active', el.id === viewId)
+  );
 }
-document.querySelectorAll('#nav .nav-tab').forEach(t => t.addEventListener('click', () => switchView(t.dataset.view)));
-document.querySelectorAll('[data-nav]').forEach(c => c.addEventListener('click', () => switchView(c.dataset.nav)));
+
+/* Nav click handlers */
+document.querySelectorAll('#nav .nav-tab').forEach(t =>
+  t.addEventListener('click', () => switchView(t.dataset.workflow, currentStage))
+);
+document.querySelectorAll('#sub-nav .sub-tab').forEach(t =>
+  t.addEventListener('click', () => switchView(currentWorkflow, t.dataset.stage))
+);
 
 /* === Edge drawing === */
 function getCenter(el, sec) {
@@ -1390,15 +1521,18 @@ function clearSelection() {
   document.body.classList.remove('has-selection');
   document.querySelectorAll('.node').forEach(n => n.classList.remove('active', 'dimmed'));
   document.querySelectorAll('.phase-box').forEach(p => p.classList.remove('phase-active', 'dimmed'));
-  const ps = document.getElementById('plan-edges'), is = document.getElementById('impl-edges');
-  if (ps) ps.innerHTML = ''; if (is) is.innerHTML = '';
+  document.querySelectorAll('svg.edges').forEach(s => s.innerHTML = '');
   detailName.textContent = ''; detailName.style.color = '';
   detailType.textContent = ''; detailType.style.color = ''; detailType.style.borderColor = '';
   detailEl.style.borderRightColor = ''; detailEl.style.boxShadow = '';
   detailDesc.innerHTML = ''; detailEl.classList.add('empty');
 }
 
-function getVP(n) { if (n.closest('#view-plan')) return 'plan'; if (n.closest('#view-implement')) return 'impl'; return null; }
+function getVP(n) {
+  const v = n.closest('.view'); if (!v) return null;
+  const id = v.id.replace('view-', '');
+  return viewKeys.includes(id) ? id : null;
+}
 
 document.addEventListener('click', e => {
   const node = e.target.closest('.node');
@@ -1408,7 +1542,7 @@ document.addEventListener('click', e => {
     if (selectedId === id && activeVP === vp) clearSelection();
     else { if (activeVP && activeVP !== vp) clearSelection(); selectNode(id, vp); }
   } else {
-    if (e.target.closest('[data-nav]') || e.target.closest('.nav-tab')) return;
+    if (e.target.closest('.nav-tab') || e.target.closest('.sub-tab')) return;
     clearSelection();
   }
 });
@@ -1418,31 +1552,27 @@ window.addEventListener('scroll', () => { if (selectedId && activeVP) drawEdges(
 
 /* Animated grid background */
 (function() {
-  function initGrid(canvasId) {
-    const canvas = document.getElementById(canvasId); if (!canvas) return;
-    const ctx = canvas.getContext('2d'); let w, h;
-    const gap = 48;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    resize(); window.addEventListener('resize', resize);
-    let time = 0;
-    function draw() {
-      time += 0.003; ctx.clearRect(0, 0, w, h);
-      const cols = Math.ceil(w / gap) + 1, rows = Math.ceil(h / gap) + 1;
-      for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
-        const x = i * gap, y = j * gap;
-        const d = Math.sqrt((x - w / 2) ** 2 + (y - h / 2) ** 2);
-        const pulse = Math.sin(d * 0.008 - time * 2) * 0.5 + 0.5;
-        ctx.fillStyle = `rgba(0,240,255,${0.015 + pulse * 0.025})`;
-        ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
-      }
-      for (let j = 0; j < rows; j++) { ctx.beginPath(); ctx.moveTo(0, j * gap); ctx.lineTo(w, j * gap); ctx.strokeStyle = 'rgba(0,240,255,0.018)'; ctx.lineWidth = 0.5; ctx.stroke(); }
-      for (let i = 0; i < cols; i++) { ctx.beginPath(); ctx.moveTo(i * gap, 0); ctx.lineTo(i * gap, h); ctx.strokeStyle = 'rgba(0,240,255,0.018)'; ctx.lineWidth = 0.5; ctx.stroke(); }
-      requestAnimationFrame(draw);
+  const canvas = document.getElementById('grid-canvas'); if (!canvas) return;
+  const ctx = canvas.getContext('2d'); let w, h;
+  const gap = 48;
+  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  let time = 0;
+  function draw() {
+    time += 0.003; ctx.clearRect(0, 0, w, h);
+    const cols = Math.ceil(w / gap) + 1, rows = Math.ceil(h / gap) + 1;
+    for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) {
+      const x = i * gap, y = j * gap;
+      const d = Math.sqrt((x - w / 2) ** 2 + (y - h / 2) ** 2);
+      const pulse = Math.sin(d * 0.008 - time * 2) * 0.5 + 0.5;
+      ctx.fillStyle = `rgba(0,240,255,${0.015 + pulse * 0.025})`;
+      ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
     }
-    draw();
+    for (let j = 0; j < rows; j++) { ctx.beginPath(); ctx.moveTo(0, j * gap); ctx.lineTo(w, j * gap); ctx.strokeStyle = 'rgba(0,240,255,0.018)'; ctx.lineWidth = 0.5; ctx.stroke(); }
+    for (let i = 0; i < cols; i++) { ctx.beginPath(); ctx.moveTo(i * gap, 0); ctx.lineTo(i * gap, h); ctx.strokeStyle = 'rgba(0,240,255,0.018)'; ctx.lineWidth = 0.5; ctx.stroke(); }
+    requestAnimationFrame(draw);
   }
-  initGrid('grid-canvas');
-  initGrid('grid-canvas-design');
+  draw();
 })();
 </script>
 </body>

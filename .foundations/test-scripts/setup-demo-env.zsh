@@ -121,12 +121,12 @@ main() {
     fi
 
     # ── Targets ──────────────────────────────────────────────────────────────
-    neon_section "GitHub Targets (HOST::ACCOUNT)"
-    printf "    ${C_DIM}These are the GitHub host/account pairs where you${C_RESET}\n" >&2
-    printf "    ${C_DIM}create and delete demo repos.${C_RESET}\n\n" >&2
+    neon_section "GitHub Targets"
+    printf "    ${C_DIM}These are the GitHub accounts where you create${C_RESET}\n" >&2
+    printf "    ${C_DIM}and delete demo repos.${C_RESET}\n\n" >&2
 
     local -a targets=()
-    collect_entries "Target" "Format: HOST::ACCOUNT  (e.g. github.com::MyOrg)" targets
+    collect_entries "Target" "Format: ACCOUNT  (e.g. MyOrg)  or  HOST::ACCOUNT for GHE" targets
 
     # Merge with existing (deduplicate)
     for t in "${existing_targets[@]}"; do

@@ -259,9 +259,9 @@ interactive_menu() {
 # CONFIGURATION - Modify these defaults as needed
 # =============================================================================
 # Env vars:
-#   DEMO_REPO_TARGETS    — comma-separated HOST::ACCOUNT pairs
+#   DEMO_REPO_TARGETS    — comma-separated targets: ACCOUNT (defaults to github.com) or HOST::ACCOUNT
 #   DEMO_REPO_TEMPLATES  — comma-separated template entries (ORG/REPO or HOST::ORG/REPO)
-GITHUB_HOST="${GITHUB_HOST:-}"
+GITHUB_HOST="${GITHUB_HOST:-github.com}"
 GITHUB_ACCOUNT="${GITHUB_ACCOUNT:-}"
 CLONE_BASE_PATH="${CLONE_BASE_PATH:-$HOME/Documents/repos}"
 REPO_COUNT="${REPO_COUNT:-1}"
@@ -289,21 +289,24 @@ DEST_HOST=""
 DEST_ACCOUNT=""
 
 # Known targets — driven by DEMO_REPO_TARGETS env var (shared with delete script)
+# Accepts "ACCOUNT" (defaults to github.com) or "HOST::ACCOUNT"
 KNOWN_TARGETS=()
 if [[ -n "$DEMO_REPO_TARGETS" ]]; then
-    IFS=',' read -rA KNOWN_TARGETS <<< "$DEMO_REPO_TARGETS"
+    IFS=',' read -rA _raw_targets <<< "$DEMO_REPO_TARGETS"
+    for _entry in "${_raw_targets[@]}"; do
+        [[ "$_entry" != *"::"* ]] && _entry="${GITHUB_HOST}::${_entry}"
+        KNOWN_TARGETS+=("$_entry")
+    done
+    unset _raw_targets _entry
 else
     printf "\n  ${C_RED}✖${C_RESET} ${C_WHITE}DEMO_REPO_TARGETS${C_RESET} env var is not set.\n" >&2
     printf "    ${C_DIM}Run: ./setup-demo-env.zsh${C_RESET}\n\n" >&2
     exit 1
 fi
 
-# Derive GITHUB_HOST/GITHUB_ACCOUNT from first target if not set via env/CLI
-if [[ -z "$GITHUB_HOST" || -z "$GITHUB_ACCOUNT" ]]; then
-    _first="${KNOWN_TARGETS[1]}"
-    [[ -z "$GITHUB_HOST" ]] && GITHUB_HOST="${_first%%::*}"
-    [[ -z "$GITHUB_ACCOUNT" ]] && GITHUB_ACCOUNT="${_first#*::}"
-    unset _first
+# Derive GITHUB_ACCOUNT from first target if not set via env/CLI
+if [[ -z "$GITHUB_ACCOUNT" ]]; then
+    GITHUB_ACCOUNT="${KNOWN_TARGETS[1]#*::}"
 fi
 
 # =============================================================================
