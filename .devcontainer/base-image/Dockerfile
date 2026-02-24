@@ -3,22 +3,22 @@ FROM node:22-slim
 # Set all build arguments at once
 ARG TZ \
     USERNAME=node \
-    TERRAFORM_VERSION="1.13.5" \
-    TERRAFORM_DOCS_VERSION="0.20.0" \
-    TFLINT_VERSION="0.59.1" \
-    TFLINT_AWS_RULESET_VERSION="0.23.1" \
-    TFLINT_AZURE_RULESET_VERSION="0.23.0" \
-    TFLINT_GCP_RULESET_VERSION="0.23.1" \
-    INFRACOST_VERSION="0.10.42" \
-    CHECKOV_VERSION="3.2.489" \
-    VAULT_RADAR_VERSION="0.36.0" \
+    TERRAFORM_VERSION="1.14.5" \
+    TERRAFORM_DOCS_VERSION="0.21.0" \
+    TFLINT_VERSION="0.60.0" \
+    TFLINT_AWS_RULESET_VERSION="0.45.0" \
+    TFLINT_AZURE_RULESET_VERSION="0.30.0" \
+    TFLINT_GCP_RULESET_VERSION="0.38.0" \
+    INFRACOST_VERSION="0.10.43" \
+    CHECKOV_VERSION="3.2.504" \
+    VAULT_RADAR_VERSION="0.43.0" \
     INSTALL_VAULT_RADAR="true"
 
 # Install uv directly from the official uv image (ensure version pinning for stability)
 COPY --from=docker.io/astral/uv:latest /uv /uvx /usr/local/bin/
 
 # Install Go from official image (using stable version for reliability)
-COPY --from=docker.io/library/golang:1.23-bookworm /usr/local/go /usr/local/go
+COPY --from=docker.io/library/golang:1.26-bookworm /usr/local/go /usr/local/go
 
 # Install packages, configure locale, set up directories, and install delta in one layer
 # Note: node:20-slim requires ca-certificates for HTTPS operations
@@ -83,14 +83,14 @@ RUN chmod +x /tmp/library-scripts/*.sh && \
 USER node
 
 # Install zsh theme, Claude, uv for user, and Python tools in one layer
-RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" -- \
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.1/zsh-in-docker.sh)" -- \
         -p git \
         -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
         -x && \
     uv tool install pre-commit --with pre-commit-uv && \
     ARCH=$(uname -m) && \
     if [ "$ARCH" = "x86_64" ]; then GOLANGCI_ARCH="amd64"; else GOLANGCI_ARCH="arm64"; fi && \
-    GOLANGCI_VERSION="1.63.4" && \
+    GOLANGCI_VERSION="2.10.1" && \
     mkdir -p /home/node/go/bin && \
     wget -qO- "https://github.com/golangci/golangci-lint/releases/download/v${GOLANGCI_VERSION}/golangci-lint-${GOLANGCI_VERSION}-linux-${GOLANGCI_ARCH}.tar.gz" | tar -xz -C /tmp && \
     mv "/tmp/golangci-lint-${GOLANGCI_VERSION}-linux-${GOLANGCI_ARCH}/golangci-lint" /home/node/go/bin/ && \
