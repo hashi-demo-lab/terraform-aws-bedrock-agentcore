@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Context
 
-This repository is a **Terraform module development template** using **SDD** (Spec-Driven Development, 4-phase workflow). The goal is to author enterprise-ready, reusable Terraform modules — not to consume modules from a registry. Modules are written using raw resources with secure defaults, tested with `terraform test` in a TDD workflow, and published to a private registry.
+This repository is a **Terraform development template** using **SDD** (Spec-Driven Development, 4-phase workflow). It supports three workflows: **module authoring** (raw resources with secure defaults), **provider development** (Plugin Framework resources), and **consumer provisioning** (composing infrastructure from private registry modules). All workflows share the same 4-phase structure: Clarify, Design, Implement, Validate.
 
 ## Primary Reference
 
@@ -20,6 +20,8 @@ See the root `./AGENTS.md` for the main project documentation, workflow phases, 
 | `/tf-module-implement` | Implementation only — starts from an existing `design.md`         |
 | `/tf-provider-plan` | Full 4-phase workflow for provider resources: Clarify, Design, Implement, Validate |
 | `/tf-provider-implement` | Implementation only — starts from an existing provider `design.md` |
+| `/tf-consumer-plan` | Full 4-phase workflow for consumer provisioning: Clarify, Design, Implement, Validate |
+| `/tf-consumer-implement` | Implementation only — starts from an existing `consumer-design.md` |
 
 ## Constitutions
 
@@ -27,6 +29,7 @@ Non-negotiable rules for all code generation live in the constitutions. Read the
 
 - **Module constitution**: `.foundations/memory/module-constitution.md`
 - **Provider constitution**: `.foundations/memory/provider-constitution.md`
+- **Consumer constitution**: `.foundations/memory/consumer-constitution.md`
 
 ## Design Templates
 
@@ -34,10 +37,11 @@ When creating design documents, use the canonical template for the relevant work
 
 - **Module design**: `.foundations/templates/module-design-template.md`
 - **Provider design**: `.foundations/templates/provider-design-template.md`
+- **Consumer design**: `.foundations/templates/consumer-design-template.md`
 
 ## Key Conventions
 
-- Workflow conventions are defined in the orchestrator skills (`tf-module-plan`, `tf-module-implement`, `tf-provider-plan`, `tf-provider-implement`). Follow AGENTS.md `## Context Management` for subagent rules.
+- Workflow conventions are defined in the orchestrator skills (`tf-module-plan`, `tf-module-implement`, `tf-provider-plan`, `tf-provider-implement`, `tf-consumer-plan`, `tf-consumer-implement`). Follow AGENTS.md `## Context Management` for subagent rules.
 - Key scripts: `validate-env.sh` (environment checks), `post-issue-progress.sh` (GitHub updates), `checkpoint-commit.sh` (git automation) — all in `.foundations/scripts/bash/`.
 
 ## Updating AGENTS.md Files
