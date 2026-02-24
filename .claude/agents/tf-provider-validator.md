@@ -125,6 +125,16 @@ Apply automatic fixes for unambiguous issues:
 
 After applying fixes, run `go build -o /dev/null .` and `go vet ./...` to verify fixes compile.
 
+### Step 6 — Acceptance Tests (if requested)
+
+If `$ARGUMENTS` includes `run_acceptance_tests=true`:
+
+1. Run `TF_ACC=1 go test ./internal/service/<service> -run TestAcc -v -timeout 60m`. If a specific test pattern is provided in `$ARGUMENTS`, use that pattern instead of `TestAcc`.
+2. Parse output for pass/fail per test function
+3. Include results in the Acceptance Tests section of the report
+
+If not requested, report "Acceptance tests: SKIPPED".
+
 ## Output
 
 Return the validation report as agent output. The orchestrator will use this to decide next steps.
@@ -156,6 +166,11 @@ Return the validation report as agent output. The orchestrator will use this to 
 
 ### Auto-Fixes Applied
 - [list of fixes made, e.g., "gofmt: formatted 3 files", "Added Sensitive: true to password attribute"]
+
+### Acceptance Tests
+- Status: PASS/FAIL/SKIPPED
+- Tests run: N (passed: N, failed: N)
+- [per-function results if run]
 
 ### Remaining Issues (manual fix required)
 - [list of issues that couldn't be auto-fixed, with file:line references where possible]

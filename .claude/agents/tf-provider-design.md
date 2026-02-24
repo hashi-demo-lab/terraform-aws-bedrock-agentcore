@@ -27,7 +27,7 @@ Produce a single `specs/{FEATURE}/provider-design-{resource}.md` from clarified 
 2. **Parse Input**: Extract from `$ARGUMENTS`:
    - The FEATURE path (e.g., `specs/042-storage-bucket/`)
    - The RESOURCE short name (e.g., `bucket`)
-   - Clarified requirements from Phase 1 (user-confirmed functional and non-functional requirements)
+   - Clarified requirements from Phase 1 (user-confirmed functional and non-functional requirements). Must include: **update behavior** (which attributes support in-place update vs ForceNew replacement) and **test environment** decisions (API credentials/environment variables needed for acceptance tests).
    - Research findings from Phase 1 (API/SDK docs, Plugin Framework patterns, existing provider analysis that MUST inform the design). Every schema attribute and CRUD operation must reference these findings.
 
 3. **Design**: Populate ALL 7 sections of the provider design template. Start with a Table of Contents linking to all 7 sections. Each section has specific rules:
