@@ -219,17 +219,40 @@ Scans a directory for demo repos (by inspecting git remotes) and deletes them. C
 
 The cleanup script automatically identifies repos by scanning subdirectories and reading their git remote URLs (supports both `https://` and `git@` formats).
 
+## Included Prompt Files
+
+The `prompts/` directory contains ready-made prompt files for use with `--prompt-dir`. Each file defines a non-interactive infrastructure scenario for Claude Code.
+
+| File | Scenario |
+|---|---|
+| `consumer_ec2.md` | EC2 instances with ALB and Nginx |
+| `consumer_asg.md` | Auto-Scaling Group with ALB |
+| `consumer_cloudfront.md` | CloudFront with static content (S3 + ACM) |
+| `consumer_elastic.md` | ElastiCache Redis with ECS application tier |
+| `consumer_serverless.md` | Lambda + API Gateway + DynamoDB |
+| `consumer_sqs.md` | SQS with Lambda and SNS |
+
+```zsh
+# Run all consumer prompts in parallel (one repo per prompt file)
+./bulk-run-demo.zsh -t 1 --prompt-dir ./prompts --parallel 3
+
+# Run a subset using glob filter
+./bulk-run-demo.zsh -t 1 --prompt-dir ./prompts --prompt-glob "consumer_ec2.md"
+```
+
 ## Environment Variables
 
 | Variable | Used by | Description | Default |
 |---|---|---|---|
-| `DEMO_REPO_TARGETS` | create, delete, bulk-run | `HOST::ACCOUNT` pairs (comma-separated) | *Required* — set via `setup-demo-env.zsh` |
+| `DEMO_REPO_TARGETS` | create, delete, bulk-run, cleanup | `HOST::ACCOUNT` pairs (comma-separated) | *Required* — set via `setup-demo-env.zsh` |
 | `DEMO_REPO_TEMPLATES` | create, bulk-run | Template repos (comma-separated) | *Required* — set via `setup-demo-env.zsh` |
 | `GH_TOKEN` | gh CLI | Auth token for all hosts (global override) | |
 | `GITHUB_TOKEN` | gh CLI | Auth token for github.com | |
 | `GH_ENTERPRISE_TOKEN` | gh CLI | Auth token for enterprise hosts | |
-| `GITHUB_HOST` | create | Default GitHub Enterprise hostname | First `DEMO_REPO_TARGETS` entry |
-| `GITHUB_ACCOUNT` | create | Default target account | First `DEMO_REPO_TARGETS` entry |
-| `CLONE_BASE_PATH` | create, delete | Local directory for cloned repos | `~/Documents/repos` |
-| `REPO_COUNT` | create | Number of repos to create | `1` |
-| `REPO_VISIBILITY` | create | Repo visibility (`public`/`private`) | `public` |
+| `GITHUB_HOST` | create, bulk-run | Default GitHub Enterprise hostname | First `DEMO_REPO_TARGETS` entry |
+| `GITHUB_ACCOUNT` | create, bulk-run | Default target account | First `DEMO_REPO_TARGETS` entry |
+| `CLONE_BASE_PATH` | create, delete, bulk-run | Local directory for cloned repos | `~/Documents/repos` (create/delete), `/workspace/demo-runs` (bulk-run) |
+| `SCAN_PATH` | cleanup | Base directory to scan for repos | `/workspace/demo-runs` |
+| `REPO_COUNT` | create, bulk-run | Number of repos to create | `1` (create), `3` (bulk-run) |
+| `REPO_VISIBILITY` | create, bulk-run | Repo visibility (`public`/`private`) | `public` |
+| `PARALLEL_MAX` | bulk-run | Max concurrent Claude sessions (`0` = sequential) | `3` |
