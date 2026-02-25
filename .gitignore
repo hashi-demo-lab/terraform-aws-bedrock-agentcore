@@ -42,5 +42,8 @@ notes-during-refactoring/
 # Bulk run demo outputs
 /demo-runs/
 
+# Environment files
+.env
+
 # OS files
 .DS_Store
