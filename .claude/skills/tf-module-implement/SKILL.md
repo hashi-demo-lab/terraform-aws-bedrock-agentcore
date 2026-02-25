@@ -35,10 +35,9 @@ Checkpoint after each phase: `bash .foundations/scripts/bash/checkpoint-commit.s
 
 ## Phase 4: Validate
 
-12. Run all in parallel: `terraform test`, `terraform validate`, `terraform fmt -check -recursive`, `trivy config .`, `terraform-docs markdown . > README.md`.
-13. Fix failures iteratively (max 3 rounds). Run `terraform fmt -recursive` for format issues.
-14. Write validation report to `specs/{FEATURE}/reports/` by reading the `tf-report-template` skill inline and applying its format (this is not a subagent dispatch — write the report directly).
-15. Checkpoint commit, push branch, create PR linking to `$ISSUE_NUMBER`.
+12. Launch `tf-module-validator` agent with FEATURE path. The validator runs the full pipeline (fmt, validate, test, tflint, trivy, terraform-docs), scores quality, auto-fixes unambiguous issues, and writes the validation report to `specs/{FEATURE}/reports/`.
+13. Verify the report file exists via Glob. If the validator reports failures, fix iteratively (max 3 rounds) — re-launch the validator after each fix pass.
+14. Checkpoint commit, push branch, create PR linking to `$ISSUE_NUMBER`.
 
 ## Done
 
