@@ -2,11 +2,12 @@
 
 **IMPORTANT** - Do not prompt me, make best practice decisions independently (this is for prompt eval)
 
-Using the **tf-module-e2e** skill non-interactively.
+Using the **tf-consumer-e2e** skill non-interactively.
 
 ## Infrastructure Requirements
 
 Provision using Terraform:
+
 - ElastiCache Redis cluster in private subnets
 - ECS across 2 AZs for application tier
 - ALB with HTTPS

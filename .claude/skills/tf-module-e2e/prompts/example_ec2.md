@@ -2,6 +2,8 @@
 
 **IMPORTANT**: Do not prompt me - make best practice decisions independently (this is for prompt eval)
 
+Using the **tf-consumer-e2e** skill non-interactively.
+
 ## Infrastructure Requirements
 
 Provision using Terraform:

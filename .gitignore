@@ -39,5 +39,8 @@ terraform.rc
 # ignore notes-during-refactoring folder
 notes-during-refactoring/
 
+# Bulk run demo outputs
+/demo-runs/
+
 # OS files
 .DS_Store
