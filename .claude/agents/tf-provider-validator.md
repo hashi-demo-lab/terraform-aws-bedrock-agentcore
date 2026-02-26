@@ -5,6 +5,7 @@ model: opus
 color: purple
 skills:
   - provider-resources
+  - provider-test-patterns
 tools:
   - Read
   - Write
