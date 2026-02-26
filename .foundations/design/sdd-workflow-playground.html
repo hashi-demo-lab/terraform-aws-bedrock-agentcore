@@ -790,7 +790,7 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
           <div class="node-row">
             <div class="node node-agent" data-id="tf-provider-validator" data-type="agent">tf-provider-validator</div>
             <div class="node node-skill" data-id="provider-resources-val" data-type="skill">provider-resources</div>
-            <div class="node node-skill" data-id="provider-test-patterns-val" data-type="skill">provider-test-patterns</div>
+            <div class="node node-skill" data-id="provider-run-acc-tests" data-type="skill">provider-run-acceptance-tests</div>
           </div>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-cmd" data-id="go-test-acc" data-type="cmd">go test -run TestAcc</div>
@@ -1208,19 +1208,19 @@ const connections = {
     'checkpoint-commit': [],
     'provider-design-md': ['tf-provider-test-writer','tf-provider-developer','tf-provider-validator'],
     'tf-provider-test-writer': ['provider-test-patterns','provider-design-md','go-test-stubs'],
-    'provider-test-patterns': ['tf-provider-test-writer','tf-provider-developer','tf-provider-validator'],
+    'provider-test-patterns': ['tf-provider-test-writer','tf-provider-developer'],
     'tf-provider-developer': ['provider-resources','provider-actions','provider-test-patterns-dev','provider-design-md','go-source'],
     'provider-resources': ['tf-provider-developer','tf-provider-validator'],
     'provider-actions': ['tf-provider-developer'],
     'provider-test-patterns-dev': ['tf-provider-developer'],
     'provider-resources-val': ['tf-provider-validator'],
-    'provider-test-patterns-val': ['tf-provider-validator'],
+    'provider-run-acc-tests': ['tf-provider-validator'],
     'go-build': ['go-source'],
     'go-test-c': ['go-source','go-test-stubs'],
     'go-vet': ['go-source'],
     'go-test-stubs': ['tf-provider-test-writer','go-test-c','tf-provider-validator'],
     'go-source': ['tf-provider-developer','go-build','go-test-c','go-vet','tf-provider-validator','go-test-acc'],
-    'tf-provider-validator': ['provider-resources-val','provider-test-patterns-val','go-source','go-test-stubs','provider-design-md','validation-report'],
+    'tf-provider-validator': ['provider-resources-val','provider-run-acc-tests','go-source','go-test-stubs','provider-design-md','validation-report'],
     'go-test-acc': ['go-source'],
     'tf-report-template': ['validation-report'],
     'gh-pr-create': ['pr','gh-issue-updated'],
@@ -1360,7 +1360,7 @@ const nodeDesc = {
   'tf-provider-design':     'Produces provider-design-{resource}.md from requirements and research. Covers schema design, CRUD operations, state management, and acceptance test scenarios. Skills: provider-resources.',
   'tf-provider-test-writer':'Reads design \u00a72 + \u00a75. Writes Go acceptance test stubs with t.Skip("not implemented") and config functions. Must compile via go test -c. Tests only \u2014 no helpers, exports, or sweep. Skills: provider-test-patterns.',
   'tf-provider-developer':  'Executes one implementation checklist item using Go + Plugin Framework. Reads schema and CRUD specs from design. Writes Go source, runs go build + go test -c. Skills: provider-resources, provider-actions, provider-test-patterns.',
-  'tf-provider-validator':  'Validates provider code against design: conformance check, build \u0026 static analysis, test compilation, code review, auto-fix. Optionally runs acceptance tests. Skills: provider-resources, provider-test-patterns.',
+  'tf-provider-validator':  'Validates provider code against design: conformance check, build \u0026 static analysis, test compilation, code review, auto-fix. Optionally runs acceptance tests. Skills: provider-resources, provider-run-acceptance-tests.',
 
   /* Provider skills & references */
   'provider-resources':     'Plugin Framework resource/data-source patterns: schema design, CRUD operations, state management, acceptance testing. Used by design, developer, and validator agents.',
@@ -1368,7 +1368,7 @@ const nodeDesc = {
   'provider-actions':       'Plugin Framework action patterns: imperative operations at lifecycle events (before/after create, update, destroy).',
   'provider-test-patterns': 'Terraform provider acceptance test patterns: TestCase/TestStep fields, scenario patterns (basic, disappears, update, validation), config helpers, import, sweepers.',
   'provider-test-patterns-dev':'Terraform provider acceptance test patterns: TestCase/TestStep fields, scenario patterns, config helpers, import, sweepers. Used by developer agent.',
-  'provider-test-patterns-val':'Terraform provider acceptance test patterns: TestCase/TestStep fields, scenario patterns, config helpers, import, sweepers. Used by validator agent.',
+  'provider-run-acc-tests':  'Guide for running acceptance tests: go test -run TestAcc, environment setup, real cloud API interaction. Used by validator agent.',
   'provider-design-template':'Canonical template for provider-design-{resource}.md. Covers schema, CRUD, state mapping, tests, and checklist.',
   'provider-constitution':  'Provider code standards: Go conventions, Plugin Framework patterns, testing requirements. Read by tf-provider-design directly.',
   'provider-design-md':     'Provider design artifact. Covers schema design, CRUD operations, state management, test scenarios, and implementation checklist. Handoff between /tf-provider-plan and /tf-provider-implement.',
