@@ -29,7 +29,7 @@ Convert `provider-design-{resource}.md` §5 (Test Scenarios) into Go acceptance 
    - Only import packages directly referenced by compiled code — no imports for commented-out blocks.
    - Suppress unused variables with `_ = varName` after `t.Skip`.
 5. **Format**: Run `gofmt -w` on the generated test file.
-6. **Compile**: Run `go test -c -o /dev/null ./internal/service/<service>`. Fix errors (max 2 rounds).
+6. **Compile**: Run `go test -c -o /dev/null ./internal/service/<service>`. Fix errors until compilation passes.
 7. **Report**: File created with line count, test function count per scenario group, config function count, compilation result.
 
 ## Key Boundaries

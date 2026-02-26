@@ -23,12 +23,12 @@ Checkpoint: `bash .foundations/scripts/bash/checkpoint-commit.sh --dir . --prefi
 4. Launch concurrent `tf-provider-test-writer` agents with `$DESIGN_FILE`. Verify `_test.go` exists. Checkpoint.
 5. Extract all checklist items from design §6 via Grep (`- [ ]` lines).
 6. For each item: launch `tf-provider-developer` agent → `go build` + `go test -c` → checkpoint.
-7. Final `go vet ./...`. Fix rounds if needed (max 2). Verify all §6 items marked `[x]`.
+7. Final `go vet ./...`. Fix until clean. Verify all §6 items marked `[x]`.
 
 ## Phase 4: Validate
 
 8. Launch concurrent `tf-provider-validator` agents with `$DESIGN_FILE` and service directory. If auto-fixes applied, run `go build` to confirm.
-9. If remaining issues, launch `tf-provider-developer` targeted at specific issues (max 2 fix rounds).
+9. If remaining issues, launch `tf-provider-developer` targeted at specific issues. Repeat until resolved.
 10. Run acceptance tests.
 11. Write validation report to `specs/{FEATURE}/reports/` using the `tf-report-template` skill provider template.
 12. Checkpoint commit, push branch, create PR linking to `$ISSUE_NUMBER`.
