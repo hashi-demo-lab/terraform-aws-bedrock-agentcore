@@ -18,80 +18,49 @@ Answer ONE research question per instance using API/SDK documentation, Plugin Fr
 
 ## Instructions
 
-1. **Parse**: Understand the research question and context from `$ARGUMENTS`
-2. **API/SDK Docs**: Search cloud service API documentation for endpoints, request/response schemas, pagination, error types, and rate limits
-3. **Plugin Framework Docs**: Look up Plugin Framework patterns — schema design, plan modifiers, validators, state management, and testing conventions
-4. **Existing Providers**: Study existing provider implementations for the same or similar cloud services — resource structure, error handling, and test patterns
-5. **Registry**: Check Terraform registry for existing providers managing the same service — compare approaches
-6. **Validate**: Verify findings are consistent across sources (API docs align with provider capabilities)
-7. **Synthesize**: Format structured findings per Output Format below and return as agent output
-
-## Research Priority
-
-1. **API/SDK documentation** — authoritative source for endpoints, models, error types
-2. **Plugin Framework documentation** — authoritative source for schema design, state management
-3. **Existing provider source code** — practical patterns for CRUD, testing, error handling
-4. **Terraform Registry** — existing providers for comparison and pattern reference
+1. **Parse**: Understand the research question and context from `$ARGUMENTS`.
+2. **API/SDK Docs**: Search for endpoints, request/response schemas, pagination, error types, and rate limits.
+3. **Plugin Framework Docs**: Look up schema design, plan modifiers, validators, state management, and testing conventions.
+4. **Existing Providers**: Study provider implementations for the same or similar cloud services — resource structure, error handling, test patterns.
+5. **Registry**: Check Terraform registry for existing providers managing the same service.
+6. **Validate**: Verify findings are consistent across sources.
+7. **Synthesize**: Return structured findings per the output format below.
 
 ## Output
 
-Return concise research findings to the orchestrator. Findings are returned in-memory — do NOT write to disk. The orchestrator will pass them to the design agent via `$ARGUMENTS`.
+Return concise research findings as agent output — do NOT write to disk.
 
 ```markdown
 ## Research: {Question}
 
 ### Decision
-
-[What approach was chosen and why — one sentence]
+[Chosen approach and why — one sentence]
 
 ### API/SDK Findings
-
-- **Service endpoint(s)**: {API base path and key operations}
-- **Key operations**: {Create, Read, Update, Delete — method names and input/output types}
-- **Pagination**: {How list operations paginate, if applicable}
-- **Error types**: {Specific error types returned by the API — NotFound, Conflict, Throttle, etc.}
-- **Rate limits**: {Known rate limits or throttling behavior}
-- **Async operations**: {Whether operations are async and how to poll for completion}
+- Service endpoint(s), key operations, error types, rate limits, async behavior
 
 ### Schema Design
-
-- **Required attributes**: {Attributes that must be set by the user}
-- **Optional attributes**: {Attributes with defaults or optional configuration}
-- **Computed attributes**: {Attributes set by the API — IDs, ARNs, timestamps}
-- **ForceNew attributes**: {Attributes that require resource replacement when changed}
-- **Sensitive attributes**: {Attributes containing secrets or credentials}
-- **Nested blocks**: {Complex nested configurations}
+- Required/Optional/Computed/ForceNew/Sensitive attributes, nested blocks
 
 ### Test Considerations
-
-- **Environment variables**: {Required env vars for acceptance tests — API credentials, region, etc.}
-- **Import format**: {How the resource is imported — ID format, composite keys}
-- **Sweep approach**: {How to identify and clean up test resources}
-- **Prerequisites**: {Infrastructure that must exist before tests can run}
+- Environment variables, import format, sweep approach, prerequisites
 
 ### Rationale
-
 [Evidence-based justification with source references]
 
 ### Alternatives Considered
-
-| Alternative | Why Not  |
-| ----------- | -------- |
+| Alternative | Why Not |
+|-------------|---------|
 | [option]    | [reason] |
 
 ### Sources
-
 - [URL or reference]
 ```
 
 ## Constraints
 
-- **ONE question per instance**: Each research agent answers exactly one question
-- **API/SDK docs first**: Start with API documentation to understand service behavior and error types
-- **Plugin Framework second**: Use Plugin Framework docs to identify schema patterns and conventions
-- **Existing providers for patterns**: Study provider implementations for CRUD, testing, and error handling patterns
-- **Return output**: Format findings as concise structured text and return as agent output — do NOT write to disk
-- **MUST run in foreground**
+- ONE question per instance
+- MUST run in foreground
 
 ## Context
 
