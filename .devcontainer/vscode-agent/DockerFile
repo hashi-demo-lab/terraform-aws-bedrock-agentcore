@@ -1,11 +1,8 @@
 FROM srlynch1/terraform-ai-tools:latest
 
-RUN npm install -g @github/copilot@prerelease && \
+RUN npm install -g @github/copilot@v0.0.400-0 && \
     npm cache clean --force
 
-# Patch overly-strict undici dispatch assertions that cause AssertionError on Node.js v25+
-COPY scripts/patch-copilot.sh /tmp/patch-copilot.sh
-RUN bash /tmp/patch-copilot.sh && rm /tmp/patch-copilot.sh
 
 # Add yolo aliases for unattended mode
 RUN echo 'alias copiloty="copilot --yolo --disable-builtin-mcps"' >> /home/node/.zshrc && \
