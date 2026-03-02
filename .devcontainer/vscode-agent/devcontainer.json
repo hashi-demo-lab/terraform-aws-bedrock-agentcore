@@ -67,7 +67,8 @@
     "AWS_SECRET_ACCESS_KEY": "${localEnv:AWS_SECRET_ACCESS_KEY}",
     "AWS_SESSION_TOKEN": "${localEnv:AWS_SESSION_TOKEN}",
     "AWS_SESSION_EXPIRATION": "${localEnv:AWS_SESSION_EXPIRATION}",
-    "VAULT_RADAR_LICENSE": "${localEnv:VAULT_RADAR_LICENSE:}"
+    "VAULT_RADAR_LICENSE": "${localEnv:VAULT_RADAR_LICENSE:}",
+    "COPILOT_AUTO_UPDATE": "false"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace"
