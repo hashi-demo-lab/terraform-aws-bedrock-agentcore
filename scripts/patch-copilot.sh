@@ -2,6 +2,12 @@
 # patch-copilot.sh — Neuter undici assert() calls in the GitHub Copilot CLI
 # bundle that cause AssertionError crashes during long-lived sessions.
 #
+# Downstream: github/copilot-cli#1754
+#   AssertionError [ERR_ASSERTION] during retrospective generation followed
+#   by HTTP/2 GOAWAY connection error (503). Particularly affects sub-agent
+#   dispatch via the task tool — crashes after 1-2 tool calls regardless of
+#   session duration. Main agent performing identical operations works fine.
+#
 # ROOT CAUSE
 # ----------
 # The bundled undici HTTP client has race conditions in its HTTP/2 connection
@@ -138,7 +144,7 @@ patch_bundle() {
   fi
 
   local tmp
-  tmp="$(mktemp --suffix=.js)"
+  tmp="$(mktemp /tmp/patch-copilot-XXXXXX)"
   cp "$file" "$tmp"
 
   # Apply patch: replace undici assert imports with no-ops
@@ -172,67 +178,102 @@ UNDICI_KEYWORDS = [
     'addSignal', 'removeSignal',
 ]
 
-# Match every  REQFN("assert")  /  REQFN("node:assert")  occurrence.
-# These appear as  var NAME=REQFN(...)  or  ,NAME=REQFN(...)  in var chains.
-pattern = re.compile(
-    re.escape(req_fn) + r'\("(?:node:)?assert"\)'
-)
-
 # No-op replacement: a callable Proxy whose property access returns itself,
 # so both  assert(expr)  and  assert.strictEqual(a,b)  become no-ops.
 NOOP = '(()=>{let a=new Proxy(()=>{},{get:()=>a});return a})()'
 
-total = 0
-for m in reversed(list(pattern.finditer(content))):
-    pos = m.start()
-    ctx = content[pos:pos+2000]
+# ── Collect all replacements as (start, end, text) tuples ────────────────
+# All patterns scan the ORIGINAL content. Replacements are applied in a
+# single O(n) pass at the end, eliminating O(n*m) intermediate string copies.
+replacements = []
+counts = {'assert': 0, 'h2_data': 0, 'h2_trailers': 0, 'resume': 0, 'callback': 0}
+
+# ── Assert neutering ────────────────────────────────────────────────────
+# Match every  REQFN("assert")  /  REQFN("node:assert")  occurrence.
+assert_pat = re.compile(re.escape(req_fn) + r'\("(?:node:)?assert"\)')
+for m in assert_pat.finditer(content):
+    ctx = content[m.start():m.start()+2000]
     if any(kw in ctx for kw in UNDICI_KEYWORDS):
-        content = content[:m.start()] + NOOP + content[m.end():]
-        total += 1
+        replacements.append((m.start(), m.end(), NOOP))
+        counts['assert'] += 1
 
 # ── Upstream fix: nodejs/undici#4845 ─────────────────────────────────────
 # Fix 1: Guard H2 data handler — skip late DATA frames after completion.
 #   Before:  STREAM.on("data",CHUNK=>{REQUEST.onData(CHUNK)===!1&&STREAM.pause()})
 #   After:   STREAM.on("data",CHUNK=>{if(REQUEST.aborted||REQUEST.completed)return;REQUEST.onData(CHUNK)===!1&&STREAM.pause()})
-h2_data = re.compile(
-    r'(?P<stream>[a-zA-Z]+)\.on\("data",(?P<chunk>[a-zA-Z]+)=>\{'
-    r'(?P<req>[a-zA-Z]+)\.onData\((?P=chunk)\)===!1&&(?P=stream)\.pause\(\)'
-    r'\}'
-)
-h2_data_fixes = 0
-for m in reversed(list(h2_data.finditer(content))):
-    s, c, r = m.group('stream'), m.group('chunk'), m.group('req')
-    replacement = (
-        f'{s}.on("data",{c}=>{{if({r}.aborted||{r}.completed)return;'
-        f'{r}.onData({c})===!1&&{s}.pause()}})'
+#
+# Uses literal-anchored search (.on("data",) then targeted regex at each
+# candidate — avoids backreference regex scan over the full 15+ MB bundle.
+H2_DATA_ANCHOR = '.on("data",'
+pos = 0
+while True:
+    idx = content.find(H2_DATA_ANCHOR, pos)
+    if idx == -1:
+        break
+    # Walk back to find STREAM identifier
+    si = idx - 1
+    while si >= 0 and content[si].isalpha():
+        si -= 1
+    si += 1
+    stream = content[si:idx]
+    if not stream:
+        pos = idx + 1
+        continue
+    # Try to match the full pattern in a small window
+    window = content[si:idx+200]
+    lm = re.match(
+        re.escape(stream) + r'\.on\("data",([a-zA-Z]+)=>\{([a-zA-Z]+)\.onData\(\1\)===!1&&'
+        + re.escape(stream) + r'\.pause\(\)\}\)',
+        window
     )
-    # Only patch H2 client contexts (near HTTP/2-specific patterns)
-    ctx = content[max(0,m.start()-800):m.start()+800]
-    if 'onComplete' in ctx and ('trailers' in ctx or 'openStreams' in ctx
-            or '.request(' in ctx or 'onHeaders' in ctx):
-        content = content[:m.start()] + replacement + content[m.end()+1:]
-        h2_data_fixes += 1
-total += h2_data_fixes
+    if lm:
+        chunk, req = lm.group(1), lm.group(2)
+        match_end = si + lm.end()
+        # Only patch H2 client contexts (near HTTP/2-specific patterns)
+        ctx = content[max(0,si-800):si+800]
+        if 'onComplete' in ctx and ('trailers' in ctx or 'openStreams' in ctx
+                or '.request(' in ctx or 'onHeaders' in ctx):
+            repl = (
+                f'{stream}.on("data",{chunk}=>{{if({req}.aborted||{req}.completed)return;'
+                f'{req}.onData({chunk})===!1&&{stream}.pause()}})'
+            )
+            replacements.append((si, match_end, repl))
+            counts['h2_data'] += 1
+    pos = idx + 1
 
 # Fix 2: Remove data listeners before onComplete in trailers handler.
 #   Before:  STREAM.once("trailers",VAR=>{REQUEST.aborted||REQUEST.completed||REQUEST.onComplete(VAR)})
 #   After:   STREAM.once("trailers",VAR=>{REQUEST.aborted||REQUEST.completed||(STREAM.removeAllListeners("data"),REQUEST.onComplete(VAR))})
-h2_trailers = re.compile(
-    r'(?P<stream>[a-zA-Z]+)\.once\("trailers",(?P<var>[a-zA-Z]+)=>\{'
-    r'(?P<req>[a-zA-Z]+)\.aborted\|\|(?P=req)\.completed\|\|'
-    r'(?P=req)\.onComplete\((?P=var)\)'
-    r'\}'
-)
-h2_trailer_fixes = 0
-for m in reversed(list(h2_trailers.finditer(content))):
-    s, v, r = m.group('stream'), m.group('var'), m.group('req')
-    replacement = (
-        f'{s}.once("trailers",{v}=>{{{r}.aborted||{r}.completed||'
-        f'({s}.removeAllListeners("data"),{r}.onComplete({v}))}})'
+H2_TRAILER_ANCHOR = '.once("trailers",'
+pos = 0
+while True:
+    idx = content.find(H2_TRAILER_ANCHOR, pos)
+    if idx == -1:
+        break
+    si = idx - 1
+    while si >= 0 and content[si].isalpha():
+        si -= 1
+    si += 1
+    stream = content[si:idx]
+    if not stream:
+        pos = idx + 1
+        continue
+    window = content[si:idx+300]
+    lm = re.match(
+        re.escape(stream) + r'\.once\("trailers",([a-zA-Z]+)=>\{([a-zA-Z]+)\.aborted\|\|\2\.completed\|\|'
+        r'\2\.onComplete\(\1\)\}\)',
+        window
     )
-    content = content[:m.start()] + replacement + content[m.end()+1:]
-    h2_trailer_fixes += 1
-total += h2_trailer_fixes
+    if lm:
+        var, req = lm.group(1), lm.group(2)
+        match_end = si + lm.end()
+        repl = (
+            f'{stream}.once("trailers",{var}=>{{{req}.aborted||{req}.completed||'
+            f'({stream}.removeAllListeners("data"),{req}.onComplete({var}))}})'
+        )
+        replacements.append((si, match_end, repl))
+        counts['h2_trailers'] += 1
+    pos = idx + 1
 
 # ── Upstream fix: nodejs/undici#4846 ─────────────────────────────────────
 # Fix 3: Null guard in _resume after fetching request from queue.
@@ -244,16 +285,13 @@ resume_null = re.compile(
     r'let (?P<var>[a-zA-Z])=t\[(?P<queue>\w+)\]\[t\[(?P<pending>\w+)\]\];'
     r'if\(t\[(?P<url>\w+)\]\.protocol==="https:"&&t\[(?P<sn>\w+)\]!==(?P=var)\.servername\)'
 )
-resume_fixes = 0
-for m in reversed(list(resume_null.finditer(content))):
-    v = m.group('var')
+for m in resume_null.finditer(content):
     original = m.group(0)
-    # Insert null guard: if(!VAR)return; right after the let assignment
+    v = m.group('var')
     let_end = original.index(';') + 1
-    replacement = original[:let_end] + f'if(!{v})return;' + original[let_end:]
-    content = content[:m.start()] + replacement + content[m.end():]
-    resume_fixes += 1
-total += resume_fixes
+    repl = original[:let_end] + f'if(!{v})return;' + original[let_end:]
+    replacements.append((m.start(), m.end(), repl))
+    counts['resume'] += 1
 
 # ── Upstream fix: nodejs/undici#4059 ─────────────────────────────────────
 # Fix 4: Guard onConnect when callback is null (onError raced ahead).
@@ -261,26 +299,81 @@ total += resume_fixes
 #   After:   if(!this.callback){VAR(new Error("request aborted"));return}this.abort=VAR,this.context=...}
 # This prevents TypeError when onError fires before onConnect under high
 # error rates, nullifying this.callback before the assert check.
-callback_assert = re.compile(
-    r'(?P<assert>\w+)\(this\.callback\),this\.abort=(?P<var>[a-zA-Z]),this\.context=(?P<ctx>[a-zA-Z]+)\}'
-)
-callback_fixes = 0
-for m in reversed(list(callback_assert.finditer(content))):
-    a, v, c = m.group('assert'), m.group('var'), m.group('ctx')
-    replacement = (
-        f'if(!this.callback){{{v}(new Error("request aborted"));return}}'
-        f'this.abort={v},this.context={c}}}'
+#
+# Uses literal-anchored search to avoid expensive \w+ backreference scan.
+CB_ANCHOR = 'this.callback),this.abort='
+pos = 0
+while True:
+    idx = content.find(CB_ANCHOR, pos)
+    if idx == -1:
+        break
+    # Walk back past the opening paren to find the assert function name
+    paren = idx - 1  # should be '('
+    if paren < 0 or content[paren] != '(':
+        pos = idx + 1
+        continue
+    fi = paren - 1
+    while fi >= 0 and content[fi].isalpha():
+        fi -= 1
+    fi += 1
+    assert_fn = content[fi:paren]
+    if not assert_fn:
+        pos = idx + 1
+        continue
+    # Extract VAR (single char after this.abort=)
+    after = idx + len(CB_ANCHOR)
+    if after >= len(content) or not content[after].isalpha():
+        pos = idx + 1
+        continue
+    var = content[after]
+    # Find ,this.context=CTX}
+    ctx_marker = ',this.context='
+    ctx_idx = content.find(ctx_marker, after + 1)
+    if ctx_idx == -1 or ctx_idx > after + 20:
+        pos = idx + 1
+        continue
+    ci = ctx_idx + len(ctx_marker)
+    ce = ci
+    while ce < len(content) and content[ce].isalpha():
+        ce += 1
+    if ce >= len(content) or content[ce] != '}':
+        pos = idx + 1
+        continue
+    ctx_val = content[ci:ce]
+    match_end = ce + 1
+    repl = (
+        f'if(!this.callback){{{var}(new Error("request aborted"));return}}'
+        f'this.abort={var},this.context={ctx_val}}}'
     )
-    content = content[:m.start()] + replacement + content[m.end():]
-    callback_fixes += 1
-total += callback_fixes
+    replacements.append((fi, match_end, repl))
+    counts['callback'] += 1
+    pos = idx + 1
 
+# ── Single-pass string rebuild ───────────────────────────────────────────
+replacements.sort(key=lambda r: r[0])
+# Validate no overlaps
+for i in range(1, len(replacements)):
+    if replacements[i][0] < replacements[i-1][1]:
+        sys.stderr.write(
+            f'  ⚠️  Overlapping replacements at {replacements[i-1][0]}-{replacements[i-1][1]}'
+            f' and {replacements[i][0]}-{replacements[i][1]}\n'
+        )
+parts = []
+last = 0
+for start, end, repl in replacements:
+    parts.append(content[last:start])
+    parts.append(repl)
+    last = end
+parts.append(content[last:])
+content = ''.join(parts)
+
+total = sum(counts.values())
 with open(path, 'w') as f:
     f.write(content)
 print(f'{total}')
 sys.stderr.write(
-    f'  🔧  H2 data guards: {h2_data_fixes}, trailers fixes: {h2_trailer_fixes}, '
-    f'resume null guards: {resume_fixes}, onConnect guards: {callback_fixes}\n'
+    f'  🔧  H2 data guards: {counts["h2_data"]}, trailers fixes: {counts["h2_trailers"]}, '
+    f'resume null guards: {counts["resume"]}, onConnect guards: {counts["callback"]}\n'
 )
 PYEOF
 )
