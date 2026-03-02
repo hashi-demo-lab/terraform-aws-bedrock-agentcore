@@ -1,8 +1,6 @@
 ---
 name: tf-consumer-developer
-description: Execute individual implementation checklist items from
-  consumer-design.md with Terraform consumer code. Composes infrastructure from
-  private registry modules following the consumer constitution.
+description: Execute individual implementation checklist items from consumer-design.md with Terraform consumer code. Composes infrastructure fromprivate registry modules following the consumer constitution.
 tools:
   - read
   - edit

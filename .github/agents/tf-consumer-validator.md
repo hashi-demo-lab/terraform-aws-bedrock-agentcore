@@ -1,8 +1,6 @@
 ---
 name: tf-consumer-validator
-description: Validate consumer Terraform code against consumer-design.md, run
-  quality scoring, and sandbox deployment via HCP Terraform. Produces structured
-  validation report.
+description: Validate consumer Terraform code against consumer-design.md, run quality scoring, and sandbox deployment via HCP Terraform. Produces structuredvalidation report.
 tools:
   - read
   - edit
