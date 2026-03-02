@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
-# patch-copilot.sh — Remove overly-strict undici dispatch assertions from the
-# GitHub Copilot CLI bundle that cause AssertionError on Node.js v25+.
+# patch-copilot.sh — Neuter undici assert() calls in the GitHub Copilot CLI
+# bundle that cause AssertionError crashes on Node.js v25+.
+#
+# The bundled undici imports Node's assert module and sprinkles invariant
+# checks throughout the connection pool / HTTP client code.  On Node v25 the
+# built-in undici changed internal state semantics, causing these assertions
+# to fire on long-lived sessions (see github/copilot-cli#1754).
+#
+# Strategy: find every `var NAME=require("assert")` (or `require("node:assert")`)
+# that lives inside an undici module and replace it with a no-op function.
+# This is safe because these are debug invariants, not control flow, and
+# Node's own undici ships without them.
 #
 # Usage:
 #   ./scripts/patch-copilot.sh            # auto-detect install path
@@ -10,7 +20,6 @@ set -euo pipefail
 
 # ── Locate the copilot package ────────────────────────────────────────────────
 find_package_dir() {
-  # 1. npm global root (most reliable — avoids picking up VS Code shims)
   local npm_root
   npm_root="$(npm root -g 2>/dev/null || true)"
   if [[ -f "$npm_root/@github/copilot/index.js" ]]; then
@@ -18,8 +27,6 @@ find_package_dir() {
     return
   fi
 
-  # 2. Walk every 'copilot' on PATH looking for one whose resolved target
-  #    sits next to an index.js (i.e. the npm-loader symlink pattern).
   while IFS= read -r bin; do
     local resolved dir
     resolved="$(readlink -f "$bin" 2>/dev/null || true)"
@@ -50,45 +57,19 @@ fi
 echo "📦  Copilot package: $COPILOT_DIR"
 
 # ── Patch a single JS bundle file ────────────────────────────────────────────
-# Usage: patch_bundle <path>
-# Returns 0 if patched or already clean, 1 on failure.
 patch_bundle() {
   local file="$1"
   local label
   label="$(basename "$(dirname "$file")")/$(basename "$file")"
 
   if [[ ! -f "$file" ]]; then
-    return 0   # optional file, skip silently
+    return 0
   fi
 
-  # Idempotency marker
-  if grep -q '__PATCH_APPLIED__' "$file" 2>/dev/null; then
+  if grep -q '__UNDICI_ASSERT_PATCH__' "$file" 2>/dev/null; then
     echo "  ✅  $label — already patched"
     return 0
   fi
-
-  # Count matching patterns (all known assertion forms in undici client/pool)
-  local count
-  count=$(python3 -c "
-import re
-with open('$file', 'r') as f:
-    content = f.read()
-patterns = [
-    re.compile(r'for\(;;\)\{if\(t\.destroyed\)\{\w+\(t\[\w+\]===0\);return\}'),
-    re.compile(r't\.destroyed\)\{\w+\(t\[\w+\]===0\);let '),
-    re.compile(r'\}\w+\(t\[\w+\]===0\)\}\}function'),
-    re.compile(r'for\(\w+\(t\[\w+\]===0\);'),
-    re.compile(r',\w+\(t\[\w+\]===0\),t\.emit\(\"disconnect\"'),
-]
-print(sum(len(p.findall(content)) for p in patterns))
-")
-
-  if [[ "$count" -eq 0 ]]; then
-    echo "  ⚠️   $label — no assertion patterns found (already clean or different build)"
-    return 0
-  fi
-
-  echo "  🔍  $label — found $count assertion(s)"
 
   # Backup
   local backup="${file}.bak"
@@ -97,63 +78,74 @@ print(sum(len(p.findall(content)) for p in patterns))
     echo "  💾  Backup: $backup"
   fi
 
-  # Apply patch via Python (robust to any minified variable names)
-  local tmp patched
+  local tmp
   tmp="$(mktemp --suffix=.js)"
   cp "$file" "$tmp"
 
+  # Apply patch: replace undici assert imports with no-ops
+  local patched
   patched=$(python3 - "$tmp" <<'PYEOF'
 import re, sys
 path = sys.argv[1]
 with open(path, 'r') as f:
     content = f.read()
-patches = [
-    # for(;;){if(t.destroyed){FUNC(t[x]===0);return}
-    (re.compile(r'(for\(;;\)\{if\(t\.destroyed\)\{)\w+\(t\[\w+\]===0\);(return\})'), r'\1\2'),
-    # if(...,t.destroyed){FUNC(t[x]===0);let   — destroy path before splice
-    (re.compile(r'(t\.destroyed\)\{)\w+\(t\[\w+\]===0\);(let )'), r'\1\2'),
-    # }FUNC(t[x]===0)}}function  — end of error-flush loop
-    (re.compile(r'(\})\w+\(t\[\w+\]===0\)(\}\}function)'), r'\1\2'),
-    # for(FUNC(t[x]===0);  — TLS cert-altname error loop initialiser
-    (re.compile(r'for\(\w+\(t\[\w+\]===0\);'), r'for(;'),
-    # ,FUNC(t[x]===0),t.emit("disconnect"  — disconnect handler
-    (re.compile(r',\w+\(t\[\w+\]===0\)(,t\.emit\("disconnect")'), r'\1'),
+
+# Detect which require alias this bundle uses (ve or z)
+# by checking which one appears with "node:assert"
+req_fn = None
+for candidate in ['ve', 'z']:
+    if f'{candidate}("node:assert")' in content or f'{candidate}("assert")' in content:
+        req_fn = candidate
+        break
+if req_fn is None:
+    print(0)
+    sys.exit(0)
+
+# Undici keyword fingerprints — if any appear within 2000 chars of the
+# assert import, we know it belongs to undici (not some other module).
+UNDICI_KEYWORDS = [
+    'kRunning', 'kPending', 'kSize', 'kBusy', 'kConnected', 'kFree',
+    'kUrl', 'kClose', 'kDestroy', 'kDispatch', 'kNeedDrain',
+    'kKeepAliveTimeout', 'kSocket', 'kClient', 'kHeadersList',
+    'kDestroyed', 'kBodyUsed',
 ]
+
+# Match:  var NAME=REQFN("assert")  or  var NAME=REQFN("node:assert")
+pattern = re.compile(
+    r'var (\w+)=' + re.escape(req_fn) + r'\("(?:node:)?assert"\)'
+)
+
 total = 0
-for pattern, repl in patches:
-    content, n = pattern.subn(repl, content)
-    total += n
+# Process from end to start so offsets stay valid
+for m in reversed(list(pattern.finditer(content))):
+    name = m.group(1)
+    pos = m.start()
+    ctx = content[pos:pos+2000]
+    if any(kw in ctx for kw in UNDICI_KEYWORDS):
+        # Replace:  var NAME=require("assert")
+        # With:     var NAME=()=>{}             (no-op function, same var binding)
+        replacement = f'var {name}=()=>{{}}'
+        content = content[:m.start()] + replacement + content[m.end():]
+        total += 1
+
 with open(path, 'w') as f:
     f.write(content)
 print(total)
 PYEOF
 )
 
-  echo "" >> "$tmp"
-  echo "// __PATCH_APPLIED__" >> "$tmp"
-
-  # Verify
-  local remaining
-  remaining=$(python3 -c "
-import re
-with open('$tmp', 'r') as f:
-    content = f.read()
-patterns = [
-    re.compile(r'for\(;;\)\{if\(t\.destroyed\)\{\w+\(t\[\w+\]===0\);return\}'),
-    re.compile(r't\.destroyed\)\{\w+\(t\[\w+\]===0\);let '),
-    re.compile(r'\}\w+\(t\[\w+\]===0\)\}\}function'),
-    re.compile(r'for\(\w+\(t\[\w+\]===0\);'),
-    re.compile(r',\w+\(t\[\w+\]===0\),t\.emit\(\"disconnect\"'),
-]
-print(sum(len(p.findall(content)) for p in patterns))
-")
-
-  if [[ "$remaining" -gt 0 ]]; then
-    echo "  ❌  $label — $remaining assertion(s) still present after patch!" >&2
+  if [[ "$patched" -eq 0 ]]; then
+    echo "  ⚠️   $label — no undici assert imports found (already clean or different build)"
     rm -f "$tmp"
-    return 1
+    return 0
   fi
 
+  echo "  🔍  $label — neutered $patched undici assert import(s)"
+
+  echo "" >> "$tmp"
+  echo "// __UNDICI_ASSERT_PATCH__" >> "$tmp"
+
+  # Syntax check
   if ! node --check "$tmp" 2>/dev/null; then
     echo "  ❌  $label — syntax check failed, restoring backup" >&2
     cp "$backup" "$file"
@@ -162,7 +154,7 @@ print(sum(len(p.findall(content)) for p in patterns))
   fi
 
   mv "$tmp" "$file"
-  echo "  🔧  $label — removed $patched assertion(s) ✅"
+  echo "  ✅  $label — patched successfully"
 }
 
 # ── Patch all known bundle files ─────────────────────────────────────────────
