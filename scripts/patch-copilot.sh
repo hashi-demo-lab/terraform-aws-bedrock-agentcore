@@ -51,7 +51,7 @@
 # REMOVAL
 # -------
 # Remove this patch when the Copilot CLI ships an undici version containing
-# the fixes from nodejs/undici#4845 and related PRs, or when the bundled
+# the fixes from nodejs/undici#4845, #4846, #4059 — or when the bundled
 # undici drops assert() calls in its production build.
 #
 # Usage:
@@ -234,10 +234,54 @@ for m in reversed(list(h2_trailers.finditer(content))):
     h2_trailer_fixes += 1
 total += h2_trailer_fixes
 
+# ── Upstream fix: nodejs/undici#4846 ─────────────────────────────────────
+# Fix 3: Null guard in _resume after fetching request from queue.
+#   Before:  let VAR=t[QUEUE][t[PENDING]];if(t[URL].protocol==="https:"&&t[SN]!==VAR.servername)
+#   After:   let VAR=t[QUEUE][t[PENDING]];if(!VAR)return;if(t[URL].protocol==="https:"&&t[SN]!==VAR.servername)
+# This prevents TypeError: Cannot read properties of null (reading 'servername')
+# when H2 stream completion nulls a queue slot and kResume is called.
+resume_null = re.compile(
+    r'let (?P<var>[a-zA-Z])=t\[(?P<queue>\w+)\]\[t\[(?P<pending>\w+)\]\];'
+    r'if\(t\[(?P<url>\w+)\]\.protocol==="https:"&&t\[(?P<sn>\w+)\]!==(?P=var)\.servername\)'
+)
+resume_fixes = 0
+for m in reversed(list(resume_null.finditer(content))):
+    v = m.group('var')
+    original = m.group(0)
+    # Insert null guard: if(!VAR)return; right after the let assignment
+    let_end = original.index(';') + 1
+    replacement = original[:let_end] + f'if(!{v})return;' + original[let_end:]
+    content = content[:m.start()] + replacement + content[m.end():]
+    resume_fixes += 1
+total += resume_fixes
+
+# ── Upstream fix: nodejs/undici#4059 ─────────────────────────────────────
+# Fix 4: Guard onConnect when callback is null (onError raced ahead).
+#   Before:  ASSERT(this.callback),this.abort=VAR,this.context=...}
+#   After:   if(!this.callback){VAR(new Error("request aborted"));return}this.abort=VAR,this.context=...}
+# This prevents TypeError when onError fires before onConnect under high
+# error rates, nullifying this.callback before the assert check.
+callback_assert = re.compile(
+    r'(?P<assert>\w+)\(this\.callback\),this\.abort=(?P<var>[a-zA-Z]),this\.context=(?P<ctx>[a-zA-Z]+)\}'
+)
+callback_fixes = 0
+for m in reversed(list(callback_assert.finditer(content))):
+    a, v, c = m.group('assert'), m.group('var'), m.group('ctx')
+    replacement = (
+        f'if(!this.callback){{{v}(new Error("request aborted"));return}}'
+        f'this.abort={v},this.context={c}}}'
+    )
+    content = content[:m.start()] + replacement + content[m.end():]
+    callback_fixes += 1
+total += callback_fixes
+
 with open(path, 'w') as f:
     f.write(content)
 print(f'{total}')
-sys.stderr.write(f'  🔧  H2 data guards: {h2_data_fixes}, trailers fixes: {h2_trailer_fixes}\n')
+sys.stderr.write(
+    f'  🔧  H2 data guards: {h2_data_fixes}, trailers fixes: {h2_trailer_fixes}, '
+    f'resume null guards: {resume_fixes}, onConnect guards: {callback_fixes}\n'
+)
 PYEOF
 )
 
