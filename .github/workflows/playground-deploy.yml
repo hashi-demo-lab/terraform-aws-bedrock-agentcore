@@ -42,7 +42,7 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
-          DEPLOY_URL=$(npx --yes vercel@50.15.1 deploy --prod \
+          DEPLOY_URL=$(npx --yes vercel@50.15.1 --prod \
             --token=${{ secrets.VERCEL_TOKEN }} \
             --yes)
           echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
