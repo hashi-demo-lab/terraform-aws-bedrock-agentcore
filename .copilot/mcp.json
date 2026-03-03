@@ -3,16 +3,16 @@
     "terraform-mcp-server": {
       "type": "local",
       "command": "docker",
-      "tools": [
-        "*"
-      ],
+      "tools": ["*"],
       "args": [
         "run",
         "-i",
         "--rm",
         "-e",
         "TFE_TOKEN",
-        "hashicorp/terraform-mcp-server:0.4.0"
+        "ENABLE_TF_OPERATIONS=true",
+        "hashicorp/terraform-mcp-server:0.4.0",
+        "--toolsets=all"
       ],
       "env": {
         "TFE_TOKEN": "${TFE_TOKEN}"
@@ -22,9 +22,7 @@
       "type": "http",
       "url": "https://knowledge-mcp.global.api.aws",
       "headers": {},
-      "tools": [
-        "*"
-      ]
+      "tools": ["*"]
     }
   }
 }
