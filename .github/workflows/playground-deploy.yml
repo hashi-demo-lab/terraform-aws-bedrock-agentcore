@@ -25,7 +25,7 @@ jobs:
           FILE_SHA=$(sha1sum .foundations/design/sdd-workflow-playground.html | cut -d' ' -f1)
 
           # Create deployment via Vercel API
-          RESPONSE=$(curl -sf -X POST "https://api.vercel.com/v13/deployments" \
+          RESPONSE=$(curl -s --fail-with-body -X POST "https://api.vercel.com/v13/deployments?teamId=${{ secrets.VERCEL_ORG_ID }}" \
             -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d @- << PAYLOAD
@@ -61,10 +61,10 @@ jobs:
       - name: Reassign tfai.vercel.app alias
         run: |
           DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
-          curl -sf -X POST \
+          RESULT=$(curl -s --fail-with-body -X POST \
             -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{"alias": "tfai.vercel.app"}' \
-            "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases"
-          echo ""
+            "https://api.vercel.com/v2/deployments/$DEPLOY_ID/aliases?teamId=${{ secrets.VERCEL_ORG_ID }}")
+          echo "$RESULT" | jq .
           echo "Alias tfai.vercel.app reassigned to deployment $DEPLOY_ID"
