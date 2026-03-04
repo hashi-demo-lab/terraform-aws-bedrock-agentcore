@@ -1048,18 +1048,18 @@ body.has-selection .node.dimmed { opacity: 0.15; }
     </div>
     <div class="ed-card">
       <h3>Version-Controlled</h3>
-      <p>Skills live in <code>.claude/skills/</code> and are version-controlled alongside the codebase. Changes to skills are reviewed via standard PR workflows.</p>
+      <p>Skills live in <code>.claude/skills/</code> or <code>.agent/skills/</code> and are version-controlled alongside the codebase. Changes to skills are reviewed via standard PR workflows.</p>
       <div class="node-row">
         <div class="node node-skill" data-id="tf-module-plan" data-type="skill">tf-module-plan</div>
         <div class="node node-skill" data-id="terraform-style-guide" data-type="skill">terraform-style-guide</div>
         <div class="node node-skill" data-id="tf-research" data-type="skill">tf-research</div>
       </div>
-      <div class="card-detail">Stored as markdown files under .claude/skills/ -- portable, diffable, and composable.</div>
+      <div class="card-detail">Stored as markdown files under .claude/skills/ or .agent/skills/ -- portable, diffable, and composable.</div>
     </div>
     <div class="ed-card">
-      <h3>User-Invocable Slash Commands</h3>
+      <h3>User-Invocable Skills</h3>
       <p>Skills can be triggered directly by users via slash commands (e.g. <code>/tf-module-plan</code>). This gives humans the same entry points that agents use programmatically.</p>
-      <div class="card-detail">Slash commands bridge the gap between interactive use and autonomous execution.</div>
+      <div class="card-detail">User-invocable skills bridge the gap between interactive use and autonomous execution.</div>
     </div>
   </div>
 </div>
@@ -4544,7 +4544,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
   <div class="card-grid">
     <div class="ed-card">
       <h3>Writing a Skill</h3>
-      <ul><li>Create <code>.claude/skills/[name]/SKILL.md</code></li><li>YAML frontmatter: name, description, user-invocable flag</li><li>Markdown body with domain knowledge and examples</li><li>Reference via slash command: <code>/[skill-name]</code></li></ul>
+      <ul><li>Create <code>.claude/skills/[name]/SKILL.md</code> or <code>.agent/skills/[name]/SKILL.md</code></li><li>YAML frontmatter: name, description, user-invocable flag</li><li>Markdown body with domain knowledge and examples</li><li>Reference via slash command: <code>/[skill-name]</code></li></ul>
     </div>
     <div class="ed-card">
       <h3>Defining an Agent</h3>
