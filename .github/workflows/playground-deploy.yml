@@ -22,22 +22,10 @@ jobs:
 
       - name: Prepare deployment directory
         run: |
-          mkdir -p deploy
-          cp .foundations/design/sdd-workflow-playground.html deploy/index.html
-          cat > deploy/vercel.json << 'EOF'
-          {
-            "rewrites": [
-              { "source": "/", "destination": "/index.html" }
-            ]
-          }
-          EOF
-
-      - name: Create Vercel project link
-        run: |
           mkdir -p deploy/.vercel
-          cat > deploy/.vercel/project.json << EOF
-          {"orgId":"${{ secrets.VERCEL_ORG_ID }}","projectId":"${{ secrets.VERCEL_PROJECT_ID }}"}
-          EOF
+          cp .foundations/design/sdd-workflow-playground.html deploy/index.html
+          echo '{"rewrites":[{"source":"/","destination":"/index.html"}]}' > deploy/vercel.json
+          echo '{"orgId":"${{ secrets.VERCEL_ORG_ID }}","projectId":"${{ secrets.VERCEL_PROJECT_ID }}"}' > deploy/.vercel/project.json
 
       - name: Deploy to Vercel
         id: deploy
