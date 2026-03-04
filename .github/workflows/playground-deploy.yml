@@ -62,6 +62,27 @@ jobs:
           echo "Deployed to: https://$DEPLOY_URL"
           echo "Deployment ID: $DEPLOY_ID"
 
+      - name: Wait for deployment to be ready
+        run: |
+          DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
+          TEAM_ID="${{ steps.vars.outputs.team_id }}"
+          for i in $(seq 1 30); do
+            STATE=$(curl -s \
+              -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+              "https://api.vercel.com/v13/deployments/$DEPLOY_ID?teamId=$TEAM_ID" \
+              | jq -r '.readyState')
+            echo "Attempt $i: readyState=$STATE"
+            if [ "$STATE" = "READY" ]; then
+              exit 0
+            elif [ "$STATE" = "ERROR" ] || [ "$STATE" = "CANCELED" ]; then
+              echo "::error::Deployment entered $STATE state"
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "::error::Timed out waiting for deployment to be ready"
+          exit 1
+
       - name: Reassign tfai.vercel.app alias
         run: |
           DEPLOY_ID="${{ steps.deploy.outputs.deploy_id }}"
