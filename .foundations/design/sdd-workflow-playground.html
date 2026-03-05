@@ -5633,11 +5633,6 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
 <div class="subsection" id="workflows-module-impl" data-sub="Module Impl">
   <h3 class="subsection-title">/tf-module-implement</h3>
   <p class="subsection-desc">Phases 3 &amp; 4 — Build + Test + Validate. Agents write tests first (TDD), implement one checklist item at a time, and iterate until the quality score passes threshold.</p>
-  <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">Prerequisites: Setup <span class="accordion-arrow">&#x25BC;</span></div><div class="accordion-body">
-    <div class="node-row"><div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div><div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh</div><div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh</div></div>
-    <div class="artifacts-label">Reads</div>
-    <div class="node-row"><div class="node node-artifact" data-id="design-md" data-type="artifact">design.md<span class="pref">P1</span></div></div>
-  </div></div>
   <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">Phase 3: Build + Test (TDD) <span class="accordion-arrow">&#x25BC;</span></div><div class="accordion-body">
     <div class="node-row"><div class="node node-agent" data-id="tf-module-test-writer" data-type="agent">tf-module-test-writer</div><div class="node node-skill" data-id="terraform-test" data-type="skill">terraform-test</div></div>
     <div class="step-note" style="margin-top:6px">Reads design.md. Writes scaffolding and test files. 1:1 mapping from design assertions to HCL assert blocks.</div>
