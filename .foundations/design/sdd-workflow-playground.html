@@ -2851,6 +2851,354 @@ body.has-selection .node.dimmed { opacity: 0.15; }
   </div>
 </div>
 
+<div class="subsection" id="guardrails-private-registry" data-sub="Private Registry">
+  <h3 class="subsection-title">Private Module Registry</h3>
+  <p class="subsection-desc">Curated, versioned modules as the only source for consumer compositions</p>
+  <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
+    <svg viewBox="0 0 680 240" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="pmr-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.5" fill="#E0DCD4" opacity="0.5"/>
+        </pattern>
+        <filter id="pmr-shadow" x="-5%" y="-5%" width="115%" height="125%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="680" height="240" rx="10" fill="#FAFAF8"/>
+      <rect x="0" y="0" width="680" height="240" rx="10" fill="url(#pmr-dots)"/>
+      <rect x="0" y="0" width="680" height="240" rx="10" fill="none" stroke="#E0DCD4" stroke-width="1"/>
+
+      <text x="340" y="26" text-anchor="middle" font-family="Playfair Display,serif" font-size="14" fill="#C4283A" font-weight="700">Private Module Registry</text>
+      <text x="340" y="40" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#8A8A8A">HCP Terraform registry — consumers MUST compose from here, never raw resources</text>
+
+      <!-- Module author flow (left) -->
+      <g filter="url(#pmr-shadow)">
+        <rect x="24" y="56" width="140" height="56" rx="8" fill="white"/>
+      </g>
+      <rect x="24" y="56" width="4" height="56" rx="2" fill="#1A6B7A"/>
+      <text x="42" y="76" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2A2A2A" font-weight="700">Module Author</text>
+      <text x="42" y="92" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Builds, tests, publishes</text>
+      <text x="42" y="103" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">tf-module-implement</text>
+      <rect x="24" y="56" width="140" height="56" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Arrow -->
+      <line x1="170" y1="84" x2="205" y2="84" stroke="#1A6B7A" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="201,80 209,84 201,88" fill="#1A6B7A" opacity="0.4"/>
+      <circle r="2.5" fill="#1A6B7A" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M170,84 L205,84"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Registry (center) -->
+      <g filter="url(#pmr-shadow)">
+        <rect x="212" y="48" width="256" height="72" rx="8" fill="white"/>
+      </g>
+      <rect x="212" y="48" width="256" height="4" rx="2" fill="#C4283A"/>
+      <text x="340" y="72" text-anchor="middle" font-family="Playfair Display,serif" font-size="13" fill="#C4283A" font-weight="700">HCP Terraform Registry</text>
+      <text x="340" y="88" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">Versioned, tested, security-scanned modules</text>
+      <!-- Version badges -->
+      <rect x="256" y="96" width="44" height="14" rx="4" fill="#2D7A4F" opacity="0.08" stroke="#2D7A4F" stroke-width="0.5" stroke-opacity="0.3"/>
+      <text x="278" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#2D7A4F">~> 3.2</text>
+      <rect x="306" y="96" width="44" height="14" rx="4" fill="#6B3FA0" opacity="0.08" stroke="#6B3FA0" stroke-width="0.5" stroke-opacity="0.3"/>
+      <text x="328" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#6B3FA0">~> 1.4</text>
+      <rect x="356" y="96" width="44" height="14" rx="4" fill="#1A6B7A" opacity="0.08" stroke="#1A6B7A" stroke-width="0.5" stroke-opacity="0.3"/>
+      <text x="378" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">~> 2.0</text>
+      <rect x="212" y="48" width="256" height="72" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.90;1.0;0.90" dur="4s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+
+      <!-- Arrow -->
+      <line x1="474" y1="84" x2="509" y2="84" stroke="#6B3FA0" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="505,80 513,84 505,88" fill="#6B3FA0" opacity="0.4"/>
+      <circle r="2.5" fill="#6B3FA0" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="0.8s" path="M474,84 L509,84"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="0.8s"/>
+      </circle>
+
+      <!-- Consumer (right) -->
+      <g filter="url(#pmr-shadow)">
+        <rect x="516" y="56" width="140" height="56" rx="8" fill="white"/>
+      </g>
+      <rect x="516" y="56" width="4" height="56" rx="2" fill="#6B3FA0"/>
+      <text x="534" y="76" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2A2A2A" font-weight="700">Consumer</text>
+      <text x="534" y="92" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Composes modules only</text>
+      <text x="534" y="103" font-family="JetBrains Mono,monospace" font-size="7" fill="#6B3FA0">tf-consumer-implement</text>
+      <rect x="516" y="56" width="140" height="56" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.7s" repeatCount="indefinite" begin="0.3s"/>
+      </rect>
+
+      <!-- Guardrail rules below -->
+      <g filter="url(#pmr-shadow)">
+        <rect x="80" y="136" width="520" height="44" rx="8" fill="white"/>
+      </g>
+      <rect x="80" y="136" width="4" height="44" rx="2" fill="#C4283A"/>
+      <rect x="96" y="142" width="36" height="16" rx="4" fill="#C4283A">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="2.5s" repeatCount="indefinite"/>
+      </rect>
+      <text x="114" y="154" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="white" font-weight="700">MUST</text>
+      <text x="142" y="152" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2A2A2A" font-weight="600">No raw resource blocks in consumer code</text>
+      <text x="142" y="168" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Version pin with ~> X.Y  |  MUST NOT override encryption defaults  |  CHANGELOG review before bumps</text>
+
+      <!-- Sentinel badge -->
+      <g filter="url(#pmr-shadow)">
+        <rect x="80" y="192" width="240" height="32" rx="8" fill="white"/>
+      </g>
+      <rect x="80" y="192" width="4" height="32" rx="2" fill="#B87333"/>
+      <text x="98" y="212" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2A2A2A" font-weight="600">Sentinel policies enforce registry-only sourcing</text>
+
+      <rect x="332" y="192" width="268" height="32" rx="8" fill="white" filter="url(#pmr-shadow)"/>
+      <rect x="332" y="192" width="4" height="32" rx="2" fill="#2D7A4F"/>
+      <text x="350" y="212" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2A2A2A" font-weight="600">Run tasks validate before plan/apply</text>
+
+      <line x1="200" y1="234" x2="480" y2="234" stroke="#E0DCD4" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="card-grid">
+    <div class="ed-card">
+      <h3>Registry as Guardrail</h3>
+      <p>The private registry is not just a convenience — it's a security boundary. Consumers compose from pre-approved, security-scanned modules. Raw resource blocks are prohibited by constitution.</p>
+    </div>
+    <div class="ed-card">
+      <h3>Version Governance</h3>
+      <p>Semantic versioning with ~> X.Y pins. Breaking changes require major version bumps. CHANGELOG review before upgrades. Sentinel policies enforce registry-only module sources.</p>
+    </div>
+  </div>
+</div>
+
+<div class="subsection" id="guardrails-sentinel" data-sub="Sentinel Policy">
+  <h3 class="subsection-title">Sentinel Policy as Code</h3>
+  <p class="subsection-desc">Automated policy enforcement on every Terraform run</p>
+  <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
+    <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="sen-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.5" fill="#E0DCD4" opacity="0.5"/>
+        </pattern>
+        <filter id="sen-shadow" x="-5%" y="-5%" width="115%" height="125%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="680" height="260" rx="10" fill="#FAFAF8"/>
+      <rect x="0" y="0" width="680" height="260" rx="10" fill="url(#sen-dots)"/>
+      <rect x="0" y="0" width="680" height="260" rx="10" fill="none" stroke="#E0DCD4" stroke-width="1"/>
+
+      <text x="340" y="26" text-anchor="middle" font-family="Playfair Display,serif" font-size="14" fill="#C4283A" font-weight="700">Sentinel Policy Pipeline</text>
+      <text x="340" y="40" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#8A8A8A">HCP Terraform evaluates policies between plan and apply — agents cannot bypass</text>
+
+      <!-- Plan box -->
+      <g filter="url(#sen-shadow)">
+        <rect x="24" y="56" width="120" height="50" rx="8" fill="white"/>
+      </g>
+      <rect x="24" y="56" width="4" height="50" rx="2" fill="#1A6B7A"/>
+      <text x="42" y="78" font-family="JetBrains Mono,monospace" font-size="10" fill="#1A6B7A" font-weight="700">terraform plan</text>
+      <text x="42" y="94" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Generates plan output</text>
+      <rect x="24" y="56" width="120" height="50" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Arrow -->
+      <line x1="150" y1="81" x2="185" y2="81" stroke="#1A6B7A" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="181,77 189,81 181,85" fill="#C4283A" opacity="0.4"/>
+      <circle r="2.5" fill="#1A6B7A" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M150,81 L185,81"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Sentinel gate (center) -->
+      <g filter="url(#sen-shadow)">
+        <rect x="192" y="48" width="296" height="66" rx="8" fill="white" stroke="#C4283A" stroke-width="1.5" stroke-dasharray="4 3"/>
+      </g>
+      <rect x="192" y="48" width="296" height="4" rx="2" fill="#C4283A"/>
+      <text x="340" y="70" text-anchor="middle" font-family="Playfair Display,serif" font-size="12" fill="#C4283A" font-weight="700">Sentinel Policy Check</text>
+      <text x="340" y="86" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8.5" fill="#6B6B6B">Evaluates plan against organization policies — hard-mandatory, soft-mandatory, advisory</text>
+      <rect x="240" y="96" width="80" height="14" rx="4" fill="#C4283A" opacity="0.06" stroke="#C4283A" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="280" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#C4283A">POLICY GATE</text>
+      <rect x="330" y="96" width="50" height="14" rx="4" fill="#B87333" opacity="0.06" stroke="#B87333" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="355" y="106" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#B87333">OPA</text>
+      <rect x="192" y="48" width="296" height="66" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="2s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Arrow -->
+      <line x1="494" y1="81" x2="529" y2="81" stroke="#C4283A" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="525,77 533,81 525,85" fill="#2D7A4F" opacity="0.4"/>
+
+      <!-- Apply box -->
+      <g filter="url(#sen-shadow)">
+        <rect x="536" y="56" width="120" height="50" rx="8" fill="white"/>
+      </g>
+      <rect x="536" y="56" width="4" height="50" rx="2" fill="#2D7A4F"/>
+      <text x="554" y="78" font-family="JetBrains Mono,monospace" font-size="10" fill="#2D7A4F" font-weight="700">terraform apply</text>
+      <text x="554" y="94" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Only if policies pass</text>
+      <rect x="536" y="56" width="120" height="50" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.7s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+
+      <!-- Policy examples row -->
+      <g filter="url(#sen-shadow)">
+        <rect x="24" y="130" width="200" height="52" rx="8" fill="white"/>
+      </g>
+      <rect x="24" y="130" width="4" height="52" rx="2" fill="#C4283A"/>
+      <rect x="36" y="136" width="70" height="14" rx="4" fill="#C4283A">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="2.8s" repeatCount="indefinite"/>
+      </rect>
+      <text x="71" y="146" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="white" font-weight="700">HARD MANDATORY</text>
+      <text x="36" y="162" font-family="Source Sans 3,sans-serif" font-size="8" fill="#2A2A2A" font-weight="600">Encryption required on all storage</text>
+      <text x="36" y="174" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">No public S3 buckets, no unencrypted EBS</text>
+
+      <g filter="url(#sen-shadow)">
+        <rect x="240" y="130" width="200" height="52" rx="8" fill="white"/>
+      </g>
+      <rect x="240" y="130" width="4" height="52" rx="2" fill="#B87333"/>
+      <rect x="252" y="136" width="66" height="14" rx="4" fill="#B87333">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="3.2s" repeatCount="indefinite" begin="0.3s"/>
+      </rect>
+      <text x="285" y="146" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="white" font-weight="700">SOFT MANDATORY</text>
+      <text x="252" y="162" font-family="Source Sans 3,sans-serif" font-size="8" fill="#2A2A2A" font-weight="600">Registry-only module sources</text>
+      <text x="252" y="174" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Override requires manager approval</text>
+
+      <g filter="url(#sen-shadow)">
+        <rect x="456" y="130" width="200" height="52" rx="8" fill="white"/>
+      </g>
+      <rect x="456" y="130" width="4" height="52" rx="2" fill="#9A7B2D"/>
+      <rect x="468" y="136" width="50" height="14" rx="4" fill="#9A7B2D">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="3.5s" repeatCount="indefinite" begin="0.6s"/>
+      </rect>
+      <text x="493" y="146" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="6.5" fill="white" font-weight="700">ADVISORY</text>
+      <text x="468" y="162" font-family="Source Sans 3,sans-serif" font-size="8" fill="#2A2A2A" font-weight="600">Cost estimation thresholds</text>
+      <text x="468" y="174" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Warn on monthly cost > $500</text>
+
+      <!-- Key differentiator -->
+      <rect x="80" y="198" width="520" height="36" rx="8" fill="white" filter="url(#sen-shadow)"/>
+      <rect x="80" y="198" width="4" height="36" rx="2" fill="#C4283A"/>
+      <text x="100" y="218" font-family="Source Sans 3,sans-serif" font-size="9" fill="#2A2A2A"><tspan font-weight="700" fill="#C4283A">Key:</tspan> Agents cannot bypass hard-mandatory policies. Even with full automation, organizational rules are enforced at the platform layer — not by the agent.</text>
+
+      <line x1="200" y1="246" x2="480" y2="246" stroke="#E0DCD4" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="card-grid">
+    <div class="ed-card">
+      <h3>Policy Levels</h3>
+      <p>Hard-mandatory: blocks apply, no override. Soft-mandatory: blocks apply, manager can override. Advisory: logs warning, does not block. All evaluated between plan and apply.</p>
+    </div>
+    <div class="ed-card">
+      <h3>Agent-Proof Enforcement</h3>
+      <p>Sentinel runs at the HCP Terraform platform layer. Agents interact via API and cannot circumvent policy checks. This is defense-in-depth beyond constitution rules.</p>
+    </div>
+  </div>
+</div>
+
+<div class="subsection" id="guardrails-vault-radar" data-sub="Vault Radar">
+  <h3 class="subsection-title">Vault Radar &amp; Pre-Commit</h3>
+  <p class="subsection-desc">Secret detection before code leaves the developer's machine</p>
+  <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
+    <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="vr-dots" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="2" cy="2" r="0.5" fill="#E0DCD4" opacity="0.5"/>
+        </pattern>
+        <filter id="vr-shadow" x="-5%" y="-5%" width="115%" height="125%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.08"/>
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="680" height="220" rx="10" fill="#FAFAF8"/>
+      <rect x="0" y="0" width="680" height="220" rx="10" fill="url(#vr-dots)"/>
+      <rect x="0" y="0" width="680" height="220" rx="10" fill="none" stroke="#E0DCD4" stroke-width="1"/>
+
+      <text x="340" y="26" text-anchor="middle" font-family="Playfair Display,serif" font-size="14" fill="#C4283A" font-weight="700">Pre-Commit Secret Detection</text>
+      <text x="340" y="40" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#8A8A8A">vault-radar scans every commit — secrets never reach the repository</text>
+
+      <!-- Git commit (left) -->
+      <g filter="url(#vr-shadow)">
+        <rect x="24" y="58" width="120" height="56" rx="8" fill="white"/>
+      </g>
+      <rect x="24" y="58" width="4" height="56" rx="2" fill="#1A6B7A"/>
+      <text x="42" y="80" font-family="JetBrains Mono,monospace" font-size="10" fill="#1A6B7A" font-weight="700">git commit</text>
+      <text x="42" y="96" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Agent or developer</text>
+      <text x="42" y="107" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">commits code changes</text>
+      <rect x="24" y="58" width="120" height="56" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Arrow -->
+      <line x1="150" y1="86" x2="185" y2="86" stroke="#1A6B7A" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="181,82 189,86 181,90" fill="#C4283A" opacity="0.4"/>
+      <circle r="2.5" fill="#1A6B7A" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M150,86 L185,86"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Pre-commit hook (center) -->
+      <g filter="url(#vr-shadow)">
+        <rect x="192" y="50" width="296" height="72" rx="8" fill="white" stroke="#C4283A" stroke-width="1.5" stroke-dasharray="4 3"/>
+      </g>
+      <rect x="192" y="50" width="296" height="4" rx="2" fill="#C4283A"/>
+      <text x="340" y="74" text-anchor="middle" font-family="Playfair Display,serif" font-size="12" fill="#C4283A" font-weight="700">Pre-Commit Hooks</text>
+
+      <!-- Tool badges -->
+      <rect x="216" y="84" width="70" height="16" rx="4" fill="#C4283A" opacity="0.06" stroke="#C4283A" stroke-width="0.5" stroke-opacity="0.3"/>
+      <text x="251" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#C4283A" font-weight="600">vault-radar</text>
+
+      <rect x="294" y="84" width="56" height="16" rx="4" fill="#1A6B7A" opacity="0.06" stroke="#1A6B7A" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="322" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">tflint</text>
+
+      <rect x="358" y="84" width="44" height="16" rx="4" fill="#B87333" opacity="0.06" stroke="#B87333" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="380" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#B87333">trivy</text>
+
+      <rect x="410" y="84" width="60" height="16" rx="4" fill="#2D7A4F" opacity="0.06" stroke="#2D7A4F" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="440" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#2D7A4F">tf fmt</text>
+
+      <text x="340" y="112" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Scans staged files for secrets, misconfigs, style violations</text>
+      <rect x="192" y="50" width="296" height="72" rx="8" fill="none">
+        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="2s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- PASS arrow -->
+      <line x1="494" y1="86" x2="529" y2="86" stroke="#2D7A4F" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="525,82 533,86 525,90" fill="#2D7A4F" opacity="0.4"/>
+
+      <!-- Repository (right) -->
+      <g filter="url(#vr-shadow)">
+        <rect x="536" y="58" width="120" height="56" rx="8" fill="white"/>
+      </g>
+      <rect x="536" y="58" width="4" height="56" rx="2" fill="#2D7A4F"/>
+      <text x="554" y="80" font-family="JetBrains Mono,monospace" font-size="10" fill="#2D7A4F" font-weight="700">Repository</text>
+      <text x="554" y="96" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">Clean code pushed</text>
+      <text x="554" y="107" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">to remote origin</text>
+
+      <!-- FAIL branch -->
+      <line x1="340" y1="122" x2="340" y2="145" stroke="#C4283A" stroke-width="1.2" opacity="0.3"/>
+      <polygon points="335,142 340,149 345,142" fill="#C4283A" opacity="0.4"/>
+
+      <!-- Block card -->
+      <g filter="url(#vr-shadow)">
+        <rect x="200" y="152" width="280" height="44" rx="8" fill="white"/>
+      </g>
+      <rect x="200" y="152" width="4" height="44" rx="2" fill="#C4283A"/>
+      <rect x="212" y="158" width="36" height="16" rx="4" fill="#C4283A">
+        <animate attributeName="opacity" values="0.75;1.0;0.75" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <text x="230" y="170" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="white" font-weight="700">BLOCK</text>
+      <text x="258" y="168" font-family="Source Sans 3,sans-serif" font-size="9" fill="#C4283A" font-weight="600">Secret detected — commit rejected</text>
+      <text x="212" y="186" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">AWS keys, API tokens, passwords, private keys — vault-radar catches 100+ patterns</text>
+
+      <line x1="200" y1="210" x2="480" y2="210" stroke="#E0DCD4" stroke-width="0.5" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="card-grid">
+    <div class="ed-card">
+      <h3>Vault Radar</h3>
+      <p>HashiCorp Vault Radar scans staged files for 100+ secret patterns: AWS keys, API tokens, private keys, database credentials. Runs as a pre-commit hook — secrets never reach the repository.</p>
+    </div>
+    <div class="ed-card">
+      <h3>Pre-Commit Pipeline</h3>
+      <p>Four hooks run on every commit: vault-radar (secrets), tflint (lint), trivy (security), terraform fmt (style). The .pre-commit-config.yaml is protected by deny permissions — agents cannot disable it.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ===== CHAPTER: SDD ===== -->
 <div class="chapter-divider" id="sdd" data-section="sdd">
   <div class="chapter-number">Chapter Three</div>
