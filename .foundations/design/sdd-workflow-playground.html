@@ -5200,7 +5200,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
   <h3 class="subsection-title">Validation Reporting</h3>
   <p class="subsection-desc">Structured output from every Phase 4 validation run — machine-readable reports let agents diagnose failures and feed results back into the refinement loop.</p>
   <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
-    <svg viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <pattern id="rpt-dots" width="16" height="16" patternUnits="userSpaceOnUse">
           <circle cx="2" cy="2" r="0.5" fill="#E0DCD4" opacity="0.5"/>
@@ -5211,141 +5211,127 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       </defs>
 
       <!-- Background -->
-      <rect x="0" y="0" width="680" height="320" rx="10" fill="#FAFAF8"/>
-      <rect x="0" y="0" width="680" height="320" rx="10" fill="url(#rpt-dots)"/>
-      <rect x="0" y="0" width="680" height="320" rx="10" fill="none" stroke="#E0DCD4" stroke-width="1"/>
+      <rect x="0" y="0" width="680" height="330" rx="10" fill="#FAFAF8"/>
+      <rect x="0" y="0" width="680" height="330" rx="10" fill="url(#rpt-dots)"/>
+      <rect x="0" y="0" width="680" height="330" rx="10" fill="none" stroke="#E0DCD4" stroke-width="1"/>
 
       <!-- Title -->
       <text x="340" y="26" text-anchor="middle" font-family="Playfair Display,serif" font-size="14" fill="#1A6B7A" font-weight="700">Validation Report Pipeline</text>
       <text x="340" y="40" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#8A8A8A">Phase 4 runs 6 tools, scores quality, and outputs a structured report to specs/{FEATURE}/reports/</text>
 
-      <!-- Tool pipeline: 6 tool boxes in a row -->
+      <!-- Tool pipeline: 6 equal-width boxes -->
       <g filter="url(#rpt-shadow)">
-        <rect x="24" y="54" width="96" height="44" rx="6" fill="white"/>
+        <rect x="16" y="54" width="92" height="44" rx="6" fill="white"/>
       </g>
-      <rect x="24" y="54" width="4" height="44" rx="2" fill="#1A6B7A"/>
-      <text x="42" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#1A6B7A" font-weight="700">terraform fmt</text>
-      <text x="42" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Style compliance</text>
-      <rect x="24" y="54" width="96" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.5s" repeatCount="indefinite"/>
-      </rect>
+      <rect x="16" y="54" width="4" height="44" rx="2" fill="#1A6B7A"/>
+      <text x="34" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#1A6B7A" font-weight="700">terraform fmt</text>
+      <text x="34" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Style compliance</text>
 
-      <text x="128" y="78" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C0BDB8">&#x2192;</text>
+      <!-- Arrow 1→2 -->
+      <line x1="112" y1="76" x2="124" y2="76" stroke="#8A8A8A" stroke-width="1"/>
+      <polygon points="122,73 128,76 122,79" fill="#8A8A8A"/>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="136" y="54" width="96" height="44" rx="6" fill="white"/>
+        <rect x="130" y="54" width="92" height="44" rx="6" fill="white"/>
       </g>
-      <rect x="136" y="54" width="4" height="44" rx="2" fill="#2D7A4F"/>
-      <text x="154" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#2D7A4F" font-weight="700">tf validate</text>
-      <text x="154" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Config validity</text>
-      <rect x="136" y="54" width="96" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.7s" repeatCount="indefinite" begin="0.3s"/>
-      </rect>
+      <rect x="130" y="54" width="4" height="44" rx="2" fill="#2D7A4F"/>
+      <text x="148" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#2D7A4F" font-weight="700">tf validate</text>
+      <text x="148" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Config validity</text>
 
-      <text x="240" y="78" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C0BDB8">&#x2192;</text>
+      <!-- Arrow 2→3 -->
+      <line x1="226" y1="76" x2="238" y2="76" stroke="#8A8A8A" stroke-width="1"/>
+      <polygon points="236,73 242,76 236,79" fill="#8A8A8A"/>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="248" y="54" width="96" height="44" rx="6" fill="white"/>
+        <rect x="244" y="54" width="92" height="44" rx="6" fill="white"/>
       </g>
-      <rect x="248" y="54" width="4" height="44" rx="2" fill="#6B3FA0"/>
-      <text x="266" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#6B3FA0" font-weight="700">tf test</text>
-      <text x="266" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Assertions pass</text>
-      <rect x="248" y="54" width="96" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.6s" repeatCount="indefinite" begin="0.6s"/>
-      </rect>
+      <rect x="244" y="54" width="4" height="44" rx="2" fill="#6B3FA0"/>
+      <text x="262" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#6B3FA0" font-weight="700">tf test</text>
+      <text x="262" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Assertions pass</text>
 
-      <text x="352" y="78" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C0BDB8">&#x2192;</text>
+      <!-- Arrow 3→4 -->
+      <line x1="340" y1="76" x2="352" y2="76" stroke="#8A8A8A" stroke-width="1"/>
+      <polygon points="350,73 356,76 350,79" fill="#8A8A8A"/>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="360" y="54" width="96" height="44" rx="6" fill="white"/>
+        <rect x="358" y="54" width="92" height="44" rx="6" fill="white"/>
       </g>
-      <rect x="360" y="54" width="4" height="44" rx="2" fill="#B87333"/>
-      <text x="378" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#B87333" font-weight="700">tflint</text>
-      <text x="378" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Lint rules</text>
-      <rect x="360" y="54" width="96" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.8s" repeatCount="indefinite" begin="0.9s"/>
-      </rect>
+      <rect x="358" y="54" width="4" height="44" rx="2" fill="#B87333"/>
+      <text x="376" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#B87333" font-weight="700">tflint</text>
+      <text x="376" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Lint rules</text>
 
-      <text x="464" y="78" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C0BDB8">&#x2192;</text>
+      <!-- Arrow 4→5 -->
+      <line x1="454" y1="76" x2="466" y2="76" stroke="#8A8A8A" stroke-width="1"/>
+      <polygon points="464,73 470,76 464,79" fill="#8A8A8A"/>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="472" y="54" width="96" height="44" rx="6" fill="white"/>
+        <rect x="472" y="54" width="92" height="44" rx="6" fill="white"/>
       </g>
       <rect x="472" y="54" width="4" height="44" rx="2" fill="#C4283A"/>
-      <text x="490" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#C4283A" font-weight="700">trivy</text>
+      <text x="490" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#C4283A" font-weight="700">trivy</text>
       <text x="490" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Security scan</text>
-      <rect x="472" y="54" width="96" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.4s" repeatCount="indefinite" begin="1.2s"/>
-      </rect>
 
-      <text x="576" y="78" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C0BDB8">&#x2192;</text>
+      <!-- Arrow 5→6 -->
+      <line x1="568" y1="76" x2="580" y2="76" stroke="#8A8A8A" stroke-width="1"/>
+      <polygon points="578,73 584,76 578,79" fill="#8A8A8A"/>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="584" y="54" width="72" height="44" rx="6" fill="white"/>
+        <rect x="586" y="54" width="78" height="44" rx="6" fill="white"/>
       </g>
-      <rect x="584" y="54" width="4" height="44" rx="2" fill="#9A7B2D"/>
-      <text x="602" y="72" font-family="JetBrains Mono,monospace" font-size="9" fill="#9A7B2D" font-weight="700">tf-docs</text>
-      <text x="602" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Docs gen</text>
-      <rect x="584" y="54" width="72" height="44" rx="6" fill="none">
-        <animate attributeName="opacity" values="0.88;1.0;0.88" dur="4.0s" repeatCount="indefinite" begin="1.5s"/>
-      </rect>
+      <rect x="586" y="54" width="4" height="44" rx="2" fill="#9A7B2D"/>
+      <text x="604" y="72" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#9A7B2D" font-weight="700">tf-docs</text>
+      <text x="604" y="86" font-family="Source Sans 3,sans-serif" font-size="7.5" fill="#6B6B6B">Docs gen</text>
 
       <!-- Arrow down to report -->
-      <line x1="340" y1="98" x2="340" y2="118" stroke="#1A6B7A" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.3"/>
-      <polygon points="335,115 340,122 345,115" fill="#1A6B7A" opacity="0.4"/>
+      <line x1="340" y1="100" x2="340" y2="124" stroke="#1A6B7A" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <polygon points="335,121 340,128 345,121" fill="#1A6B7A" opacity="0.6"/>
 
       <!-- Report card -->
       <g filter="url(#rpt-shadow)">
-        <rect x="80" y="124" width="520" height="110" rx="8" fill="white"/>
+        <rect x="60" y="130" width="560" height="114" rx="8" fill="white"/>
       </g>
-      <rect x="80" y="124" width="520" height="4" rx="2" fill="#1A6B7A"/>
+      <rect x="60" y="130" width="560" height="4" rx="2" fill="#1A6B7A"/>
 
-      <text x="100" y="148" font-family="Playfair Display,serif" font-size="12" fill="#2A2A2A" font-weight="700">Validation Report</text>
-      <rect x="230" y="138" width="100" height="14" rx="4" fill="#1A6B7A" opacity="0.06" stroke="#1A6B7A" stroke-width="0.5" stroke-opacity="0.2"/>
-      <text x="280" y="148" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">tf-report-template</text>
+      <text x="80" y="154" font-family="Playfair Display,serif" font-size="12" fill="#2A2A2A" font-weight="700">Validation Report</text>
+      <rect x="210" y="144" width="100" height="14" rx="4" fill="#1A6B7A" opacity="0.06" stroke="#1A6B7A" stroke-width="0.5" stroke-opacity="0.2"/>
+      <text x="260" y="154" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">tf-report-template</text>
 
       <!-- Report sections -->
-      <text x="100" y="168" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
+      <text x="80" y="174" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
         <tspan font-weight="600" fill="#2A2A2A">Tool Results</tspan> — pass/fail for each tool with error details
       </text>
-      <text x="100" y="182" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
+      <text x="80" y="188" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
         <tspan font-weight="600" fill="#2A2A2A">Quality Score</tspan> — 6 dimensions scored 1-10, composite score vs 7.0 threshold
       </text>
-      <text x="100" y="196" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
+      <text x="80" y="202" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
         <tspan font-weight="600" fill="#2A2A2A">Security Checklist</tspan> — encryption, IAM, network, credentials, compliance status
       </text>
-      <text x="100" y="210" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
-        <tspan font-weight="600" fill="#2A2A2A">Findings</tspan> — severity-ranked issues: CRITICAL > HIGH > MEDIUM > LOW
+      <text x="80" y="216" font-family="Source Sans 3,sans-serif" font-size="9" fill="#6B6B6B">
+        <tspan font-weight="600" fill="#2A2A2A">Findings</tspan> — severity-ranked issues: CRITICAL &gt; HIGH &gt; MEDIUM &gt; LOW
       </text>
 
       <!-- Output path -->
-      <rect x="100" y="218" width="240" height="12" rx="3" fill="#F5F3EF"/>
-      <text x="108" y="227" font-family="JetBrains Mono,monospace" font-size="7" fill="#8A8A8A">specs/{FEATURE}/reports/validation.md</text>
+      <rect x="80" y="226" width="260" height="12" rx="3" fill="#F5F3EF"/>
+      <text x="88" y="235" font-family="JetBrains Mono,monospace" font-size="7" fill="#8A8A8A">specs/{FEATURE}/reports/validation.md</text>
 
-      <!-- Feedback arrows -->
-      <line x1="340" y1="234" x2="340" y2="254" stroke="#1A6B7A" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.3"/>
-      <polygon points="335,251 340,258 345,251" fill="#1A6B7A" opacity="0.4"/>
+      <!-- Arrow down to decision -->
+      <line x1="340" y1="246" x2="340" y2="268" stroke="#1A6B7A" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <polygon points="335,265 340,272 345,265" fill="#1A6B7A" opacity="0.6"/>
 
       <!-- Decision row -->
       <g filter="url(#rpt-shadow)">
-        <rect x="160" y="260" width="160" height="36" rx="8" fill="white"/>
+        <rect x="140" y="274" width="180" height="36" rx="8" fill="white"/>
       </g>
-      <rect x="160" y="260" width="4" height="36" rx="2" fill="#C4283A"/>
-      <text x="178" y="282" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C4283A" font-weight="700">Score &lt; 7.0</text>
-      <text x="280" y="282" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">&#x2192; Refinement round</text>
-      <rect x="160" y="260" width="160" height="36" rx="8" fill="none">
-        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="2.5s" repeatCount="indefinite"/>
-      </rect>
+      <rect x="140" y="274" width="4" height="36" rx="2" fill="#C4283A"/>
+      <text x="158" y="296" font-family="Source Sans 3,sans-serif" font-size="10" fill="#C4283A" font-weight="700">Score &lt; 7.0</text>
+      <text x="258" y="296" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">&#x2192; Refinement round</text>
 
       <g filter="url(#rpt-shadow)">
-        <rect x="360" y="260" width="160" height="36" rx="8" fill="white"/>
+        <rect x="360" y="274" width="180" height="36" rx="8" fill="white"/>
       </g>
-      <rect x="360" y="260" width="4" height="36" rx="2" fill="#2D7A4F"/>
-      <text x="378" y="282" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2D7A4F" font-weight="700">Score &#x2265; 7.0</text>
-      <text x="478" y="282" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">&#x2192; Attach to PR</text>
-      <rect x="360" y="260" width="160" height="36" rx="8" fill="none">
-        <animate attributeName="opacity" values="0.85;1.0;0.85" dur="3.0s" repeatCount="indefinite" begin="0.5s"/>
-      </rect>
+      <rect x="360" y="274" width="4" height="36" rx="2" fill="#2D7A4F"/>
+      <text x="378" y="296" font-family="Source Sans 3,sans-serif" font-size="10" fill="#2D7A4F" font-weight="700">Score &#x2265; 7.0</text>
+      <text x="478" y="296" font-family="Source Sans 3,sans-serif" font-size="8" fill="#6B6B6B">&#x2192; Attach to PR</text>
 
       <!-- Bottom line -->
       <line x1="200" y1="310" x2="480" y2="310" stroke="#E0DCD4" stroke-width="0.5" opacity="0.4"/>
