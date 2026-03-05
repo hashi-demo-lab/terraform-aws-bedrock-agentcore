@@ -581,7 +581,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <section id="landing">
   <div class="landing-eyebrow">HCP TERRAFORM x AI AGENTS</div>
   <h1 class="landing-headline">AI-Powered Infrastructure Engineering at Enterprise Scale</h1>
-  <p class="landing-body">A structured learning path for platform teams adopting autonomous Terraform development with HCP Terraform — covering agent architecture, layered guardrails, Specification-Driven Development, and three validated workflow patterns.</p>
+  <p class="landing-body">A structured learning path for platform teams adopting autonomous HCP Terraform development — covering agent architecture, layered guardrails, Specification-Driven Development, and three validated workflow patterns.</p>
   <div class="landing-ctas">
     <button class="landing-cta primary" onclick="scrollToSection('foundations')">Explore Foundations</button>
   </div>
@@ -590,11 +590,11 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <div class="pillar-grid">
   <div class="pillar-card">
     <div class="pillar-label">WHAT / The Methodology</div>
-    <p>Autonomous Terraform dev powered by AI agents. Specialized subagents handle research, design, implementation, and validation. The design document is the single source of truth, human-approved before any code is written.</p>
+    <p>Autonomous HCP Terraform dev powered by AI agents. Specialized subagents handle research, design, implementation, and validation. The design document is the single source of truth, human-approved before any code is written.</p>
   </div>
   <div class="pillar-card">
     <div class="pillar-label">WHY / The Business Case</div>
-    <p>Ship production Terraform faster with built-in security controls, consistent code standards, and quality gates (>=7.0 score). Constitutions encode your team's standards into every agent invocation.</p>
+    <p>Ship production HCP Terraform faster with built-in security controls, consistent code standards, and quality gates (>=7.0 score). Constitutions encode your team's standards into every agent invocation.</p>
   </div>
   <div class="pillar-card">
     <div class="pillar-label">WHO / The Audience</div>
@@ -650,7 +650,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <div class="chapter-divider" id="foundations" data-section="foundations">
   <div class="chapter-number">Chapter One</div>
   <h2 class="chapter-title">Foundations</h2>
-  <p class="chapter-subtitle">Agent architecture, skills, subagents, context engineering, and the core concepts that power autonomous Terraform development</p>
+  <p class="chapter-subtitle">Agent architecture, skills, subagents, context engineering, and the core concepts that power autonomous HCP Terraform development</p>
 </div>
 
 <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
@@ -790,7 +790,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <!-- Foundations: Overview -->
 <div class="subsection" id="foundations-overview" data-sub="Overview">
   <h3 class="subsection-title">SDD Pipeline Overview</h3>
-  <p class="subsection-desc">AI-powered Terraform development using Specification-Driven Development (SDD) — agents follow a structured methodology instead of generating code ad hoc, producing auditable, repeatable infrastructure.</p>
+  <p class="subsection-desc">AI-powered HCP Terraform development using Specification-Driven Development (SDD) — agents follow a structured methodology instead of generating code ad hoc, producing auditable, repeatable infrastructure.</p>
   <div class="svg-diagram">
     <svg viewBox="0 0 680 220" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -960,7 +960,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
       </text>
       <text x="34" y="102" font-family="JetBrains Mono,monospace" font-size="9" fill="#62D4DC">description</text>
       <text x="110" y="102" font-family="JetBrains Mono,monospace" font-size="9" fill="#E0DCD4">:</text>
-      <text x="34" y="116" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC477D" opacity="0.85">Plans Terraform modules</text>
+      <text x="34" y="116" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC477D" opacity="0.85">Plans HCP Terraform modules</text>
       <text x="34" y="128" font-family="JetBrains Mono,monospace" font-size="8" fill="#DC477D" opacity="0.85">with style guide</text>
       <text x="34" y="144" font-family="JetBrains Mono,monospace" font-size="9" fill="#62D4DC">triggers</text>
       <text x="88" y="144" font-family="JetBrains Mono,monospace" font-size="9" fill="#E0DCD4">:</text>
@@ -989,7 +989,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
       <circle cx="328" cy="40" r="8" fill="white" opacity="0.18"/>
       <text x="328" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="white" font-weight="700">tf</text>
       <text x="346" y="36" font-family="JetBrains Mono,monospace" font-size="9" fill="white" font-weight="600">tf-module-plan</text>
-      <text x="346" y="50" font-family="Source Sans 3,sans-serif" font-size="8" fill="white" opacity="0.65">Plans and validates Terraform modules</text>
+      <text x="346" y="50" font-family="Source Sans 3,sans-serif" font-size="8" fill="white" opacity="0.65">Plans and validates HCP Terraform modules</text>
       <g filter="url(#sk-shadow)">
         <rect x="308" y="66" width="354" height="36" rx="8" fill="#6B3FA0">
           <animate attributeName="opacity" values="0.88;1.0;0.88" dur="3.5s" repeatCount="indefinite" begin="0.4s"/>
@@ -2945,7 +2945,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
     </div>
     <div class="ed-card">
       <h3>Dynamic Credentials Per Run</h3>
-      <p>Every Terraform run receives short-lived, dynamically generated credentials. Tokens expire after the run completes.</p>
+      <p>Every HCP Terraform run receives short-lived, dynamically generated credentials. Tokens expire after the run completes.</p>
     </div>
     <div class="ed-card">
       <h3>Blast Radius Contained</h3>
@@ -3072,7 +3072,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 
 <div class="subsection" id="guardrails-sentinel" data-sub="Sentinel Policy">
   <h3 class="subsection-title">Sentinel Policy as Code</h3>
-  <p class="subsection-desc">Automated policy enforcement on every Terraform run — agent-generated plans are evaluated against organisational rules before any infrastructure change is applied.</p>
+  <p class="subsection-desc">Automated policy enforcement on every HCP Terraform run — agent-generated plans are evaluated against organisational rules before any infrastructure change is applied.</p>
   <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
     <svg viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -3698,7 +3698,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
   <div class="card-grid">
     <div class="ed-card">
       <h3>Module Constitution</h3>
-      <p>File structure, naming conventions, security defaults, and quality thresholds for Terraform module development.</p>
+      <p>File structure, naming conventions, security defaults, and quality thresholds for HCP Terraform module development.</p>
       <div class="node-row"><div class="node node-ref" data-id="module-constitution" data-type="ref">module-constitution</div></div>
     </div>
     <div class="ed-card">
@@ -4543,7 +4543,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <div style="max-width:var(--max-w);margin:0 auto;padding:48px 28px 0">
   <h3 style="font-family:var(--serif);font-size:28px;font-weight:700;color:var(--text);margin-bottom:8px">Module Workflow</h3>
   <p style="font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#C4283A;margin-bottom:16px">RAW HCL RESOURCES &rarr; TESTED TERRAFORM MODULE</p>
-  <p style="font-family:var(--sans);font-size:16px;line-height:1.7;color:var(--text-body);margin-bottom:24px">The module workflow produces reusable Terraform modules from raw HCL resources. Research agents scan AWS documentation and the public registry for implementation patterns, a design agent creates the specification, and a developer agent implements using TDD &mdash; writing tests before any production code. The result is a tested, documented module ready for the private registry.</p>
+  <p style="font-family:var(--sans);font-size:16px;line-height:1.7;color:var(--text-body);margin-bottom:24px">The module workflow produces reusable HCP Terraform modules from raw HCL resources. Research agents scan AWS documentation and the public registry for implementation patterns, a design agent creates the specification, and a developer agent implements using TDD &mdash; writing tests before any production code. The result is a tested, documented module ready for the private registry.</p>
 </div>
 
 <div class="svg-diagram" style="max-width:680px;margin:0 auto 32px;padding:0 28px">
@@ -4646,7 +4646,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
 <!-- Module Plan -->
 <div class="subsection" id="workflows-module-plan" data-sub="Module Plan">
   <h3 class="subsection-title">/tf-module-plan</h3>
-  <p class="subsection-desc">Phases 1 &amp; 2 — Requirements + Design. Agents research providers, resolve ambiguity, and produce a human-approved design document before writing any Terraform.</p>
+  <p class="subsection-desc">Phases 1 &amp; 2 — Requirements + Design. Agents research providers, resolve ambiguity, and produce a human-approved design document before writing any Terraform code.</p>
   <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">Phase 1: Requirements <span class="accordion-arrow">&#x25BC;</span></div><div class="accordion-body">
     <div class="node-row"><div class="node node-script" data-id="validate-env" data-type="script">validate-env.sh</div><div class="node node-cmd" data-id="gh-issue-create" data-type="cmd">gh issue create</div><div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div><div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div></div>
     <div class="node-row" style="margin-top:6px"><div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div></div>
@@ -5272,7 +5272,7 @@ body.has-selection .node.dimmed { opacity: 0.15; }
       </rect>
     </g>
     <text x="364" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="white" letter-spacing="2" font-weight="700">DEVCONTAINER</text>
-    <text x="364" y="119" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" fill="rgba(255,255,255,0.85)">Terraform + AI Agents</text>
+    <text x="364" y="119" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="12" fill="rgba(255,255,255,0.85)">HCP Terraform + AI Agents</text>
     <text x="364" y="147" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="rgba(255,255,255,0.6)" letter-spacing="0.5">tflint · trivy · pre-commit</text>
 
     <!-- Output path to READY -->
@@ -5331,7 +5331,7 @@ source ~/.bashrc  # or source ~/.zshrc</pre></div>
 
 <div class="subsection" id="prerequisites-quickstart" data-sub="Quickstart">
   <h3 class="subsection-title">Quickstart</h3>
-  <p class="subsection-desc">Get up and running in 4 steps — from clone to first autonomous Terraform module in under 30 minutes.</p>
+  <p class="subsection-desc">Get up and running in 4 steps — from clone to first autonomous HCP Terraform module in under 30 minutes.</p>
   <div class="gs-step"><h3>1. Create Repository from Template</h3><p>Navigate to the template repo on GitHub. Click <strong>"Use this template"</strong> > <strong>"Create a new repository"</strong>.</p></div>
   <div class="gs-step"><h3>2. Clone and Open in VS Code</h3><pre>git clone https://github.com/YOUR_ORG/your-new-repo.git
 code your-new-repo</pre></div>
@@ -5406,7 +5406,7 @@ const nodeDesc = {
   'gh-issue-updated': 'GitHub issue updated with Phase 3-4 progress and final PR link.',
   'validation-report': 'Validation results written to specs/{FEATURE}/reports/ using tf-report-template format.',
   'tf-init': 'terraform init -backend=false. Local-only initialization.',
-  'tf-module-research': 'Investigates ONE research question per instance via AWS docs, provider docs, and Terraform registry. Runs 3-4 concurrently in Phase 1. Returns findings in-memory (<500 tokens).',
+  'tf-module-research': 'Investigates ONE research question per instance via AWS docs, provider docs, and HCP Terraform registry. Runs 3-4 concurrently in Phase 1. Returns findings in-memory (<500 tokens).',
   'tf-module-design': 'Produces specs/{FEATURE}/design.md from clarified requirements and research findings. Reads module-constitution.md and module-design-template.md itself. Populates all 7 mandatory sections.',
   'tf-module-test-writer': 'Reads design.md Sections 2, 3, and 5. Writes scaffolding (versions.tf, variables.tf) and 4 test files. Maps 1:1 from design assertions to HCL assert blocks. Runs BEFORE implementation (TDD).',
   'tf-module-developer': 'Executes one implementation checklist item from design.md Section 6. Reads Sections 2, 3, 4. Writes .tf files, runs fmt + validate + test, marks item [x].',
@@ -5421,7 +5421,7 @@ const nodeDesc = {
   'module-constitution': 'Module code standards: file structure, naming, variable conventions, security defaults, tags, provider constraints.',
   'design-md': 'The SINGLE planning artifact (P1). 7 sections covering purpose, interface, resources, security, tests, checklist, and open questions.',
   'mcp-aws-docs': 'AWS Knowledge MCP: search_documentation, read_documentation, recommend, get_regional_availability.',
-  'mcp-terraform': 'Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies.',
+  'mcp-terraform': 'HCP Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies.',
   'tf-scaffolding': 'versions.tf + variables.tf written by tf-module-test-writer as part of TDD scaffolding before implementation.',
   'tf-code': 'Terraform module files: main.tf, outputs.tf, locals.tf. Written by tf-module-developer agents during Phase 3.',
   'tf-tests': 'Test files in tests/: basic, complete, edge_cases, validation .tftest.hcl.',
