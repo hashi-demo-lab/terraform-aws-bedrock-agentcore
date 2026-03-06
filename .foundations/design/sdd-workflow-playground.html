@@ -958,7 +958,7 @@ details.gs-step[open]::details-content { height: auto; }
     <details class="ed-card">
       <summary>
         <h3>Specification-Driven Development</h3>
-        <p>Every task follows 4 sequential phases: Clarify requirements, Design the solution, Build with TDD, and Validate quality. The design document is the single source of truth that all downstream agents follow.</p>
+        <p>Every task follows 4 sequential phases: Clarify requirements, Design the solution, Build with Test Driven Development (TDD), and Validate quality. The design document is the single source of truth that all downstream agents follow.</p>
       </summary>
       <div class="card-expand">
         <p>SDD produces a single <code>specs/{FEATURE}/design.md</code> containing 7 mandatory sections: Purpose &amp; Requirements, Resources &amp; Architecture, Interface Contract, Security Controls, Test Scenarios, Implementation Checklist, and Open Questions. This document is the sole artifact passed between the Plan and Implement phases -- no separate specification, plan, contract, or task files exist.</p>
@@ -3041,16 +3041,11 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
         <animateMotion dur="2.0s" repeatCount="indefinite" begin="0.9s" path="M186,85 L228,104"/>
         <animate attributeName="opacity" values="0;0.8;0" dur="2.0s" repeatCount="indefinite" begin="0.9s"/>
       </circle>
-      <!-- Connection lines AWS MCP to tool grid row 4 -->
+      <!-- Connection line AWS MCP to tool grid row 4 -->
       <line x1="186" y1="210" x2="228" y2="213" stroke="#B87333" stroke-width="1.2" opacity="0.35"/>
-      <line x1="186" y1="230" x2="448" y2="213" stroke="#B87333" stroke-width="1.2" opacity="0.35"/>
       <circle r="3" fill="#B87333" opacity="0">
         <animateMotion dur="2.2s" repeatCount="indefinite" begin="1.0s" path="M186,210 L228,213"/>
         <animate attributeName="opacity" values="0;0.8;0" dur="2.2s" repeatCount="indefinite" begin="1.0s"/>
-      </circle>
-      <circle r="3" fill="#B87333" opacity="0">
-        <animateMotion dur="2.5s" repeatCount="indefinite" begin="1.4s" path="M186,230 L448,213"/>
-        <animate attributeName="opacity" values="0;0.8;0" dur="2.5s" repeatCount="indefinite" begin="1.4s"/>
       </circle>
       <!-- Tool grid row 1 -->
       <g filter="url(#mcp-shadow)">
@@ -3102,7 +3097,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       </g>
       <rect x="454" y="138" width="7" height="7" rx="2" fill="white" opacity="0.5"/>
       <text x="470" y="150" font-family="JetBrains Mono,monospace" font-size="9" fill="white" font-weight="600">create_run</text>
-      <text x="454" y="164" font-family="Source Sans 3,sans-serif" font-size="8" fill="white" opacity="0.7">DENY — human gate required</text>
+      <text x="454" y="164" font-family="Source Sans 3,sans-serif" font-size="8" fill="white" opacity="0.7">Trigger plan or apply</text>
       <!-- Tool grid row 4 (AWS) -->
       <g filter="url(#mcp-shadow)">
         <rect x="230" y="190" width="210" height="46" rx="8" fill="#B87333" opacity="0.88">
@@ -4521,7 +4516,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
   <div class="card-grid single">
     <details class="ed-card">
       <summary>
-        <p>Every task follows the same 4-phase methodology. Phase 1 (Clarify) gathers requirements. Phase 2 (Design) produces a design doc. Phase 3 (Build) implements via TDD. Phase 4 (Validate) runs quality checks. The design doc is the single source of truth.</p>
+        <p>Every task follows the same 4-phase methodology. Phase 1 (Clarify) gathers requirements. Phase 2 (Design) produces a design doc. Phase 3 (Build) implements via Test Driven Development (TDD). Phase 4 (Validate) runs quality checks. The design doc is the single source of truth.</p>
         <div class="node-row"><div class="node node-concept" data-id="concept-sdd-overview" data-type="concept">concept-sdd-overview</div></div>
       </summary>
       <div class="card-expand">
@@ -5801,7 +5796,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
 <!-- Module Impl -->
 <div class="subsection" id="workflows-module-impl" data-sub="Module Impl">
   <h3 class="subsection-title">/tf-module-implement</h3>
-  <p class="subsection-desc">Phases 3 &amp; 4 — Build + Test + Validate. Agents write tests first (TDD), implement one checklist item at a time, and iterate until the quality score passes threshold.</p>
+  <p class="subsection-desc">Phases 3 &amp; 4 — Build + Test + Validate. Agents write tests first using Test Driven Development (TDD), implement one checklist item at a time, and iterate until the quality score passes threshold.</p>
   <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">Phase 3: Build + Test (TDD) <span class="accordion-arrow">&#x25BC;</span></div><div class="accordion-body">
     <div class="node-row"><div class="node node-agent" data-id="tf-module-test-writer" data-type="agent">tf-module-test-writer</div><div class="node node-skill" data-id="terraform-test" data-type="skill">terraform-test</div></div>
     <div class="step-note" style="margin-top:6px">Reads design.md. Writes scaffolding and test files. 1:1 mapping from design assertions to HCL assert blocks.</div>
@@ -5945,7 +5940,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
 <!-- Provider Impl (compact accordion) -->
 <div class="subsection" id="workflows-provider-impl" data-sub="Provider Impl">
   <h3 class="subsection-title">/tf-provider-implement</h3>
-  <p class="subsection-desc">Phases 3 &amp; 4 — Build + Validate (Go). Agents implement provider resources with acceptance tests, running the full TDD cycle against the Plugin Framework.</p>
+  <p class="subsection-desc">Phases 3 &amp; 4 — Build + Validate (Go). Agents implement provider resources with acceptance tests, running the full Test Driven Development (TDD) cycle against the Plugin Framework.</p>
   <div class="accordion"><div class="accordion-header" onclick="toggleAccordion(this)">Phase 3: Build + Test (TDD) <span class="accordion-arrow">&#x25BC;</span></div><div class="accordion-body">
     <div class="node-row"><div class="node node-agent" data-id="tf-provider-test-writer" data-type="agent">tf-provider-test-writer</div><div class="node node-skill" data-id="provider-test-patterns" data-type="skill">provider-test-patterns</div></div>
     <div class="node-row" style="margin-top:4px"><div class="node node-agent" data-id="tf-provider-developer" data-type="agent">tf-provider-developer<span class="pref">xN</span></div><div class="node node-skill" data-id="provider-resources" data-type="skill">provider-resources</div><div class="node node-skill" data-id="provider-actions" data-type="skill">provider-actions</div></div>
@@ -6747,7 +6742,7 @@ code your-new-repo</pre></summary>
   </details>
   <details class="gs-step"><summary><h3>4. Run Your First Workflow</h3><pre>/tf-module-plan aws_s3_bucket aws - Create an S3 bucket module with encryption and versioning</pre></summary>
     <div class="card-expand">
-      <p>This slash command triggers the full 4-phase SDD workflow. The orchestrator spawns research agents to study the AWS S3 API, then a design agent writes <code>design.md</code>, pauses for your approval, and if approved, launches TDD implementation with test-first development and quality validation.</p>
+      <p>This slash command triggers the full 4-phase SDD workflow. The orchestrator spawns research agents to study the AWS S3 API, then a design agent writes <code>design.md</code>, pauses for your approval, and if approved, launches Test Driven Development (TDD) implementation with test-first development and quality validation.</p>
       <ul>
         <li><strong>Phase 1 (Clarify)</strong>: Agent asks up to 4 clarification questions about your requirements</li>
         <li><strong>Phase 2 (Design)</strong>: Produces <code>specs/NNN-s3-bucket/design.md</code> with 7 mandatory sections</li>
