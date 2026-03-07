@@ -3880,7 +3880,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
 <!-- Guardrails: Agent Identity & Isolation (RBAC) -->
 <div class="subsection" id="guardrails-agent-isolation" data-sub="Agent Isolation">
   <h3 class="subsection-title">Agent Identity &amp; Role-Based Access Controls</h3>
-  <p class="subsection-desc">Agents operate on feature branches &mdash; they push commits, open PRs for human review, and interact with a dedicated sandbox project through the TFE API. Access is scoped by project-level RBAC with a dedicated team token, and dynamic OIDC credentials confine cloud access to the agent's sandbox account. Protected branches (prod, uat, dev) each map to an HCP Terraform workspace: merges trigger runs via VCS integration and flow through a shared run pipeline of plan, cost estimation, policy check, and apply.</p>
+  <p class="subsection-desc">Agents operate on feature branches, they push commits, open PRs for human review, and interact with a dedicated sandbox project through the HCP Terraform API. Access is scoped by project-level RBAC with a dedicated team token, and dynamic OIDC credentials confine cloud access to the agent's sandbox account. Protected branches (prod, uat, dev) each map to an HCP Terraform workspace: merges trigger runs via VCS integration and flow through a shared run pipeline of plan, cost estimation, policy check, and apply.</p>
   <div class="svg-diagram" style="max-width:760px;margin:24px auto 32px;padding:0 28px">
     <svg viewBox="0 0 760 580" xmlns="http://www.w3.org/2000/svg">
       <defs>
