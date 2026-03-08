@@ -3162,14 +3162,17 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
     <details class="ed-card">
       <summary>
         <h3>Terraform MCP Server</h3>
-        <p>9 tools: search/read modules, search/read providers, search policies, list organizations, read/create workspaces, workspace variables. Runs as Docker container inside the devcontainer.</p>
+        <p>Three toolsets — registry (providers, modules, policies), registry-private (org-scoped modules and providers), and terraform (workspace, run, and variable management). Runs as Docker container inside the devcontainer.</p>
         <div class="node-row">
           <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp</div>
         </div>
       </summary>
       <div class="card-expand">
-        <p>The Terraform MCP server runs as a Docker container (<code>hashicorp/terraform-mcp-server:0.4.0</code>) inside the devcontainer, using Docker-in-Docker. It receives the <code>TFE_TOKEN</code> environment variable for authentication and is configured with <code>--toolsets=all</code> to expose registry, workspace, and provider toolsets.</p>
+        <p>The Terraform MCP server runs as a Docker container (<code>hashicorp/terraform-mcp-server:0.4.0</code>) inside the devcontainer, using Docker-in-Docker. It receives the <code>TFE_TOKEN</code> environment variable for authentication and is configured with <code>--toolsets=all</code> to expose all three toolsets.</p>
         <ul>
+          <li><strong>Registry</strong> (8 tools): <code>search_providers</code>, <code>get_provider_details</code>, <code>get_latest_provider_version</code>, <code>search_modules</code>, <code>get_module_details</code>, <code>get_latest_module_version</code>, <code>search_policies</code>, <code>get_policy_details</code></li>
+          <li><strong>Registry-Private</strong> (4 tools): <code>search_private_modules</code>, <code>get_private_module_details</code>, <code>search_private_providers</code>, <code>get_private_provider_details</code></li>
+          <li><strong>Terraform</strong> (20+ tools): workspace CRUD, run management, variable sets, policy sets, stacks, token permissions</li>
           <li>Container image pinned to version <code>0.4.0</code> for reproducibility</li>
           <li><code>ENABLE_TF_OPERATIONS=true</code> enables plan/apply operations through the MCP interface</li>
           <li>Runs with <code>-i --rm</code> flags: interactive mode, auto-cleanup on exit</li>
@@ -7266,7 +7269,7 @@ const nodeDesc = {
   'module-constitution': 'Module code standards: file structure, naming, variable conventions, security defaults, tags, provider constraints.',
   'design-md': 'The SINGLE planning artifact (P1). 7 sections covering purpose, interface, resources, security, tests, checklist, and open questions.',
   'mcp-aws-docs': 'AWS Knowledge MCP: search_documentation, read_documentation, recommend, get_regional_availability.',
-  'mcp-terraform': 'HCP Terraform Registry MCP: search_modules, get_module_details, search_providers, get_provider_details, search_policies.',
+  'mcp-terraform': 'Terraform MCP Server — three toolsets: registry (search/get providers, modules, policies), registry-private (org-scoped private modules and providers), and terraform (workspace, run, variable, and policy set management).',
   'tf-scaffolding': 'versions.tf + variables.tf written by tf-module-test-writer as part of TDD scaffolding before implementation.',
   'tf-code': 'Terraform module files: main.tf, outputs.tf, locals.tf. Written by tf-module-developer agents during Phase 3.',
   'tf-tests': 'Test files in tests/: basic, complete, edge_cases, validation .tftest.hcl.',
