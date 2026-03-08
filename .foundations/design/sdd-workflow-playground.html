@@ -4033,10 +4033,10 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       </rect>
       <text x="208" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="white" font-weight="700">DEV WORKSPACE</text>
 
-      <!-- Arrows: Enterprise workspaces -> pipeline -->
-      <line x1="294" y1="124" x2="328" y2="158" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
-      <line x1="294" y1="160" x2="328" y2="188" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
-      <line x1="294" y1="196" x2="328" y2="218" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
+      <!-- Arrows: Enterprise workspaces -> pipeline (horizontal) -->
+      <line x1="294" y1="124" x2="328" y2="124" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
+      <line x1="294" y1="160" x2="328" y2="160" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
+      <line x1="294" y1="196" x2="328" y2="196" stroke="#6B3FA0" stroke-width="0.8" opacity="0.25"/>
 
       <!-- ===== SEPARATION LINE (Agent Boundary) ===== -->
       <line x1="8" y1="278" x2="746" y2="278" stroke="#C4283A" stroke-width="1.5" stroke-dasharray="6 3" opacity="0.4"/>
@@ -4050,7 +4050,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       <!-- Arrow: Agent -> Sandbox Project (straight down) -->
       <line x1="192" y1="344" x2="192" y2="370" stroke="#C4283A" stroke-width="0.8" opacity="0.35"/>
       <polygon points="189,367 192,374 195,367" fill="#C4283A" opacity="0.5"/>
-      <text x="204" y="360" font-family="JetBrains Mono,monospace" font-size="6" fill="#8A8A8A">TFE API</text>
+      <text x="204" y="360" font-family="JetBrains Mono,monospace" font-size="6" fill="#8A8A8A">API</text>
       <circle r="2" fill="#C4283A" opacity="0">
         <animateMotion path="M192,344 L192,370" dur="1.6s" repeatCount="indefinite" begin="0.3s"/>
         <animate attributeName="opacity" values="0;0.8;0" dur="1.6s" repeatCount="indefinite" begin="0.3s"/>
@@ -4073,85 +4073,82 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       <text x="208" y="449" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">Ephemeral, auto-cleanup</text>
 
       <!-- Arrow: Sandbox workspace -> pipeline -->
-      <line x1="294" y1="438" x2="338" y2="270" stroke="#C4283A" stroke-width="0.8" opacity="0.2"/>
+      <line x1="294" y1="438" x2="338" y2="228" stroke="#C4283A" stroke-width="0.8" opacity="0.2"/>
 
-      <!-- ===== COMMON RUN PIPELINE ===== -->
-      <rect x="330" y="100" width="140" height="170" rx="8" fill="white" stroke="#E0DCD4" stroke-width="1" filter="url(#rbac-shadow)"/>
-      <rect x="330" y="100" width="140" height="26" rx="8" fill="rgba(26,107,122,0.04)"/>
-      <text x="400" y="112" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#8A8A8A" font-weight="600">HCP TERRAFORM</text>
-      <text x="400" y="122" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1A1A1A" font-weight="700">RUN PIPELINE</text>
+      <!-- ===== COMMON RUN PIPELINE (bottom-aligned with HCP TF Project at y=260) ===== -->
+      <rect x="330" y="100" width="140" height="160" rx="8" fill="white" stroke="#E0DCD4" stroke-width="1" filter="url(#rbac-shadow)"/>
+      <rect x="330" y="100" width="140" height="22" rx="8" fill="rgba(26,107,122,0.04)"/>
+      <text x="400" y="110" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#8A8A8A" font-weight="600">HCP TERRAFORM</text>
+      <text x="400" y="120" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1A1A1A" font-weight="700">RUN PIPELINE</text>
 
-      <rect x="342" y="136" width="116" height="20" rx="4" fill="rgba(26,107,122,0.06)" stroke="#1A6B7A" stroke-width="0.6"/>
-      <text x="400" y="150" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1A6B7A" font-weight="600">PLAN</text>
+      <rect x="342" y="128" width="116" height="20" rx="4" fill="rgba(26,107,122,0.06)" stroke="#1A6B7A" stroke-width="0.6"/>
+      <text x="400" y="142" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#1A6B7A" font-weight="600">PLAN</text>
 
-      <line x1="400" y1="156" x2="400" y2="166" stroke="#E0DCD4" stroke-width="0.8"/>
-      <polygon points="397,163 400,168 403,163" fill="#E0DCD4"/>
+      <line x1="400" y1="148" x2="400" y2="154" stroke="#E0DCD4" stroke-width="0.8"/>
+      <polygon points="397,152 400,156 403,152" fill="#E0DCD4"/>
 
-      <rect x="342" y="170" width="116" height="20" rx="4" fill="rgba(154,123,45,0.06)" stroke="#9A7B2D" stroke-width="0.6"/>
-      <text x="400" y="184" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#9A7B2D" font-weight="600">COST ESTIMATION</text>
+      <rect x="342" y="158" width="116" height="20" rx="4" fill="rgba(154,123,45,0.06)" stroke="#9A7B2D" stroke-width="0.6"/>
+      <text x="400" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#9A7B2D" font-weight="600">COST ESTIMATION</text>
 
-      <line x1="400" y1="190" x2="400" y2="200" stroke="#E0DCD4" stroke-width="0.8"/>
-      <polygon points="397,197 400,202 403,197" fill="#E0DCD4"/>
+      <line x1="400" y1="178" x2="400" y2="184" stroke="#E0DCD4" stroke-width="0.8"/>
+      <polygon points="397,182 400,186 403,182" fill="#E0DCD4"/>
 
-      <rect x="342" y="204" width="116" height="20" rx="4" fill="rgba(107,63,160,0.06)" stroke="#6B3FA0" stroke-width="0.6"/>
-      <text x="400" y="218" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B3FA0" font-weight="600">POLICY CHECK</text>
+      <rect x="342" y="188" width="116" height="20" rx="4" fill="rgba(107,63,160,0.06)" stroke="#6B3FA0" stroke-width="0.6"/>
+      <text x="400" y="202" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#6B3FA0" font-weight="600">POLICY CHECK</text>
 
-      <line x1="400" y1="224" x2="400" y2="234" stroke="#E0DCD4" stroke-width="0.8"/>
-      <polygon points="397,231 400,236 403,231" fill="#E0DCD4"/>
+      <line x1="400" y1="208" x2="400" y2="214" stroke="#E0DCD4" stroke-width="0.8"/>
+      <polygon points="397,212 400,216 403,212" fill="#E0DCD4"/>
 
-      <rect x="342" y="238" width="116" height="20" rx="4" fill="rgba(196,40,58,0.06)" stroke="#C4283A" stroke-width="0.8" stroke-dasharray="4 3"/>
-      <text x="400" y="252" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#C4283A" font-weight="600">APPLY</text>
-
-      <!-- Separation line near pipeline bottom -->
-      <line x1="330" y1="270" x2="470" y2="270" stroke="#E0DCD4" stroke-width="0.8" stroke-dasharray="3 3" opacity="0.4"/>
+      <rect x="342" y="218" width="116" height="20" rx="4" fill="rgba(196,40,58,0.06)" stroke="#C4283A" stroke-width="0.8" stroke-dasharray="4 3"/>
+      <text x="400" y="232" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#C4283A" font-weight="600">APPLY</text>
 
       <!-- ===== CLOUD ACCOUNTS ===== -->
       <rect x="530" y="32" width="170" height="18" rx="4" fill="rgba(74,107,138,0.08)"/>
       <text x="615" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4A6B8A" font-weight="700" letter-spacing="1">CLOUD SUB ACCOUNTS</text>
 
-      <!-- Prod Account -->
-      <rect x="530" y="128" width="170" height="32" rx="5" fill="#4A6B8A" filter="url(#rbac-shadow)">
+      <!-- Prod Account (aligned with PROD WORKSPACE y=110) -->
+      <rect x="530" y="110" width="170" height="32" rx="5" fill="#4A6B8A" filter="url(#rbac-shadow)">
         <animate attributeName="opacity" values="0.88;1;0.88" dur="3.5s" repeatCount="indefinite" begin="0.8s"/>
       </rect>
-      <text x="615" y="145" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">PROD ACCOUNT</text>
-      <text x="615" y="156" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">Strict policy, approval required</text>
+      <text x="615" y="127" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">PROD ACCOUNT</text>
+      <text x="615" y="138" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">Strict policy, approval required</text>
 
-      <!-- Non-Prod Account -->
-      <rect x="530" y="174" width="170" height="32" rx="5" fill="#4A6B8A" filter="url(#rbac-shadow)">
+      <!-- Non-Prod Account (centered between UAT y=146 and DEV bottom y=210) -->
+      <rect x="530" y="162" width="170" height="32" rx="5" fill="#4A6B8A" filter="url(#rbac-shadow)">
         <animate attributeName="opacity" values="0.88;1;0.88" dur="3.5s" repeatCount="indefinite" begin="1.0s"/>
       </rect>
-      <text x="615" y="191" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">NON-PROD ACCOUNT</text>
-      <text x="615" y="202" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">UAT + Dev workloads</text>
+      <text x="615" y="179" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">NON-PROD ACCOUNT</text>
+      <text x="615" y="190" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">UAT + Dev workloads</text>
 
-      <!-- Sandbox Account -->
-      <rect x="530" y="418" width="170" height="32" rx="5" fill="rgba(196,40,58,0.85)" filter="url(#rbac-shadow)" stroke="#C4283A" stroke-width="0.5" stroke-dasharray="4 3">
+      <!-- Sandbox Account (aligned with SANDBOX WORKSPACE y=424) -->
+      <rect x="530" y="424" width="170" height="32" rx="5" fill="rgba(196,40,58,0.85)" filter="url(#rbac-shadow)" stroke="#C4283A" stroke-width="0.5" stroke-dasharray="4 3">
         <animate attributeName="opacity" values="0.88;1;0.88" dur="3.5s" repeatCount="indefinite" begin="1.2s"/>
       </rect>
-      <text x="615" y="435" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">SANDBOX ACCOUNT</text>
-      <text x="615" y="446" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">Ephemeral, auto-cleanup</text>
+      <text x="615" y="441" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">SANDBOX ACCOUNT</text>
+      <text x="615" y="452" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="6" fill="rgba(255,255,255,0.7)">Ephemeral, auto-cleanup</text>
 
       <!-- ===== ARROWS: Pipeline -> Cloud Accounts ===== -->
-      <!-- Pipeline -> Prod -->
-      <line x1="470" y1="162" x2="528" y2="144" stroke="#4A6B8A" stroke-width="0.8" opacity="0.35"/>
-      <polygon points="523,141 530,144 525,149" fill="#4A6B8A" opacity="0.5"/>
+      <!-- Pipeline -> Prod (horizontal at y=126) -->
+      <line x1="470" y1="126" x2="528" y2="126" stroke="#4A6B8A" stroke-width="0.8" opacity="0.35"/>
+      <polygon points="524,123 530,126 524,129" fill="#4A6B8A" opacity="0.5"/>
       <circle r="2" fill="#4A6B8A" opacity="0">
-        <animateMotion path="M470,162 L528,144" dur="1.8s" repeatCount="indefinite" begin="1.0s"/>
+        <animateMotion path="M470,126 L528,126" dur="1.8s" repeatCount="indefinite" begin="1.0s"/>
         <animate attributeName="opacity" values="0;0.7;0" dur="1.8s" repeatCount="indefinite" begin="1.0s"/>
       </circle>
 
-      <!-- Pipeline -> Non-Prod -->
-      <line x1="470" y1="190" x2="528" y2="190" stroke="#4A6B8A" stroke-width="0.8" opacity="0.35"/>
-      <polygon points="523,187 530,190 523,193" fill="#4A6B8A" opacity="0.5"/>
+      <!-- Pipeline -> Non-Prod (horizontal at y=178) -->
+      <line x1="470" y1="178" x2="528" y2="178" stroke="#4A6B8A" stroke-width="0.8" opacity="0.35"/>
+      <polygon points="524,175 530,178 524,181" fill="#4A6B8A" opacity="0.5"/>
       <circle r="2" fill="#4A6B8A" opacity="0">
-        <animateMotion path="M470,190 L528,190" dur="1.8s" repeatCount="indefinite" begin="1.3s"/>
+        <animateMotion path="M470,178 L528,178" dur="1.8s" repeatCount="indefinite" begin="1.3s"/>
         <animate attributeName="opacity" values="0;0.7;0" dur="1.8s" repeatCount="indefinite" begin="1.3s"/>
       </circle>
 
       <!-- Pipeline -> Sandbox Account -->
-      <line x1="470" y1="264" x2="528" y2="430" stroke="#C4283A" stroke-width="0.8" opacity="0.25"/>
-      <polygon points="524,426 530,434 528,424" fill="#C4283A" opacity="0.5"/>
+      <line x1="470" y1="228" x2="528" y2="440" stroke="#C4283A" stroke-width="0.8" opacity="0.25"/>
+      <polygon points="524,436 530,444 528,434" fill="#C4283A" opacity="0.5"/>
       <circle r="2" fill="#C4283A" opacity="0">
-        <animateMotion path="M470,264 L528,430" dur="1.8s" repeatCount="indefinite" begin="1.6s"/>
+        <animateMotion path="M470,228 L528,440" dur="1.8s" repeatCount="indefinite" begin="1.6s"/>
         <animate attributeName="opacity" values="0;0.7;0" dur="1.8s" repeatCount="indefinite" begin="1.6s"/>
       </circle>
 
@@ -4409,7 +4406,7 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
 </div>
 
 <div class="subsection" id="guardrails-sentinel" data-sub="Sentinel Policy">
-  <h3 class="subsection-title">Sentinel Policy as Code</h3>
+  <h3 class="subsection-title">Policy as Code</h3>
   <p class="subsection-desc">Automated policy enforcement on every HCP Terraform run — agent-generated plans are evaluated against organisational rules before any infrastructure change is applied.</p>
   <div class="svg-diagram" style="max-width:680px;margin:24px auto 32px;padding:0 28px">
     <svg viewBox="0 0 680 270" xmlns="http://www.w3.org/2000/svg">
@@ -4596,8 +4593,13 @@ Step 12: terraform test + fmt + trivy + terraform-docs (validate phase)</pre>
       <text x="340" y="74" text-anchor="middle" font-family="Playfair Display,serif" font-size="12" fill="#C4283A" font-weight="700">Pre-Commit Hooks</text>
 
       <!-- Tool badges -->
-      <rect x="216" y="84" width="70" height="16" rx="4" fill="#C4283A" opacity="0.06" stroke="#C4283A" stroke-width="0.5" stroke-opacity="0.3"/>
-      <text x="251" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#C4283A" font-weight="600">vault-radar</text>
+      <!-- vault-radar: hero badge — gold fill with official Vault Radar icon -->
+      <rect x="208" y="82" width="86" height="20" rx="5" fill="#B87333" filter="url(#vr-shadow)"/>
+      <!-- Official HashiCorp Vault Radar icon (scaled to 12px) -->
+      <g transform="translate(214,86) scale(0.5)">
+        <path d="M23 11.9965L21.9435 10.9398L20.887 11.9965C20.887 16.8959 16.9004 20.8831 12.0018 20.8831C7.10309 20.8831 3.11654 16.8959 3.11654 11.9965C3.11654 7.09702 7.10309 3.10983 12.0018 3.10983C14.0056 3.10983 15.939 3.80019 17.4886 5.01537L15.7171 6.78706C14.6395 6.01569 13.3541 5.59302 11.9982 5.59302C8.46598 5.59302 5.59228 8.46718 5.59228 12C5.59228 15.5328 8.46598 18.407 11.9982 18.407C15.5305 18.407 18.4042 15.5328 18.4042 12L17.3477 10.9433L16.2912 12C16.2912 14.367 14.3648 16.2936 11.9982 16.2936C9.63166 16.2936 7.7053 14.367 7.7053 12C7.7053 9.63304 9.63166 7.70637 11.9982 7.70637C12.7836 7.70637 13.5337 7.92123 14.1923 8.3122L11.9982 10.5066V12H13.4914L20.4855 5.0048C18.4042 2.48639 15.2769 1 11.9982 1C5.93389 1 1 5.93468 1 12C1 18.0653 5.93389 23 11.9982 23C18.0626 23 22.9965 18.0653 22.9965 12L23 11.9965Z" fill="white"/>
+      </g>
+      <text x="256" y="96" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white" font-weight="700">vault-radar</text>
 
       <rect x="294" y="84" width="56" height="16" rx="4" fill="#1A6B7A" opacity="0.06" stroke="#1A6B7A" stroke-width="0.5" stroke-opacity="0.2"/>
       <text x="322" y="95" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#1A6B7A">tflint</text>
