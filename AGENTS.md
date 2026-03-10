@@ -4,11 +4,11 @@ Operational rules for the orchestrator during workflow execution. Everything els
 
 ## Workflows
 
-| Command | Agents | Design Artifact | Constitution |
-|---------|--------|----------------|--------------|
-| `/tf-module-plan` + `/tf-module-implement` | tf-module-research, tf-module-design, tf-module-test-writer, tf-module-developer | `specs/{FEATURE}/design.md` | `.foundations/memory/module-constitution.md` |
+| Command                                        | Agents                                                                                 | Design Artifact                                 | Constitution                                   |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| `/tf-module-plan` + `/tf-module-implement`     | tf-module-research, tf-module-design, tf-module-test-writer, tf-module-developer       | `specs/{FEATURE}/design.md`                     | `.foundations/memory/module-constitution.md`   |
 | `/tf-provider-plan` + `/tf-provider-implement` | tf-provider-research, tf-provider-design, tf-provider-developer, tf-provider-validator | `specs/{FEATURE}/provider-design-{resource}.md` | `.foundations/memory/provider-constitution.md` |
-| `/tf-consumer-plan` + `/tf-consumer-implement` | tf-consumer-research, tf-consumer-design, tf-consumer-developer, tf-consumer-validator | `specs/{FEATURE}/consumer-design.md` | `.foundations/memory/consumer-constitution.md` |
+| `/tf-consumer-plan` + `/tf-consumer-implement` | tf-consumer-research, tf-consumer-design, tf-consumer-developer, tf-consumer-validator | `specs/{FEATURE}/consumer-design.md`            | `.foundations/memory/consumer-constitution.md` |
 
 ## Context Management
 
@@ -43,4 +43,4 @@ Authentication requires `gh auth login --hostname <hostname>` — standard `gh a
 
 ### Agent Output Persistence
 
-Most agents persist output artifacts to disk. The orchestrator verifies expected files exist after each dispatch. **Exception**: Research agents (`tf-{workflow}-research`) return findings in-memory — the orchestrator collects these and passes them to the design agent via `$ARGUMENTS`.
+Subagents persist output artifacts to disk. The orchestrator verifies expected files exist after each dispatch.
