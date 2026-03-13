@@ -41,9 +41,19 @@ jobs:
       cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Get PR branch
+        id: pr
+        run: |
+          PR_DATA=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.issue.number }} --jq '{ref: .head.ref, sha: .head.sha}')
+          echo "ref=$(echo "$PR_DATA" | jq -r '.ref')" >> "$GITHUB_OUTPUT"
+          echo "sha=$(echo "$PR_DATA" | jq -r '.sha')" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.pr.outputs.ref }}
           fetch-depth: 0
 
       - name: Setup Terraform
@@ -69,6 +79,17 @@ jobs:
         run: |
           pre-commit run --all-files 2>&1 | tee .pre-commit-results.txt || true
 
+      # Run terraform plan to capture ALL errors (including variable validation
+      # rules that validate alone won't catch). This gives Claude the complete
+      # picture in a single pass instead of discovering errors one per cycle.
+      - name: Terraform Plan
+        if: always()
+        run: |
+          set +e
+          terraform plan -input=false 2>&1 | tee .plan-results.txt
+          echo "plan_exit=$?" >> "$GITHUB_OUTPUT"
+          exit 0
+
       # .mcp.json uses Docker (local dev); .mcp-ci.json uses npx (CI-friendly).
       # The action hardcodes enableAllProjectMcpServers=true, so it loads .mcp.json.
       - name: Use CI MCP config
@@ -88,10 +109,15 @@ jobs:
           trigger_phrase: "@claude"
           track_progress: true
           show_full_output: true
-          claude_args: "--model claude-sonnet-4-6 --max-turns 15 --settings '{}'"
+          claude_args: "--model claude-sonnet-4-6 --max-turns 30 --settings '{}'"
           prompt: |
-            Pre-commit validation results are in .pre-commit-results.txt — read this file FIRST
-            to understand ALL issues (validate errors, lint failures, formatting, etc.) before
-            making any changes. Fix every issue found, not just the first one.
+            BEFORE making any changes, read these two files to understand ALL issues:
+
+            1. .pre-commit-results.txt — pre-commit hook results (validate, fmt, tflint, docs)
+            2. .plan-results.txt — full terraform plan output (includes variable validation
+               errors that terraform validate alone won't catch)
+
+            Fix EVERY error found in both files, not just the first one. Do not declare
+            success until all issues are resolved.
 
             Then read and follow .claude/agents/module-upgrade-remediation.md as your playbook for this task.
