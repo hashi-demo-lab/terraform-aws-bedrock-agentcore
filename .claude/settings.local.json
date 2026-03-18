@@ -92,6 +92,7 @@
   "disableAllHooks": true,
   "statusLine": {
     "type": "command",
-    "command": "bash /workspace/.claude/claude-statusline.sh"
+    "command": "bash /workspace/.claude/claude-statusline.sh",
+    "padding": 1
   }
 }

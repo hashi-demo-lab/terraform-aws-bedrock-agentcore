@@ -27,7 +27,7 @@
 # │    mono        Pure grayscale — context is the only color          │
 # └─────────────────────────────────────────────────────────────────────┘
 
-set -euo pipefail
+set -uo pipefail
 
 input=$(cat)
 
