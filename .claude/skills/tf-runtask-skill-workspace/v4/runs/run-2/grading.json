@@ -1,0 +1,115 @@
+{
+  "expectations": [
+    {
+      "text": "The run ID 'run-iURWDL3wVxzefsjo' was correctly extracted from the URL",
+      "passed": true,
+      "evidence": "The JSON output file contains \"run_id\": \"run-iURWDL3wVxzefsjo\" at line 2 of run-task-results.json. The transcript Step 3 confirms the script was called with the full URL and the run ID appears in the final result table: \"Run ID | run-iURWDL3wVxzefsjo\"."
+    },
+    {
+      "text": "The script scripts/get-run-task-results.sh was called with the URL and produced valid JSON output",
+      "passed": true,
+      "evidence": "Transcript Step 3: 'Ran get-run-task-results.sh with the full URL to fetch task stages, results, and outcomes.' Step 4: 'Re-ran the script and saved output to run-task-results.json.' The output file run-task-results.json contains 14382 bytes of well-formed JSON with task_stages, task_results, outcomes, and summary fields."
+    },
+    {
+      "text": "The output shows task results in a structured format with columns for Task Name, Status, and Enforcement",
+      "passed": true,
+      "evidence": "Transcript final result contains a markdown table with headers: '| Task Name | Status | Enforcement | Message | Link |' and a row: '| Apptio-Cloudability | failed | advisory | Total Cost before: 31.54, after: 31.64, diff: +0.10 | — |'. This matches the structured format requirement with all three requested columns plus extras."
+    },
+    {
+      "text": "The Apptio-Cloudability task and its failed/advisory status are displayed",
+      "passed": true,
+      "evidence": "Final result shows 'Apptio-Cloudability | failed | advisory' in the Post-Plan Tasks table. This is corroborated by run-task-results.json which contains task_name: 'Apptio-Cloudability', status: 'failed', enforcement_level: 'advisory'."
+    },
+    {
+      "text": "The cost information from the message field is presented",
+      "passed": true,
+      "evidence": "The message field value 'Total Cost before: 31.54, after: 31.64, diff: +0.10' appears in the task results table. Additionally, detailed cost breakdown is presented under 'Estimation Detail' including a resource-level cost table and the monthly impact of +0.10 USD."
+    },
+    {
+      "text": "Outcomes for the task result are shown with their status tags",
+      "passed": true,
+      "evidence": "Transcript final result contains a dedicated 'Apptio-Cloudability — Outcomes' table with columns '| Outcome | Description | Status | Severity |' showing three outcomes: Estimation/Passed, Policy/Failed/Gated, Recommendation/Passed. These match the three outcomes in run-task-results.json (outcome_ids: Estimation, Policy, Recommendation) with their corresponding status tags."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included — such as run status, trigger source, or whether the run has been applied",
+      "passed": true,
+      "evidence": "Transcript Step 5 shows mcp__terraform__get_run_details was called with run_id: run-iURWDL3wVxzefsjo. The final result includes a 'Run Context' table with: Status=applied, Source=tfe-api, Trigger=manual, Message='Apply from merge to main', Terraform Version=1.14.7, Has Changes=yes, Applied At=2026-03-17T09:42:10Z. The narrative also notes 'This run was triggered via API (merge to main), manually confirmed, and has been fully applied despite the advisory task failure below.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 4,
+      "Bash": 3,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "ToolSearch": 1,
+      "mcp__terraform__get_run_details": 1
+    },
+    "total_tool_calls": 12,
+    "total_steps": 6,
+    "errors_encountered": 0,
+    "output_chars": 14382,
+    "transcript_chars": 5914
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "1 task stage (post_plan) with 1 task result and 3 outcomes",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json confirms exactly 1 entry in task_stages array (stage: post_plan), 1 entry in task_results array, and 3 entries in outcomes array."
+    },
+    {
+      "claim": "Summary: total_tasks=1, passed=0, failed=1",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json summary field: total_tasks: 1, passed: 0, failed: 1."
+    },
+    {
+      "claim": "23 resources failing policy — 22 missing cost-center tag, 1 EC2 instance type violation",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The Policy outcome body_html in run-task-results.json contains '23 Failing Resources' heading, 23 detail sections (22 with advisory cost-center tag violations, 1 with gated EC2 instance type violation for t3.small vs t2.small)."
+    },
+    {
+      "claim": "Recommendation to switch from t3.small to t4g.small for ~20% cost savings",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Recommendation outcome body_html shows t3.small (0.0264) vs t4g.small (0.0212). Savings calculation: (0.0264-0.0212)/0.0264 = 19.7%, which rounds to ~20%."
+    },
+    {
+      "claim": "The stage passed overall because advisory enforcement does not block",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json shows task_stages[0].status = 'passed' while the single task_result has status 'failed' with enforcement_level 'advisory'. Advisory tasks do not block stage progression in Terraform Cloud."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script scripts/get-run-task-results.sh was called with the URL and produced valid JSON output",
+        "reason": "This assertion could pass if the script was called but returned cached/hardcoded data. Consider verifying that the run_id in the JSON output matches the URL's run ID, which would confirm the script actually processed the correct run."
+      },
+      {
+        "reason": "No assertion checks the detailed outcome content (cost breakdown, policy violations, recommendations). The executor went well beyond the assertions by parsing HTML body content from outcomes into readable tables. An assertion like 'Policy violation details including specific resource names and rule descriptions are shown' would validate this valuable work."
+      },
+      {
+        "reason": "No assertion verifies the stage-level information (post_plan stage, stage status). The skill correctly identified the stage and explained why it passed despite a failed task — this is a meaningful insight worth asserting on."
+      }
+    ],
+    "overall": "Assertions cover the core workflow well — URL parsing, script execution, structured output, task details, outcomes, and MCP enrichment. The main gap is that no assertion validates the deep outcome content (cost tables, policy violation specifics, recommendations) which constituted the most impressive and useful part of the output."
+  }
+}

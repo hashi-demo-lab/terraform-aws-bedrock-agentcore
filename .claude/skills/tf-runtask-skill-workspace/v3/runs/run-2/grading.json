@@ -1,0 +1,119 @@
+{
+  "expectations": [
+    {
+      "text": "The run ID 'run-iURWDL3wVxzefsjo' was correctly extracted from the URL",
+      "passed": true,
+      "evidence": "The raw JSON output file contains \"run_id\": \"run-iURWDL3wVxzefsjo\" and the transcript Step 4 shows the script was called with the full URL. The MCP call in Step 6 also used run_id run-iURWDL3wVxzefsjo."
+    },
+    {
+      "text": "The script scripts/get-run-task-results.sh was called with the URL and produced valid JSON output",
+      "passed": true,
+      "evidence": "Transcript Step 4: 'Ran the get-run-task-results.sh script with the provided URL' using Bash. The output file run-task-results.json contains valid structured JSON with task_stages, task_results, outcomes, and a summary object."
+    },
+    {
+      "text": "The output shows task results in a structured format with columns for Task Name, Status, and Enforcement",
+      "passed": true,
+      "evidence": "Transcript Final Result shows a markdown table: '| Task Name | Status | Enforcement | Message | Link |' with the row '| Apptio-Cloudability | failed | advisory | Total Cost before: 31.54, after: 31.64, diff: +0.10 | -- |'"
+    },
+    {
+      "text": "The Apptio-Cloudability task and its failed/advisory status are displayed",
+      "passed": true,
+      "evidence": "Final Result table row: 'Apptio-Cloudability | failed | advisory'. Also confirmed in raw JSON: task_name 'Apptio-Cloudability', status 'failed', enforcement_level 'advisory'."
+    },
+    {
+      "text": "The cost information from the message field is presented",
+      "passed": true,
+      "evidence": "The message 'Total Cost before: 31.54, after: 31.64, diff: +0.10' appears in the task results table. Additionally, the Estimation Detail section breaks down the cost: TOTAL 31.54 -> 31.64 (+0.10), and the Key Findings section states 'Monthly impact +$0.10 USD'."
+    },
+    {
+      "text": "Outcomes for the task result are shown with their status tags",
+      "passed": true,
+      "evidence": "Final Result includes an 'Apptio-Cloudability -- Outcomes' table with three outcomes: Estimation (Passed), Policy (Failed, Gated), Recommendation (Passed). Each has Status and Severity columns matching the tags from the raw JSON."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included — such as run status, trigger source, or whether the run has been applied",
+      "passed": true,
+      "evidence": "Transcript Step 6 shows mcp__terraform__get_run_details was called. The Final Result 'Run Context' section includes: Status: Applied, Source: tfe-api (manual trigger), Terraform Version: 1.14.7, Applied At: 2026-03-17T09:42:10Z, and the commit message."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 4,
+      "Bash": 3,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "ToolSearch": 1,
+      "mcp__terraform__get_run_details": 1
+    },
+    "total_tool_calls": 12,
+    "total_steps": 7,
+    "errors_encountered": 0,
+    "output_chars": 14382,
+    "transcript_chars": 5643
+  },
+  "claims": [
+    {
+      "claim": "Script returned 1 task stage (post_plan), 1 task result, and 3 outcomes",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Raw JSON confirms: 1 entry in task_stages array with stage 'post_plan', 1 entry in task_results, and 3 entries in outcomes array (Estimation, Policy, Recommendation)."
+    },
+    {
+      "claim": "Run status is applied, triggered via tfe-api",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 6 states 'Run status is applied, triggered via tfe-api'. This matches the Final Result Run Context section."
+    },
+    {
+      "claim": "23 resources are failing policy — 22 missing cost-center tag, 1 EC2 instance type violation",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Raw JSON body_html for Policy outcome contains '23 Failing Resources' heading. Counting the individual resource details sections in the HTML confirms 23 resources: 22 with cost-center tag violations (advisory) and 1 (module.app_server.aws_instance.this[0]) with instance type violation (gated)."
+    },
+    {
+      "claim": "The gated policy violation did not block the run because overall task enforcement is advisory",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The raw JSON shows enforcement_level 'advisory' on the task result. The run status is 'applied'. The user_notes.md correctly identifies this nuance: 'the gated severity at the outcome level is informational only and does not override the workspace-level task enforcement setting.'"
+    },
+    {
+      "claim": "Recommendation is to switch from t3.small to t4g.small for ~20% cost savings",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Raw JSON Recommendation body_html shows Instance Type current t3.small, recommended t4g.small, with prices 0.0264 vs 0.0212. Savings calculation: (0.0264-0.0212)/0.0264 = ~19.7%, consistent with the ~20% claim."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "Gated severity at outcome level vs advisory enforcement at task level — unclear whether outcome-level gating can override workspace-level enforcement"
+    ],
+    "needs_review": [
+      "22 resources missing cost-center tag — may indicate a tagging standard that should be addressed",
+      "EC2 instance type policy requires t2.small but t3.small is deployed — verify whether policy or instance type should change"
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The output shows task results in a structured format with columns for Task Name, Status, and Enforcement",
+        "reason": "This assertion checks for the presence of columns but not correctness of the values within them. A table with the right headers but wrong data (e.g., swapped status/enforcement values) would also pass. Consider checking that specific cell values match the raw JSON."
+      },
+      {
+        "reason": "No assertion checks whether the HTML body content (Estimation detail, Policy detail, Recommendation detail) was correctly parsed from HTML into the user-facing markdown. The executor did an impressive job extracting structured tables from raw HTML, but an assertion verifying key data points from the HTML (e.g., specific resource names, specific cost figures) appear in the final output would catch regressions."
+      },
+      {
+        "reason": "No assertion checks that the script was called from the correct working directory or with the right environment (TFE_TOKEN set). A script invocation that fails silently and returns empty JSON could pass assertions 1-2 if the executor fabricated output. Consider an assertion that the raw JSON file contains expected API-sourced fields."
+      }
+    ],
+    "overall": "Assertions cover the key functional areas well — extraction, script execution, structured display, cost info, outcomes, and MCP metadata. The main gap is that most assertions check for presence rather than correctness of specific values. The raw JSON output file provides a strong ground-truth anchor that could be leveraged for more discriminating assertions."
+  }
+}

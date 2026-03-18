@@ -1,0 +1,111 @@
+{
+  "expectations": [
+    {
+      "text": "The script scripts/get-run-task-results.sh was executed with the run ID",
+      "passed": true,
+      "evidence": "Transcript Step 1: 'Executed the script with the run ID run-hGthAq8Kuv5wcKZq' using 'scripts/get-run-task-results.sh run-hGthAq8Kuv5wcKZq'. Output file run-task-results.json contains 'run_id: run-hGthAq8Kuv5wcKZq' confirming actual execution."
+    },
+    {
+      "text": "If the run has zero total_tasks in the summary, the output clearly states no run tasks produced results or no run tasks are configured",
+      "passed": true,
+      "evidence": "The JSON summary shows total_tasks: 0. The final result states: 'This run has task stages but no task results were produced' and 'the external service did not return any task result entries'. This clearly communicates zero results to the user."
+    },
+    {
+      "text": "If task_stages is non-empty, the output shows the stage name and status",
+      "passed": true,
+      "evidence": "Transcript Final Result: '- **post_plan** (status: passed) — created 2026-03-11T04:20:17Z, passed at 2026-03-11T04:21:02+00:00'. The JSON confirms task_stages contains one entry with stage 'post_plan' and status 'passed'."
+    },
+    {
+      "text": "The Tier 1 summary line with explicit numeric counts (Total tasks: 0, Passed: 0, Failed: 0) appears in the user-facing response, not just in the raw JSON — even though all counts are zero",
+      "passed": true,
+      "evidence": "Transcript Final Result includes: '**Total tasks**: 0 | Passed: 0 | Failed: 0 | Errored: 0'. This is in the user-facing response section, not just in the raw JSON file."
+    },
+    {
+      "text": "No errors or crashes occurred during execution",
+      "passed": true,
+      "evidence": "Transcript Issues section: '- None'. Metrics show errors_encountered: 0. All steps completed successfully."
+    },
+    {
+      "text": "The output distinguishes between 'no task stages' and 'task stages exist but have zero results'",
+      "passed": true,
+      "evidence": "Transcript Step 4: 'identified edge case #2 — task stages exist but contain zero task results'. Final Result: 'This run has task stages but no task results were produced.' and lists the specific stage. This explicitly differentiates from a scenario with no task stages at all."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included to provide lifecycle context for the run",
+      "passed": true,
+      "evidence": "Transcript Step 3 shows mcp__terraform__get_run_details was called. Final Result includes a 'Run context (from MCP)' section with status (applied), source (terraform+cloud), trigger reason (manual), Terraform version (1.14.6), auto-apply (enabled), and applied-at timestamp."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 3,
+      "Bash": 3,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "mcp__terraform__get_run_details": 1,
+      "ToolSearch": 1
+    },
+    "total_tool_calls": 11,
+    "total_steps": 4,
+    "errors_encountered": 0,
+    "output_chars": 4230,
+    "transcript_chars": 2728
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "The run status is 'applied'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 3 reports run status as 'applied' from MCP get_run_details. Consistent with the run having completed through to apply."
+    },
+    {
+      "claim": "There is 1 task stage (post_plan) with status passed",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json confirms task_stages array has exactly one entry with stage 'post_plan' and status 'passed'."
+    },
+    {
+      "claim": "The task stage produced no individual task results",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json shows task_results: [] for the post_plan stage, and summary total_tasks: 0."
+    },
+    {
+      "claim": "The external service did not return any task result entries",
+      "type": "quality",
+      "verified": false,
+      "evidence": "This is a plausible interpretation but cannot be fully verified — it could also be that no external service was ever invoked, or the task was configured but disabled. The claim is reasonable speculation, not confirmed fact."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "Task stage exists with status 'passed' but has zero task results — could mean the external service returned no results, or the task was removed after the run started",
+      "Org name 'hashi-demos-apj' was provided but not needed by the script (uses run ID directly)"
+    ],
+    "needs_review": [
+      "Verify whether the workspace is expected to have active run tasks producing results — empty results may indicate misconfiguration"
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script scripts/get-run-task-results.sh was executed with the run ID",
+        "reason": "This assertion is weak — it checks that the script was invoked but not that it succeeded or produced valid output. A script that errors out would still pass. The JSON output file provides stronger evidence, but the assertion doesn't require checking it."
+      },
+      {
+        "reason": "No assertion checks that the raw JSON output file (run-task-results.json) was saved and contains valid, parseable JSON matching the expected schema. This is an important artifact that should be verified independently of the transcript's claims about it."
+      }
+    ],
+    "overall": "Assertions are well-designed for this edge case (task stages with zero results). The distinction assertion (#6) is particularly discriminating. Two minor gaps: the script execution assertion could be tightened, and output file validity could be checked directly."
+  }
+}

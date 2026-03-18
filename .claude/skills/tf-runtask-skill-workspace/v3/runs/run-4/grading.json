@@ -1,0 +1,107 @@
+{
+  "expectations": [
+    {
+      "text": "The script scripts/get-run-task-results.sh was executed with the run ID",
+      "passed": true,
+      "evidence": "Transcript Step 2: 'cd /workspace/.claude/skills/tf-runtask-skill-workspace/v3/skill && bash scripts/get-run-task-results.sh run-hGthAq8Kuv5wcKZq'. The run-task-results.json output file confirms the script returned valid JSON with run_id: run-hGthAq8Kuv5wcKZq."
+    },
+    {
+      "text": "If the run has zero total_tasks in the summary, the output clearly states no run tasks produced results or no run tasks are configured",
+      "passed": true,
+      "evidence": "The run-task-results.json shows total_tasks=0. Transcript Step 5 and Final Result state: 'This run has task stages but no task results were produced. The post_plan stage exists (status: passed) but contains zero task results.' This matches edge case #2 from SKILL.md."
+    },
+    {
+      "text": "If task_stages is non-empty, the output shows the stage name and status",
+      "passed": true,
+      "evidence": "task_stages contains one entry (post_plan, status: passed). Transcript Step 2 notes '1 task stage (post_plan, status: passed)' and Final Result says 'The post_plan stage exists (status: passed)'."
+    },
+    {
+      "text": "The summary counts (total_tasks, passed, failed) are shown in the user-facing response text, not just in the raw JSON",
+      "passed": false,
+      "evidence": "The transcript's Final Result says: 'This run has task stages but no task results were produced. The post_plan stage exists (status: passed) but contains zero task results.' While it conveys zero results, it does not explicitly show the summary counts (total_tasks: 0, passed: 0, failed: 0) in the user-facing text. SKILL.md Step 3 Tier 1 explicitly requires: 'Always include these counts in the user-facing response (not just in the raw JSON), even when all counts are zero.' The transcript shows the executor mentioned the counts in Step 2 (an internal step) but the Final Result section — the user-facing output — omits them."
+    },
+    {
+      "text": "No errors or crashes occurred during execution",
+      "passed": true,
+      "evidence": "Transcript Issues section: 'None. The script executed successfully and returned valid JSON.' metrics.json shows errors_encountered: 0."
+    },
+    {
+      "text": "The output distinguishes between 'no task stages' and 'task stages exist but have zero results'",
+      "passed": true,
+      "evidence": "Transcript Step 5: 'Identified this as SKILL.md edge case #2 — task stages exist but contain zero task results.' Final Result: 'This run has task stages but no task results were produced.' This is clearly distinct from edge case #1 (no task stages at all / no run tasks configured)."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included to provide lifecycle context for the run",
+      "passed": true,
+      "evidence": "Transcript Step 4: Called mcp__terraform__get_run_details. Result includes run status (applied), source (terraform+cloud), trigger (manual/CLI), Terraform version (1.14.6), auto-apply (true), and application date (2026-03-11). Final Result references: 'The run itself was triggered via CLI with auto-apply enabled and has been successfully applied.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.86
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 4,
+      "Bash": 3,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "ToolSearch": 1,
+      "mcp__terraform__get_run_details": 1
+    },
+    "total_tool_calls": 12,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 762,
+    "transcript_chars": 2816
+  },
+  "claims": [
+    {
+      "claim": "Script returned JSON successfully with 1 task stage (post_plan, status: passed) and 0 task results",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json confirms exactly 1 task_stage with stage=post_plan, status=passed, and task_results=[] (empty array). summary.total_tasks=0."
+    },
+    {
+      "claim": "Run status is applied, source is terraform+cloud, trigger is manual CLI",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 4 reports these from MCP get_run_details. Cannot independently verify MCP response from outputs alone, but the claim is consistent with the transcript."
+    },
+    {
+      "claim": "This is edge case #2 per SKILL.md",
+      "type": "process",
+      "verified": true,
+      "evidence": "SKILL.md edge case #2: 'Task stages exist but contain zero task results (task_stages is non-empty but each stage's task_results array is empty, total_tasks is 0)'. The JSON output matches this exactly."
+    },
+    {
+      "claim": "Raw JSON was saved to outputs directory",
+      "type": "process",
+      "verified": true,
+      "evidence": "run-task-results.json exists at /workspace/.claude/skills/tf-runtask-skill-workspace/v3/runs/run-4/outputs/run-task-results.json with 762 chars of valid JSON content."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "The task stage exists (post_plan, status: passed) but produced zero task results — could mean external service did not send back results, or run task was removed/disabled after stage creation."
+    ],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The summary counts (total_tasks, passed, failed) are shown in the user-facing response text, not just in the raw JSON",
+        "reason": "This assertion is valuable and caught a real gap: the executor described the situation in prose but didn't include the explicit numeric counts. However, the assertion is hard to evaluate precisely because the 'user-facing response' is ambiguous — the transcript is a record of execution, not the literal chat output. Consider requiring the counts to appear in the Final Result section of the transcript, or in a dedicated output file."
+      },
+      {
+        "reason": "No assertion checks whether the raw JSON output file contains valid, parseable JSON. The executor could write a truncated or malformed file and still pass assertion #1 (which only checks script execution, not file validity). Consider adding: 'The saved run-task-results.json is valid JSON and contains the run_id field.'"
+      }
+    ],
+    "overall": "Assertions are well-designed for this edge case scenario. They correctly test the 'empty but not absent' distinction (assertion 6) and check for MCP enrichment (assertion 7). The one failure on summary counts is a legitimate catch — the SKILL.md is explicit about always showing counts even when zero."
+  }
+}

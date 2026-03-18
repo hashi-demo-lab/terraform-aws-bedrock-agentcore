@@ -1,0 +1,14 @@
+{
+  "eval0": {
+    "A": "v3",
+    "B": "v2",
+    "run_dir_A": "runs/run-1",
+    "run_dir_B": "runs/run-1"
+  },
+  "eval3": {
+    "A": "v2",
+    "B": "v3",
+    "run_dir_A": "runs/run-4",
+    "run_dir_B": "runs/run-4"
+  }
+}

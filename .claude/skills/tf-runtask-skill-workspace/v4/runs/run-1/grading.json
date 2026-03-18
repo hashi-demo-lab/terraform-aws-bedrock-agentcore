@@ -1,0 +1,117 @@
+{
+  "expectations": [
+    {
+      "text": "The Tier 1 summary line shows explicit counts: Total tasks: 1, with passed/failed/errored breakdown",
+      "passed": true,
+      "evidence": "Transcript Final Result, Tier 1 section: '**Total tasks**: 1 | Passed: 0 | Failed: 1 | Errored: 0'. All counts are explicit."
+    },
+    {
+      "text": "A Tier 2 markdown table shows the Apptio-Cloudability task with status 'failed', enforcement 'advisory', and the cost diff message (Total Cost before/after)",
+      "passed": true,
+      "evidence": "Transcript Tier 2 table row: '| Apptio-Cloudability | failed | advisory | Total Cost before: 31.54, after: 31.64, diff: +0.10 | N/A |'. All three fields present and correct. Verified against run-task-results.json which confirms status 'failed', enforcement_level 'advisory', and matching message."
+    },
+    {
+      "text": "The stage is identified as post_plan or Post-Plan with overall stage status 'passed' (stage passed despite advisory failure)",
+      "passed": true,
+      "evidence": "Transcript Tier 2 heading: '### Tier 2 -- Post-Plan Tasks (stage status: passed)'. Additionally the transcript explains: 'The stage passed despite the task failure because the enforcement level is `advisory`'. Confirmed by run-task-results.json: stage 'post_plan', status 'passed'."
+    },
+    {
+      "text": "The script scripts/get-run-task-results.sh was executed and the saved JSON artifact contains run_id matching the input run ID",
+      "passed": true,
+      "evidence": "Transcript Step 2: 'Tool: Bash — `scripts/get-run-task-results.sh run-iURWDL3wVxzefsjo`'. The output file run-task-results.json contains '\"run_id\": \"run-iURWDL3wVxzefsjo\"' matching the input run ID."
+    },
+    {
+      "text": "Outcomes are shown: Estimation (Passed), Policy (Failed), and Recommendation (Passed)",
+      "passed": true,
+      "evidence": "Transcript Tier 3 table shows all three outcomes: '| Estimation | Cost Estimation Result | Passed | -- |', '| Policy | Policy Evaluation Result | Failed | Gated |', '| Recommendation | Recommendation Result | Passed | -- |'. Matches the three outcomes in run-task-results.json."
+    },
+    {
+      "text": "The output includes actionable detail from outcome bodies — such as policy violations (e.g. missing tags, wrong instance type), cost impact, or optimization recommendations",
+      "passed": true,
+      "evidence": "Transcript includes three detail sections: (1) Estimation Detail with per-resource cost table and +0.10 USD impact; (2) Policy Evaluation Detail listing '22 resources missing the cost-center tag (advisory)' and '1 EC2 instance using t3.small instead of required t2.small (gated)'; (3) Recommendation Detail with instance type comparison table (t3.small -> t4g.small, price 0.0264 -> 0.0212). Tier 4 Actionable Insights synthesizes key findings. All derived from body_html in the JSON outcomes."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included — such as run status, trigger source, or whether the run has been applied",
+      "passed": true,
+      "evidence": "Transcript Step 3 documents calling 'mcp__terraform__get_run_details(run_id: \"run-iURWDL3wVxzefsjo\")'. The Run Context table in Final Result shows: Status 'applied', Source 'tfe-api', Trigger 'manual', Terraform Version '1.14.7', Applied At '2026-03-17T09:42:10Z', and commit message. Tier 4 notes: 'the run was applied'."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 3,
+      "Bash": 2,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "mcp__terraform__get_run_details": 1,
+      "ToolSearch": 1
+    },
+    "total_tool_calls": 10,
+    "total_steps": 4,
+    "errors_encountered": 0,
+    "output_chars": 14382,
+    "transcript_chars": 4793
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "Script returned a JSON object with 1 task stage, 1 task result, and 3 outcomes",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json contains exactly 1 entry in task_stages, 1 entry in task_results, and 3 entries in outcomes array."
+    },
+    {
+      "claim": "Run status is 'applied', source 'tfe-api', trigger reason 'manual'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 3 reports these values from MCP get_run_details. The Run Context table confirms them. Cannot independently verify against MCP response, but the values are internally consistent."
+    },
+    {
+      "claim": "23 resources are failing policy checks",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json Policy outcome body_html contains '<h3>23 Failing Resources</h3>' and lists 23 individual resource details (22 missing cost-center tag + 1 EC2 instance type violation)."
+    },
+    {
+      "claim": "The gated policy did not block the run because task-level enforcement is advisory",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json shows enforcement_level 'advisory' at the task result level, while the Policy outcome tag shows 'Gated' at outcome level. The run status is 'applied', confirming it was not blocked."
+    },
+    {
+      "claim": "Monthly cost impact is +0.10 USD driven by CloudWatch metric alarm",
+      "type": "factual",
+      "verified": true,
+      "evidence": "run-task-results.json Estimation outcome body_html shows TOTAL diff +0.10 and the only changed resource is module.alb_5xx_alarm.aws_cloudwatch_metric_alarm.this[0] going from 0.00 to 0.10."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "Unclear whether 'Gated' severity at the outcome level has enforcement meaning or is purely informational from the vendor, since the task-level enforcement is 'advisory' and the run proceeded."
+    ],
+    "needs_review": [
+      "22 resources missing cost-center tag — consider default_tags strategy in AWS provider",
+      "EC2 instance type policy violation (t3.small vs required t2.small) may be intentional or indicate stale policy, especially given recommendation to use t4g.small"
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script scripts/get-run-task-results.sh was executed and the saved JSON artifact contains run_id matching the input run ID",
+        "reason": "This assertion checks that the script ran and the run_id matches, but does not verify the JSON is structurally complete (e.g., that it contains task_stages, task_results, and outcomes). A script that returns only {\"run_id\": \"run-iURWDL3wVxzefsjo\"} would pass. Consider also checking that outcomes_count > 0 or that at least one task_result exists."
+      },
+      {
+        "reason": "No assertion checks the Tier 4 'Actionable Insights' section, which is arguably the highest-value output of the skill — it synthesizes findings across all outcomes into concrete next steps. An executor that omits Tier 4 entirely would still pass all 7 assertions."
+      }
+    ],
+    "overall": "Assertions provide good coverage of the tiered output structure and data correctness. The two gaps are: (1) no assertion validates the synthesized Tier 4 insights, and (2) the JSON artifact assertion could be more discriminating about content completeness."
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "tool_calls": {
+    "Read": 2,
+    "Write": 3,
+    "Bash": 3,
+    "Edit": 0,
+    "Glob": 1,
+    "Grep": 0,
+    "mcp__terraform__get_run_details": 1,
+    "ToolSearch": 1
+  },
+  "total_tool_calls": 11,
+  "total_steps": 4,
+  "files_created": [
+    "run-task-results.json",
+    "transcript.md",
+    "user_notes.md",
+    "metrics.json"
+  ],
+  "errors_encountered": 0,
+  "output_chars": 4230,
+  "transcript_chars": 2728
+}

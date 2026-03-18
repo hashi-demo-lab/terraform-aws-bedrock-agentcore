@@ -1,0 +1,151 @@
+{
+  "expectations": [
+    {
+      "text": "The output includes a markdown table with run task results",
+      "passed": true,
+      "evidence": "Transcript 'Final Result' section contains multiple markdown tables including Tier 2 table with columns: Task Name | Status | Enforcement | Message | Link, and Tier 3 outcome table with columns: Outcome | Description | Status | Severity."
+    },
+    {
+      "text": "The task name 'Apptio-Cloudability' appears in the output",
+      "passed": true,
+      "evidence": "Transcript Tier 2 table row: '| Apptio-Cloudability | failed | advisory | Total Cost before: 31.54, after: 31.64, diff: +0.10 | -- |'. Also present in the JSON artifact at task_results[0].task_name."
+    },
+    {
+      "text": "The status 'failed' is shown for the task result",
+      "passed": true,
+      "evidence": "Transcript Tier 2 table row shows '| Apptio-Cloudability | failed | advisory |...'. JSON artifact confirms status: 'failed'."
+    },
+    {
+      "text": "The enforcement level 'advisory' is indicated",
+      "passed": true,
+      "evidence": "Transcript Tier 2 table shows 'advisory' in the Enforcement column. Additionally, the note states: 'the enforcement level is advisory (warning only, does not block the run)'."
+    },
+    {
+      "text": "The message about cost diff (Total Cost before/after) is shown",
+      "passed": true,
+      "evidence": "Transcript Tier 2 table Message column: 'Total Cost before: 31.54, after: 31.64, diff: +0.10'. This matches the JSON artifact's message field exactly."
+    },
+    {
+      "text": "The stage 'post_plan' or 'Post-Plan' is identified",
+      "passed": true,
+      "evidence": "Transcript section header: '### Tier 2 -- Post-Plan Tasks (stage status: passed)'. JSON artifact confirms stage: 'post_plan'."
+    },
+    {
+      "text": "The overall stage status 'passed' is shown (stage passed despite advisory failure)",
+      "passed": true,
+      "evidence": "Transcript header: 'Post-Plan Tasks (stage status: passed)' and note: 'The stage passed despite the task failure because the enforcement level is advisory'. JSON confirms task_stages[0].status: 'passed'."
+    },
+    {
+      "text": "The script scripts/get-run-task-results.sh was executed and produced valid JSON output with run_id field",
+      "passed": true,
+      "evidence": "Transcript Step 2 documents running the script. The saved JSON file (run-task-results.json) contains valid JSON with run_id: 'run-iURWDL3wVxzefsjo' at the top level, along with task_stages and summary fields."
+    },
+    {
+      "text": "The table row count matches the actual number of task results (1 task)",
+      "passed": true,
+      "evidence": "Tier 2 table has exactly 1 data row (Apptio-Cloudability). JSON confirms 1 task_result in the array. Tier 1 summary states 'Total tasks: 1'."
+    },
+    {
+      "text": "Outcomes are shown: Estimation (Passed), Policy (Failed), and Recommendation (Passed)",
+      "passed": true,
+      "evidence": "Transcript Tier 3 table shows all three outcomes: '| Estimation | Cost Estimation Result | Passed | -- |', '| Policy | Policy Evaluation Result | Failed | Gated |', '| Recommendation | Recommendation Result | Passed | -- |'. JSON artifact confirms outcomes_count: 3 with matching data."
+    },
+    {
+      "text": "The JSON artifact was saved to a file and contains valid run task data",
+      "passed": true,
+      "evidence": "File outputs/run-task-results.json exists and contains valid JSON with run_id, tfe_hostname, task_stages (with full task_results and outcomes including body_html), and summary fields. The file is 121 lines of well-structured data."
+    },
+    {
+      "text": "The output includes actionable detail from outcome bodies — such as policy violations, failing resources, or cost recommendations",
+      "passed": true,
+      "evidence": "Transcript includes detailed expandable sections: Estimation Detail (resource-level cost breakdown with specific amounts), Policy Evaluation Detail (22 resources missing cost-center tag, 1 EC2 using t3.small instead of t2.small), and Recommendation Detail (switch t3.small to t4g.small for ~20% savings with pricing comparison). Tier 4 Key Findings synthesizes these into actionable bullet points."
+    },
+    {
+      "text": "Run metadata from MCP get_run_details is included — such as run status, trigger source, or whether the run has been applied",
+      "passed": true,
+      "evidence": "Transcript Step 4 documents calling mcp__terraform__get_run_details. The 'Run Context' table in the Final Result shows: Status: applied, Source: tfe-api, Trigger: manual, Terraform Version: 1.14.7, Message: 'Apply from merge to main...', Applied At: 2026-03-17T09:42:10Z. Tier 4 also notes 'This run has already been applied despite the advisory task failure'."
+    }
+  ],
+  "summary": {
+    "passed": 13,
+    "failed": 0,
+    "total": 13,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 4,
+      "Bash": 2,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "ToolSearch": 1,
+      "mcp__terraform__get_run_details": 1
+    },
+    "total_tool_calls": 11,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 19784,
+    "transcript_chars": 5303
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "Script returned successfully with 1 task stage and 1 task result",
+      "type": "factual",
+      "verified": true,
+      "evidence": "JSON artifact confirms exactly 1 entry in task_stages array and 1 entry in task_results array"
+    },
+    {
+      "claim": "3 outcomes were returned (Estimation, Policy, Recommendation)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "JSON artifact shows outcomes array with 3 entries matching these outcome_ids, and outcomes_count: 3"
+    },
+    {
+      "claim": "Run status is 'applied'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 4 reports run status as applied. Cannot independently verify against MCP since we only have the transcript, but the claim is consistent with the run context table showing 'Applied At' timestamp"
+    },
+    {
+      "claim": "Monthly cost impact is +$0.10 USD",
+      "type": "factual",
+      "verified": true,
+      "evidence": "JSON body_html for Estimation outcome contains 'Monthly Cost Impact: +0.10 USD' and the cost table shows TOTAL diff of +0.10"
+    },
+    {
+      "claim": "23 failing resources in policy evaluation",
+      "type": "factual",
+      "verified": true,
+      "evidence": "JSON body_html for Policy outcome contains '23 Failing Resources' heading, and counting the detail sections in the HTML shows 23 individual resource entries"
+    },
+    {
+      "claim": "Switching from t3.small to t4g.small saves ~20% ($0.0264/hr to $0.0212/hr)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "JSON body_html for Recommendation outcome confirms current price 0.0264 and recommended price 0.0212. Savings: (0.0264-0.0212)/0.0264 = 19.7%, consistent with ~20% claim"
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script scripts/get-run-task-results.sh was executed and produced valid JSON output with run_id field",
+        "reason": "This assertion relies on the transcript claiming the script was run. A stronger test would check the JSON file's run_id value matches the input run ID (run-iURWDL3wVxzefsjo), which it does here but the assertion doesn't require it."
+      },
+      {
+        "reason": "No assertion checks error handling — what happens when a run has no task stages, or the run ID is invalid. Consider adding a negative test case as a separate eval."
+      },
+      {
+        "reason": "Assertions 1-7 are largely redundant with each other — if the markdown table exists with the right columns, all of them pass together. A single assertion failure would likely mean most others fail too. Consider consolidating into fewer, more discriminating assertions that test independent aspects."
+      }
+    ],
+    "overall": "Assertions are thorough for the happy-path scenario and cover the full output stack (script execution, JSON artifact, MCP metadata, presentation). The main gap is that assertions 1-7 are highly correlated — they all verify different cells of the same table, so they don't provide 7x the signal. Assertions 11-13 are the strongest because they test distinct, independently valuable outcomes."
+  }
+}

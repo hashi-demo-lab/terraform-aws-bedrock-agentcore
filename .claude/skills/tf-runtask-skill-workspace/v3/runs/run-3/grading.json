@@ -1,0 +1,105 @@
+{
+  "expectations": [
+    {
+      "text": "The script was executed with the invalid run ID run-NONEXISTENT12345",
+      "passed": true,
+      "evidence": "Transcript Step 2 shows: 'Ran `scripts/get-run-task-results.sh run-NONEXISTENT12345` from the skill directory.' Step 1 also confirms: 'Parsed the user-provided run ID `run-NONEXISTENT12345` as a direct run ID.'"
+    },
+    {
+      "text": "The output clearly communicates that the run was not found or an error occurred",
+      "passed": true,
+      "evidence": "Transcript Step 2 shows HTTP 404 with error message. Final Result states: 'The run ID `run-NONEXISTENT12345` does not exist. Both the run task script (HTTP 404) and the MCP `get_run_details` tool confirmed the run cannot be found.' The user was also given three actionable verification steps."
+    },
+    {
+      "text": "The error message includes the specific run ID 'run-NONEXISTENT12345'",
+      "passed": true,
+      "evidence": "The stderr output quoted in Step 2 includes: 'Error: API returned HTTP 404 for /runs/run-NONEXISTENT12345/task-stages?include=task_results&page%5Bnumber%5D=1&page%5Bsize%5D=100 (run: run-NONEXISTENT12345)'. The Final Result also repeats the run ID explicitly."
+    },
+    {
+      "text": "The error does not crash silently — it provides actionable feedback",
+      "passed": true,
+      "evidence": "The Final Result provides three actionable suggestions: (1) verify the run ID for typos, (2) check TFE_HOSTNAME points to the correct instance, (3) check if the run was deleted or belongs to a different org. The user_notes.md also flags that the 404 could mean deletion vs. typo."
+    },
+    {
+      "text": "No fabricated task results are shown",
+      "passed": true,
+      "evidence": "Transcript 'Output Files' section states: 'None created (script failed before producing JSON output)'. No task results were invented or hallucinated. The outputs directory contains only metrics.json (executor metadata), not any run task result files."
+    },
+    {
+      "text": "The script exits with a non-zero exit code (the error is propagated, not swallowed)",
+      "passed": true,
+      "evidence": "Transcript Step 2 states: 'The script exited with code 1.' This confirms a non-zero exit code was returned and reported."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 3,
+      "Bash": 2,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "mcp__terraform__get_run_details": 1
+    },
+    "total_tool_calls": 9,
+    "total_steps": 3,
+    "errors_encountered": 2,
+    "output_chars": 2893,
+    "transcript_chars": 2291
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "The TFC/TFE API returned HTTP 404",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 2 quotes the API response: '{\"errors\":[{\"status\":\"404\",\"title\":\"not found\"}]}' and the stderr message confirms HTTP 404."
+    },
+    {
+      "claim": "The MCP get_run_details tool also confirmed the run does not exist",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 3 states: 'The MCP tool returned an error: `run not found: run-NONEXISTENT12345`.' This is a second independent confirmation."
+    },
+    {
+      "claim": "This is not a permissions issue (which would return 401/403)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The API returned 404, not 401 or 403. The distinction is correctly stated in the Final Result."
+    },
+    {
+      "claim": "The skill handled the error case as designed",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The script exited non-zero (code 1), produced a clear error message with the run ID, and the executor surfaced this to the user with actionable guidance. No crash, no silent failure, no fabricated output."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "The 404 error could theoretically mean the run existed but was deleted, though the most likely cause is a typo or fabricated run ID."
+    ],
+    "needs_review": [
+      "Verify the run ID is correct if a real run was intended.",
+      "Confirm TFE_HOSTNAME is pointing to the correct TFC/TFE instance."
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script exits with a non-zero exit code (the error is propagated, not swallowed)",
+        "reason": "This assertion is graded from the transcript's claim that 'the script exited with code 1', not from directly observing the exit code. A stronger eval would capture the actual exit code in the outputs directory (e.g., writing $? to a file) so the grader can verify independently rather than trusting the transcript."
+      },
+      {
+        "reason": "No assertion checks that the script's stderr output is well-structured (e.g., includes 'Error:' prefix, HTTP status code, and the offending URL). The current assertions check for 'actionable feedback' loosely but don't verify the error message format that downstream tooling might depend on."
+      }
+    ],
+    "overall": "Assertions cover the key error-handling behaviors well. The main gap is that several assertions rely on transcript claims rather than independently verifiable output artifacts, since the script (correctly) produced no output files on failure. Consider having the executor capture stderr and exit code to files for grader-independent verification."
+  }
+}

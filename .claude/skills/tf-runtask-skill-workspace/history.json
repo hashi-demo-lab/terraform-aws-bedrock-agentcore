@@ -1,7 +1,7 @@
 {
   "started_at": "2026-03-18T02:48:13Z",
   "skill_name": "tf-runtask-skill",
-  "current_best": "v2",
+  "current_best": "v4",
   "iterations": [
     {
       "version": "v0",
@@ -20,6 +20,20 @@
     {
       "version": "v2",
       "parent": "v1",
+      "expectation_pass_rate": 1.0,
+      "grading_result": "won",
+      "is_current_best": false
+    },
+    {
+      "version": "v3",
+      "parent": "v2",
+      "expectation_pass_rate": 0.97,
+      "grading_result": "won",
+      "is_current_best": false
+    },
+    {
+      "version": "v4",
+      "parent": "v3",
       "expectation_pass_rate": 1.0,
       "grading_result": "won",
       "is_current_best": true

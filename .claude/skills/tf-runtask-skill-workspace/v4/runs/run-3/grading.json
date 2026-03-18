@@ -1,0 +1,97 @@
+{
+  "expectations": [
+    {
+      "text": "The script was executed with the invalid run ID run-NONEXISTENT12345",
+      "passed": true,
+      "evidence": "Transcript Step 2 shows: 'Executed the get-run-task-results.sh script with the run ID' using 'scripts/get-run-task-results.sh run-NONEXISTENT12345'. Step 3 also called mcp__terraform__get_run_details with run_id = 'run-NONEXISTENT12345'."
+    },
+    {
+      "text": "The output clearly communicates that the run was not found or an error occurred",
+      "passed": true,
+      "evidence": "Transcript Final Result states: 'The run run-NONEXISTENT12345 was not found. Both the TFC/TFE REST API (HTTP 404) and the MCP get_run_details tool confirmed the run does not exist.' Step 2 shows 'API returned HTTP 404' and Step 3 shows 'run not found: run-NONEXISTENT12345'."
+    },
+    {
+      "text": "The error message includes the specific run ID 'run-NONEXISTENT12345'",
+      "passed": true,
+      "evidence": "The error in Step 2 includes: 'Error: API returned HTTP 404 for /runs/run-NONEXISTENT12345/task-stages... (run: run-NONEXISTENT12345)'. The Final Result also references 'run-NONEXISTENT12345' explicitly."
+    },
+    {
+      "text": "The error does not crash silently — it provides actionable feedback",
+      "passed": true,
+      "evidence": "The Final Result provides three possible explanations: 'The run ID is invalid or contains a typo', 'The run was deleted', 'The TFE_TOKEN does not have access to the workspace containing this run' — and concludes with 'Please verify the run ID and try again.' This is actionable guidance, not a silent failure."
+    },
+    {
+      "text": "No fabricated task results are shown",
+      "passed": true,
+      "evidence": "The output file run-task-results.json contains only the raw API error: {\"errors\":[{\"status\":\"404\",\"title\":\"not found\"}]}. The Final Result explicitly states 'No run task results can be displayed because the run itself does not exist.' No fabricated data appears anywhere."
+    },
+    {
+      "text": "The script exits with a non-zero exit code (the error is propagated, not swallowed)",
+      "passed": true,
+      "evidence": "Transcript Step 2 states: 'Script exited with code 1.' This confirms the script propagated the error via a non-zero exit code."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 4,
+      "Bash": 2,
+      "Edit": 0,
+      "Glob": 1,
+      "Grep": 0,
+      "mcp__terraform__get_run_details": 1,
+      "ToolSearch": 1
+    },
+    "total_tool_calls": 11,
+    "total_steps": 4,
+    "errors_encountered": 2,
+    "output_chars": 3175,
+    "transcript_chars": 2463
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "The TFC/TFE API returned HTTP 404",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The saved run-task-results.json contains {\"errors\":[{\"status\":\"404\",\"title\":\"not found\"}]}, confirming the 404 response."
+    },
+    {
+      "claim": "The MCP tool also returned 'run not found'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Transcript Step 3 documents the MCP tool returning 'run not found: run-NONEXISTENT12345'. Consistent with the REST API result."
+    },
+    {
+      "claim": "The script and MCP tool both handled the 404 gracefully with clear error messages",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The script exited with code 1 (not a crash), the error message included the run ID and HTTP status, and the final output provided actionable suggestions. No stack traces or unhandled exceptions."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [
+      "Cannot distinguish between 'run never existed' vs 'run was deleted' vs 'token lacks access' — the API returns the same 404 for all three cases."
+    ],
+    "needs_review": [
+      "Verify the run ID run-NONEXISTENT12345 is correct.",
+      "Confirm the TFE_TOKEN has read access to the workspace."
+    ],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "The script exits with a non-zero exit code (the error is propagated, not swallowed)",
+        "reason": "This assertion relies entirely on the transcript's claim that the script exited with code 1. A stronger eval would capture the actual exit code in an output file (e.g., via 'echo $?' saved to a file) so the grader can verify independently rather than trusting the transcript's description."
+      }
+    ],
+    "overall": "Assertions are well-constructed for this error-handling scenario. They cover the key behaviors: execution with the right input, clear error communication, run ID inclusion, actionable feedback, no hallucinated results, and proper exit code propagation. The only gap is that exit code verification depends on the transcript rather than a captured artifact."
+  }
+}

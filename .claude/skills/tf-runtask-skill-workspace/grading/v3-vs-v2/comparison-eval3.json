@@ -1,0 +1,101 @@
+{
+  "winner": "B",
+  "reasoning": "Both outputs correctly executed the script, saved raw JSON, identified edge case #2 (task stages exist but zero task results), and presented structured results with summary counts. Output B distinguished itself by additionally calling mcp__terraform__get_run_details to enrich the response with run lifecycle context (status: applied, trigger: manual CLI, Terraform version, auto-apply setting, applied date). This directly satisfies assertion #7 which requires run metadata from MCP. Output A did not call the MCP tool at all and provided no run lifecycle metadata. Both outputs are otherwise comparable in correctness, formatting, and edge case handling.",
+  "rubric": {
+    "A": {
+      "content": {
+        "correctness": 5,
+        "completeness": 3,
+        "accuracy": 5
+      },
+      "structure": {
+        "organization": 5,
+        "formatting": 5,
+        "usability": 4
+      },
+      "content_score": 4.3,
+      "structure_score": 4.7,
+      "overall_score": 9.0
+    },
+    "B": {
+      "content": {
+        "correctness": 5,
+        "completeness": 5,
+        "accuracy": 5
+      },
+      "structure": {
+        "organization": 5,
+        "formatting": 5,
+        "usability": 5
+      },
+      "content_score": 5.0,
+      "structure_score": 5.0,
+      "overall_score": 10.0
+    }
+  },
+  "output_quality": {
+    "A": {
+      "score": 9,
+      "strengths": [
+        "Script executed correctly with proper run ID",
+        "Raw JSON saved to outputs directory",
+        "Correctly identified edge case #2 from SKILL.md",
+        "Presented stage name (post_plan) and status (passed) clearly",
+        "Summary counts (total_tasks, passed, failed) shown in user-facing text",
+        "Distinguished between 'task stages exist but have zero results' vs 'no task stages'",
+        "Helpful explanatory text about why results might be empty"
+      ],
+      "weaknesses": [
+        "No MCP get_run_details call — missing run lifecycle context entirely",
+        "No metrics.json output file for observability"
+      ]
+    },
+    "B": {
+      "score": 10,
+      "strengths": [
+        "Script executed correctly with proper run ID",
+        "Raw JSON saved to outputs directory",
+        "Correctly identified edge case #2 from SKILL.md",
+        "Presented stage name (post_plan) and status (passed) clearly",
+        "Summary counts shown in user-facing text",
+        "Distinguished between 'task stages exist but have zero results' vs 'no task stages'",
+        "Called mcp__terraform__get_run_details to enrich with run lifecycle context",
+        "Run metadata included: status (applied), source, trigger, Terraform version, auto-apply, applied date",
+        "Metrics.json output for observability"
+      ],
+      "weaknesses": [
+        "Re-ran the script a second time to save output (minor inefficiency)"
+      ]
+    }
+  },
+  "expectation_results": {
+    "A": {
+      "passed": 5,
+      "total": 7,
+      "pass_rate": 0.71,
+      "details": [
+        {"text": "The script scripts/get-run-task-results.sh was executed with the run ID", "passed": true},
+        {"text": "If the run has zero total_tasks in the summary, the output clearly states no run tasks produced results or no run tasks are configured", "passed": true},
+        {"text": "If task_stages is non-empty, the output shows the stage name and status", "passed": true},
+        {"text": "The summary counts (total_tasks, passed, failed) are shown in the user-facing response text, not just in the raw JSON", "passed": true},
+        {"text": "No errors or crashes occurred during execution", "passed": true},
+        {"text": "The output distinguishes between 'no task stages' and 'task stages exist but have zero results'", "passed": true},
+        {"text": "Run metadata from MCP get_run_details is included to provide lifecycle context for the run", "passed": false}
+      ]
+    },
+    "B": {
+      "passed": 7,
+      "total": 7,
+      "pass_rate": 1.0,
+      "details": [
+        {"text": "The script scripts/get-run-task-results.sh was executed with the run ID", "passed": true},
+        {"text": "If the run has zero total_tasks in the summary, the output clearly states no run tasks produced results or no run tasks are configured", "passed": true},
+        {"text": "If task_stages is non-empty, the output shows the stage name and status", "passed": true},
+        {"text": "The summary counts (total_tasks, passed, failed) are shown in the user-facing response text, not just in the raw JSON", "passed": true},
+        {"text": "No errors or crashes occurred during execution", "passed": true},
+        {"text": "The output distinguishes between 'no task stages' and 'task stages exist but have zero results'", "passed": true},
+        {"text": "Run metadata from MCP get_run_details is included to provide lifecycle context for the run", "passed": true}
+      ]
+    }
+  }
+}
