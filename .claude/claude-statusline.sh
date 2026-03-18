@@ -9,8 +9,8 @@
 # │    {                                                                │
 # │      "statusLine": {                                                │
 # │        "type": "command",                                           │
-# │        "command": "~/.claude/statusline.sh",                        │
-# │        "padding": 0                                                 │
+# │        "command": "bash /workspace/.claude/claude-statusline.sh",  │
+# │        "padding": 1                                                 │
 # │      }                                                              │
 # │    }                                                                │
 # │                                                                     │
@@ -27,6 +27,8 @@
 # │    mono        Pure grayscale — context is the only color          │
 # └─────────────────────────────────────────────────────────────────────┘
 
+# Do NOT use set -e: any failed subcommand (git, jq, awk on null values) would
+# silently kill the script and produce blank output in Claude Code's status bar.
 set -uo pipefail
 
 input=$(cat)
