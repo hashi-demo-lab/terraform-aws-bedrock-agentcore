@@ -1,0 +1,46 @@
+{
+  "skill_name": "tf-runtask-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Check the run tasks for run-iURWDL3wVxzefsjo",
+      "expected_output": "A structured markdown table showing the post-plan task stage with Apptio-Cloudability task result, including its failed status, advisory enforcement, and cost diff message",
+      "files": [],
+      "assertions": [
+        "The output includes a markdown table with run task results",
+        "The task name 'Apptio-Cloudability' appears in the output",
+        "The status 'failed' is shown for the task result",
+        "The enforcement level 'advisory' is indicated",
+        "The message about cost diff (Total Cost before/after) is shown",
+        "The stage 'post_plan' or 'Post-Plan' is identified",
+        "The overall stage status 'passed' is shown (stage passed despite advisory failure)",
+        "The script scripts/get-run-task-results.sh was executed to fetch the data"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What did the run tasks say for https://app.terraform.io/app/hashi-demos-apj/workspaces/terraform-agentic-workflows-demo01/runs/run-iURWDL3wVxzefsjo",
+      "expected_output": "Same structured output as eval 1, but the skill correctly parses the run ID from the full URL",
+      "files": [],
+      "assertions": [
+        "The run ID 'run-iURWDL3wVxzefsjo' was correctly extracted from the URL",
+        "The script scripts/get-run-task-results.sh was called with either the URL or extracted run ID",
+        "The output shows task results in a structured format (table or clear listing)",
+        "The Apptio-Cloudability task and its failed/advisory status are displayed",
+        "The cost information from the message field is presented"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Show me the run task results for run-NONEXISTENT12345",
+      "expected_output": "An error message indicating the run was not found or the API returned a 404",
+      "files": [],
+      "assertions": [
+        "The script was executed with the invalid run ID",
+        "The output clearly communicates that the run was not found or an error occurred",
+        "The error does not crash silently — it provides actionable feedback",
+        "No fabricated task results are shown"
+      ]
+    }
+  ]
+}
