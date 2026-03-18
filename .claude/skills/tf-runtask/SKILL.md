@@ -35,7 +35,7 @@ The script requires:
 
 The script uses `include=task_results` sideloading for efficiency (one API call for stages + results), then fetches outcomes and their HTML bodies per task result. It returns a single JSON object.
 
-**Save the raw JSON output** to a file (e.g., `run-task-results.json`) so the user can inspect or reprocess it later.
+Parse the JSON output directly — do not save it to disk. Present the results inline.
 
 ### Step 3: Present structured results
 
