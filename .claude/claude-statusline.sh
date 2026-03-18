@@ -446,7 +446,7 @@ OUT="${OUT}${RST}${PREV_ARROW}${SEP}${RST}"
 
 if [ "$MULTILINE" = "2" ]; then
   LINE2=$(build_bar "$CTX_PCT" "$CTX_TOKENS")
-  printf '%b\\n%b' "$OUT" "$LINE2"
+  printf '%b\n%b' "$OUT" "$LINE2"
 else
   printf '%b' "$OUT"
 fi
