@@ -81,14 +81,13 @@
       "Update(.mcp.json)",
       "Edit(.mcp.json)",
       "mcp__terraform__create_workspace_variable",
-      "mcp__terraform__create_run"
+      "mcp__terraform__create_run",
+      "Write(.foundations/scripts/bash/checkpoint-commit.sh)",
+      "Edit(.foundations/scripts/bash/checkpoint-commit.sh)"
     ]
   },
   "enableAllProjectMcpServers": false,
-  "enabledMcpjsonServers": [
-    "terraform",
-    "aws-knowledge-mcp-server"
-  ],
+  "enabledMcpjsonServers": ["terraform", "aws-knowledge-mcp-server"],
   "disableAllHooks": false,
   "statusLine": {
     "type": "command",
