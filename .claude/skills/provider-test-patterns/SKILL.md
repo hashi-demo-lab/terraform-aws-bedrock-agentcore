@@ -11,6 +11,9 @@ description: >-
   debugging provider acceptance tests, including questions about statecheck,
   plancheck, TestCheckFunc, CheckDestroy, ExpectError, import state
   verification, ephemeral resources, or how to structure test files.
+metadata:
+  copyright: Copyright IBM Corp. 2026
+  version: "0.0.1"
 ---
 
 # Provider Acceptance Test Patterns
