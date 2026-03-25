@@ -4,6 +4,18 @@
 
 This repository is a **Terraform development template** using **SDD** (Spec-Driven Development, 4-phase workflow). It supports three workflows: **module authoring** (raw resources with secure defaults), **provider development** (Plugin Framework resources), and **consumer provisioning** (composing infrastructure from private registry modules). All workflows share the same 4-phase structure: Clarify, Design, Implement, Validate.
 
+
+## Shell Safety
+
+Never generate shell commands containing dangerous bash parameter expansion patterns. These trigger Copilot CLI security warnings and can enable arbitrary code execution (CVE-2026-29783):
+
+- **Prompt expansion**: `${var@P}` — executes embedded command substitutions
+- **Assignment side-effects**: `${var=value}` or `${var:=value}` — assigns during expansion
+- **Indirect expansion**: `${!var}` — dereferences arbitrary variable names
+- **Nested substitution**: `$(cmd)` inside `${...}` default values
+
+Use simple `"$VAR"` quoting and explicit conditionals instead of parameter expansion tricks.
+
 ## Workflow Entry Points
 
 | Command                  | Purpose                                                                               |
