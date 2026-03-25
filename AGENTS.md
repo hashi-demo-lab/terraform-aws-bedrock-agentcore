@@ -60,12 +60,7 @@ These rules apply to ALL three workflows. Replace `{workflow}` with `module`, `p
 
 ### Consumer-Specific Rules
 
-6. **No test-writer agent**: Consumer workflow does NOT have a test-writer agent. Validation is via `terraform validate` and sandbox deployment, not `.tftest.hcl` files.
 7. **Sandbox destroy is orchestrator-controlled**: The orchestrator (not the validator) prompts the user about destroying sandbox resources after PR creation.
-
-### Copilot Shell Safety (CVE-2026-29783)
-
-Copilot CLI v0.0.423+ blocks bash tool calls containing parameter expansion (`${var}`), command substitution (`$(cmd)`), or heredocs. This is a security fix, not configurable. All workflow scripts in `.foundations/scripts/bash/` must be invoked as file calls, not inlined. See `.github/copilot-instructions.md` for the complete invocation reference.
 
 ### Agent Output Persistence
 
