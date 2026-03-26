@@ -531,7 +531,7 @@ enable_code_interpreter = true
 
 - [x] **C: Core agent and features** -- Create agent resource, code interpreter action group, custom action groups (for_each), knowledge base + data source + association (conditional), agent alias, CloudWatch log group, guardrail + version (conditional), API gateway + stage (conditional). Create `main.tf` (agent, alias, action groups, log group), `knowledge_base.tf` (KB, data source, association), `guardrail.tf` (guardrail, version), `api_gateway.tf` (API, stage). Creates: `main.tf`, `knowledge_base.tf`, `guardrail.tf`, `api_gateway.tf`.
 
-- [ ] **D: Examples** -- Create `examples/basic/` (minimal agent with defaults -- main.tf, provider config, terraform.tfvars) and `examples/complete/` (all features enabled -- main.tf, provider config, terraform.tfvars). Creates: `examples/basic/main.tf`, `examples/basic/versions.tf`, `examples/complete/main.tf`, `examples/complete/versions.tf`.
+- [x] **D: Examples** -- Create `examples/basic/` (minimal agent with defaults -- main.tf, provider config, terraform.tfvars) and `examples/complete/` (all features enabled -- main.tf, provider config, terraform.tfvars). Creates: `examples/basic/main.tf`, `examples/basic/versions.tf`, `examples/complete/main.tf`, `examples/complete/versions.tf`.
 
 - [ ] **E: Tests** -- Create unit test files with mock providers: `tests/unit_basic.tftest.hcl` (secure defaults), `tests/unit_complete.tftest.hcl` (full features), `tests/unit_edge_cases.tftest.hcl` (feature interactions), `tests/unit_validation.tftest.hcl` (validation errors + boundaries). Create acceptance and integration stubs: `tests/acceptance.tftest.hcl`, `tests/integration.tftest.hcl`. Creates: all files in `tests/`.
 
