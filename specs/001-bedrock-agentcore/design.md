@@ -2,7 +2,7 @@
 
 **Branch**: feat/001-bedrock-agentcore
 **Date**: 2026-03-26
-**Status**: Draft
+**Status**: Complete
 **Provider**: hashicorp/aws >= 6.0
 **Terraform**: >= 1.7
 
@@ -533,9 +533,9 @@ enable_code_interpreter = true
 
 - [x] **D: Examples** -- Create `examples/basic/` (minimal agent with defaults -- main.tf, provider config, terraform.tfvars) and `examples/complete/` (all features enabled -- main.tf, provider config, terraform.tfvars). Creates: `examples/basic/main.tf`, `examples/basic/versions.tf`, `examples/complete/main.tf`, `examples/complete/versions.tf`.
 
-- [ ] **E: Tests** -- Create unit test files with mock providers: `tests/unit_basic.tftest.hcl` (secure defaults), `tests/unit_complete.tftest.hcl` (full features), `tests/unit_edge_cases.tftest.hcl` (feature interactions), `tests/unit_validation.tftest.hcl` (validation errors + boundaries). Create acceptance and integration stubs: `tests/acceptance.tftest.hcl`, `tests/integration.tftest.hcl`. Creates: all files in `tests/`.
+- [x] **E: Tests** -- Create unit test files with mock providers: `tests/unit_basic.tftest.hcl` (secure defaults), `tests/unit_complete.tftest.hcl` (full features), `tests/unit_edge_cases.tftest.hcl` (feature interactions), `tests/unit_validation.tftest.hcl` (validation errors + boundaries). Create acceptance and integration stubs: `tests/acceptance.tftest.hcl`, `tests/integration.tftest.hcl`. Creates: all files in `tests/`.
 
-- [ ] **F: Polish** -- Generate README via terraform-docs, run `terraform fmt -recursive`, run `terraform validate`, run `tflint`, run `trivy config .`. Modifies: `README.md`. Validates all existing files.
+- [x] **F: Polish** -- Generate README via terraform-docs, run `terraform fmt -recursive`, run `terraform validate`, run `tflint`, run `trivy config .`. Modifies: `README.md`. Validates all existing files.
 
 ---
 
