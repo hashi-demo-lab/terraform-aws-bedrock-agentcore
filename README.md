@@ -73,6 +73,10 @@ Start any workflow by typing the slash command in your AI assistant's chat (Clau
 
 ## Day 2 Operations
 
+| Workflow | Purpose | Trigger | Agent |
+|----------|---------|---------|-------|
+| **Consumer Module Uplift** | Automated module version upgrades with risk assessment, remediation, and post-merge apply | Dependabot PR | `module-upgrade-remediation` |
+
 The **consumer module uplift** pipeline automates dependency management for consumer configurations:
 
 1. **Dependabot** detects new module versions in the private registry
