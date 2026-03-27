@@ -2,52 +2,42 @@
 name: tf-module-publish
 description: >
   Publish a Terraform module to HCP Terraform's Private Module Registry (PMR) via GitHub Actions.
-  Covers one-time PMR setup (labels, variables, module entity, token verification) and the
-  repeatable PR-merge-publish cycle. Use this skill when the user wants to publish a module to
-  the private registry, set up CI/CD for module releases, configure the PMR publishing pipeline,
-  create semver labels, or verify that the release workflow is working. Also trigger when the user
-  says things like "publish to PMR", "set up the release pipeline", "module is stuck in pending",
-  "configure module publishing", "last mile", or references the module_release/module_validate
-  GitHub Actions workflows.
+  Covers per-module PMR setup (labels, variables, module entity, token verification), README
+  preparation, and the repeatable PR-merge-publish cycle. Use this skill when the user wants to
+  publish a module to the private registry, set up the release pipeline for a new module, configure
+  module publishing, create semver labels, or verify that the release workflow is working. Also
+  trigger when the user says things like "publish to PMR", "set up the release pipeline", "module
+  is stuck in pending", "configure module publishing", "last mile", or references the
+  module_release/module_validate GitHub Actions workflows.
 user-invocable: true
 argument-hint: "[module-name] - Set up and publish module to HCP Terraform PMR"
 ---
 
 # Terraform Module Publish to PMR
 
-After `/tf-module-implement` produces a validated module on a feature branch, this skill handles the **last mile** — setting up and operating the CI/CD pipeline that publishes module versions to HCP Terraform's Private Module Registry (PMR).
+After `/tf-module-implement` produces a validated module on a feature branch, this skill handles the **last mile** — configuring HCP Terraform and GitHub so that merging the PR automatically publishes the module to the Private Module Registry (PMR).
 
-The pipeline has two GitHub Actions workflows:
+The template repo ships with two GitHub Actions workflows that handle CI/CD:
 - `module_validate.yml` — runs on PRs (fmt, validate, tflint, trivy, unit tests, terraform-docs)
-- `module_release.yml` — runs on merge to main (version calculation, PMR publish, git tag, GitHub Release)
+- `module_release.yml` — runs on merge to main (version calculation, PMR publish with tarball upload, git tag, GitHub Release)
+
+This skill covers the **per-module setup** that those workflows depend on.
 
 ## Workflow
 
-### Step 1: Determine what's needed
+### Step 1: Resolve module coordinates
 
-Check the current state of the repository to decide which setup steps are required:
+Determine the three values the release pipeline needs. These come from the module being published:
 
-```bash
-# Check if workflows exist
-ls .github/workflows/module_validate.yml .github/workflows/module_release.yml 2>/dev/null
+- **TFE_ORG** — the HCP Terraform organization name (e.g., `hashi-demos-apj`)
+- **TFE_MODULE** — the module name, matching the Terraform naming convention (e.g., `bedrock-agentcore`)
+- **TFE_PROVIDER** — the provider the module targets (e.g., `aws`)
 
-# Check if Python publish scripts exist
-ls .github/workflows/get_module_version.py .github/workflows/publish_module_version.py 2>/dev/null
+Derive these from the repo context — check `versions.tf` for the required provider, and ask the user for the org name if not already known.
 
-# Check if semver labels exist (requires gh auth)
-gh label list --search "semver"
+### Step 2: Create semver labels
 
-# Check if repo variables are set
-gh api "repos/$(gh repo view --json nameWithOwner -q .nameWithOwner)/actions/variables" --jq '.variables[].name'
-```
-
-If all artifacts exist, skip to Step 5 (verify). Otherwise, proceed through the missing steps.
-
-### Step 2: One-time GitHub setup
-
-#### Semver labels
-
-The validation workflow enforces exactly one semver label per PR. Create all three:
+The validation workflow enforces exactly one semver label per PR. Create all three if they don't already exist:
 
 ```bash
 gh label create "semver:patch" --color "0e8a16" --description "Patch version bump"
@@ -55,11 +45,11 @@ gh label create "semver:minor" --color "1d76db" --description "Minor version bum
 gh label create "semver:major" --color "d93f0b" --description "Major version bump"
 ```
 
-Labels are repo-scoped — if they already exist, `gh label create` will error (safe to ignore). Use `--force` to update existing labels.
+Labels are repo-scoped — if they exist from a prior module, this is a no-op (`gh label create` errors on duplicates, safe to ignore).
 
-#### Repository variables
+### Step 3: Set repository variables
 
-The release workflow reads module coordinates from repository variables (not secrets) so they appear in logs. The `gh variable set` subcommand requires gh >= 2.35.0 — older versions need the API fallback:
+The release workflow reads module coordinates from repository variables (not secrets) so they appear in logs. Use the API form since `gh variable set` requires gh >= 2.35.0:
 
 ```bash
 REPO="$(gh repo view --json nameWithOwner -q .nameWithOwner)"
@@ -68,13 +58,24 @@ gh api "repos/$REPO/actions/variables" -X POST -f name=TFE_MODULE -f value="<mod
 gh api "repos/$REPO/actions/variables" -X POST -f name=TFE_PROVIDER -f value="<provider-name>"
 ```
 
-#### TFE_TOKEN secret
+To update existing variables, use `-X PATCH` on `repos/$REPO/actions/variables/TFE_MODULE` instead of `-X POST`.
 
-The `TFE_TOKEN` GitHub secret must have **Manage Modules** permission on the HCP Terraform organization. A token with only `Traverse` or `Create Workspaces` will cause the version calculator (read-only) to succeed but the publish step (write) to fail with HTTP 404 — a confusing partial failure. Always verify the token can both read AND write module versions.
+### Step 4: Verify TFE_TOKEN permissions
 
-### Step 3: Create the module entity in PMR
+The `TFE_TOKEN` GitHub secret must have **Manage Modules** permission on the HCP Terraform organization. A token with only `Traverse` or `Create Workspaces` will cause the version calculator (read-only) to succeed but the publish step (write) to fail with HTTP 404 — a confusing partial failure where the workflow reports the correct version number but then can't create it.
 
-Before any version can be published, the module shell must exist in PMR. This is a one-time API call. The module starts in `pending` status until the first version is published with a tarball upload.
+If the user can provide the token value, verify it directly:
+```bash
+curl -s -H "Authorization: Bearer $TFE_TOKEN" \
+  "https://app.terraform.io/api/v2/organizations/<org>/registry-modules" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Modules visible: {len(d.get(\"data\",[]))}')"
+```
+
+If not, confirm with the user that the secret has the right scope. This is the most common cause of release workflow failures.
+
+### Step 5: Create the module entity in PMR
+
+Before any version can be published, the module shell must exist in PMR. This is a one-time API call per module. The module starts in `pending` status — this is normal and resolves automatically when the first version is published with a tarball upload.
 
 ```bash
 curl -s \
@@ -95,61 +96,41 @@ curl -s \
   }'
 ```
 
-The API returns `422` if the module already exists (safe to retry). Verify the module entity exists via the `mcp__terraform__search_private_modules` tool.
+Returns `422` if the module already exists (safe to retry). Verify via `mcp__terraform__search_private_modules`.
 
-### Step 4: Create workflow files (if missing)
+### Step 6: Prepare the README
 
-The pipeline requires five files in `.github/workflows/`:
+PMR ingests the full root README from the uploaded tarball. `terraform-docs` only manages content between `<!-- BEGIN_TF_DOCS -->` and `<!-- END_TF_DOCS -->` markers — everything above those markers is static prose that must be written manually.
 
-| File | Purpose |
-|------|---------|
-| `module_validate.yml` | PR validation (fmt, init, validate, tflint, trivy, unit tests, terraform-docs, example matrix) |
-| `module_release.yml` | On merge: version calculation, PMR publish with tarball upload, git tag, GitHub Release |
-| `get_module_version.py` | Queries PMR API for current version, returns incremented version based on semver label |
-| `publish_module_version.py` | Three-step publish: create version record, package tarball, upload to pre-signed URL |
-| `requirements.txt` | `requests==2.31.0`, `packaging==24.0` |
+Before publishing, verify the README describes the **module**, not the template repo. It should include:
+- Module title and one-line description
+- Features list
+- Usage examples (basic + advanced) with the PMR source path
+- Prerequisites (provider version, required AWS permissions/resources)
+- Security defaults table
 
-Key design decisions in these workflows:
+The `/tf-module-implement` pipeline does not rewrite the prose README — this step must be done explicitly.
 
-- **Unit tests are blocking** (not `continue-on-error`) — PRs cannot merge with failing tests
-- **Example validation** runs as a separate matrix job (parallel, not sequential)
-- **Trivy** must use `v` prefix and version `>= v0.35.0` — older versions have broken transitive dependencies
-- **terraform-docs** with `git-push: true` auto-commits README updates to the PR branch
-- **terraform init** uses `-backend=false` to avoid cloud backend configuration in CI
-- **Tarball upload is mandatory** — for API-driven (non-VCS) modules, creating a version record only returns an upload URL; the module tarball must be PUT to that URL or the version stays in `pending` status forever
+### Step 7: Add semver label and verify the pipeline
 
-### Step 5: Verify end-to-end
-
-Run through this checklist to confirm the pipeline works:
-
-1. **Labels**: `gh label list --search "semver"` shows all three labels
-2. **Variables**: `gh api "repos/$REPO/actions/variables" --jq '.variables[].name'` shows `TFE_ORG`, `TFE_MODULE`, `TFE_PROVIDER`
-3. **TFE_TOKEN**: Verify the secret can manage modules:
+1. Add `semver:minor` label to the PR (first release). Use the REST API to avoid GitHub Projects (Classic) errors:
    ```bash
-   curl -s -H "Authorization: Bearer $TFE_TOKEN" \
-     "https://app.terraform.io/api/v2/organizations/<org>/registry-modules" \
-     | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'Modules visible: {len(d.get(\"data\",[]))}')"
+   gh api "repos/OWNER/REPO/issues/PR_NUMBER/labels" -X POST --input - <<< '{"labels":["semver:minor"]}'
    ```
-4. **Module entity**: Use `mcp__terraform__search_private_modules` to confirm the module exists in PMR
-5. **Validate workflow**: Push a change to a PR branch that touches `.tf` files, confirm `module_validate.yml` triggers
-6. **Release workflow**: Merge a PR with a semver label, confirm `module_release.yml` publishes to PMR
-7. **PMR version**: Use `mcp__terraform__get_private_module_details` to confirm the version is accessible
-
-### Step 6: README verification
-
-Before publishing, verify the root README describes the **module** (features, usage examples, prerequisites, security controls), not the framework or template repo that generated it. `terraform-docs` only manages content between `<!-- BEGIN_TF_DOCS -->` and `<!-- END_TF_DOCS -->` markers — everything above those markers is static prose that PMR ingests verbatim from the uploaded tarball. A framework-focused README will confuse module consumers.
+2. Confirm `module_validate.yml` triggers and passes
+3. If `terraform-docs` pushes a commit, run `git pull --rebase` before any local pushes
+4. After human review, merge the PR
+5. Confirm `module_release.yml` triggers, publishes to PMR, creates git tag and GitHub Release
+6. Verify via `mcp__terraform__get_private_module_details`
 
 ## Troubleshooting
 
 ### Module stuck in `pending` status
 
-The module entity was created but no version has been successfully published with a tarball. Either:
-- No version has been created yet (check `version-statuses` in the API response)
-- A version was created but the tarball was not uploaded (the `publish_module_version.py` script must perform the three-step flow: create version, package tarball, upload to pre-signed URL)
+For API-driven (non-VCS) modules, creating a version returns an upload URL. A tarball of the module source must be PUT to that URL. Without the upload, the version stays in `pending` forever. The `publish_module_version.py` in the template handles this three-step flow (create version, package tarball, upload). If a version is stuck, fix manually:
 
-To fix manually:
 ```bash
-# Create a version and get the upload URL
+# Create version and capture upload URL
 RESPONSE=$(curl -s -H "Authorization: Bearer $TFE_TOKEN" \
   -H "Content-Type: application/vnd.api+json" -X POST \
   "https://app.terraform.io/api/v2/organizations/<org>/registry-modules/private/<org>/<module>/<provider>/versions" \
@@ -157,35 +138,26 @@ RESPONSE=$(curl -s -H "Authorization: Bearer $TFE_TOKEN" \
 
 UPLOAD_URL=$(echo "$RESPONSE" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['links']['upload'])")
 
-# Package and upload
+# Package (exclude non-module files) and upload
 tar -czf /tmp/module.tar.gz --exclude='.git' --exclude='.github' --exclude='specs' --exclude='.claude' --exclude='__pycache__' --exclude='.terraform' .
 curl -s -H "Content-Type: application/octet-stream" -X PUT --data-binary @/tmp/module.tar.gz "$UPLOAD_URL"
 ```
 
-### Release workflow fails at "Publish Module Version"
+### Release workflow fails at "Publish Module Version" (HTTP 404)
 
-Check the `TFE_TOKEN` GitHub secret permissions. HTTP 404 on the create-version API call means the token lacks `Manage Modules` permission. Update the secret with a properly-scoped token and re-run the workflow.
+The `TFE_TOKEN` secret lacks `Manage Modules` permission. Update the secret and re-run the workflow — re-runs pick up updated secrets immediately.
 
 ### Release workflow fails at "Determine Release Type"
 
-The merged PR had no semver label. This cannot be auto-recovered — the PR is closed. Either:
-- Create a no-op PR with the correct label to trigger a new release
-- Run the version calculator and publish scripts manually with environment variables set
+The merged PR had no semver label. Cannot auto-recover (PR is closed). Either create a no-op PR with the correct label, or run the publish scripts manually with environment variables set.
 
 ### terraform-docs causes push conflicts
 
-The validation workflow's `terraform-docs` step pushes a commit to the PR branch. If you push locally after that, git will reject with "remote contains work that you do not have locally." Always `git pull --rebase` before pushing to a branch with an active validation workflow.
+The validation workflow pushes a docs commit to the PR branch. Local pushes after that are rejected. Always `git pull --rebase` before pushing to a branch with an active validation workflow.
 
-### Trivy action fails at "Set up job"
+### Re-running a partially failed release
 
-The `aquasecurity/trivy-action` tag must use the `v` prefix (e.g., `v0.35.0` not `0.35.0`). Versions below `v0.29.0` have a broken transitive dependency on `aquasecurity/setup-trivy`. Use `v0.35.0` or later.
-
-### `gh pr edit --add-label` fails
-
-Repos with GitHub Projects (Classic) get a GraphQL deprecation error. Use the REST API:
-```bash
-gh api "repos/OWNER/REPO/issues/PR_NUMBER/labels" -X POST --input - <<< '{"labels":["semver:minor"]}'
-```
+If the release failed after the PMR version was created (e.g., git tag step failed), re-running will fail with 422 (duplicate version). Either delete the pending version via API first, or complete the remaining steps (tag, release) manually.
 
 ## Semver label guidelines
 
@@ -199,7 +171,3 @@ gh api "repos/OWNER/REPO/issues/PR_NUMBER/labels" -X POST --input - <<< '{"label
 | Remove/rename variable | `semver:major` | — |
 | Change default (breaking) | `semver:major` | — |
 | Remove output | `semver:major` | — |
-
-## Reference
-
-Full operational guide with all e2e findings: `specs/bedrock-agentcore/last-mile-operations.md`
