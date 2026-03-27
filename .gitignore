@@ -45,6 +45,10 @@ notes-during-refactoring/
 # Environment files
 .env
 
+# Python bytecode cache
+__pycache__/
+*.pyc
+
 # OS files
 .DS_Store
 .copilot/config.json
