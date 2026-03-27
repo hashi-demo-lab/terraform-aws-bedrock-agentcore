@@ -167,7 +167,11 @@ This is the automated pipeline that executes on every PR targeting `main`.
 
 **Finding**: The Python version calculator queries the **PMR API** (not git tags) for the current version. This means PMR is the source of truth. If someone manually creates a git tag without publishing to PMR, the version calculator won't see it. Conversely, if PMR has a version but the git tag was deleted, the calculator will still increment correctly.
 
-**Finding**: The `commit-sha` attribute in the PMR API links the published version to the merge commit. This is informational only — PMR does not fetch code from GitHub. The module source code is resolved by consumers via `source = "app.terraform.io/hashi-demos-apj/bedrock-agentcore/aws"` which reads from the registry, not the git SHA.
+**Finding (CRITICAL)**: For API-driven (non-VCS) modules, creating a version via the API returns an **upload URL**. You must then create a tarball of the module source and `PUT` it to that URL. Without the upload, the module stays in `pending` status forever. The reference template's `publish_module_version.py` only created the version record — it did not upload. Our fixed version performs all three steps: create version → package tarball → upload to pre-signed URL.
+
+**Finding**: The tarball should contain only Terraform module files (`.tf`, `modules/`, `examples/`, `tests/`, `README.md`, etc.) and exclude repo scaffolding (`.git`, `.github`, `specs`, `.claude`, `__pycache__`, `.terraform`). The upload URL is a pre-signed archivist URL that accepts `application/octet-stream`.
+
+**Finding**: The `commit-sha` attribute in the PMR API links the published version to the merge commit. This is informational only — PMR does not fetch code from GitHub. The module source is uploaded directly via the tarball.
 
 ---
 
