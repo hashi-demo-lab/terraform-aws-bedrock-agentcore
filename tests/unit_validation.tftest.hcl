@@ -318,7 +318,7 @@ run "test_idle_session_ttl_maximum_valid" {
     environment         = "dev"
     owner               = "platform-team"
     cost_center         = "CC-1234"
-    idle_session_ttl    = 3600
+    idle_session_ttl    = 900
   }
 
   assert {

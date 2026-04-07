@@ -39,7 +39,7 @@ run "test_all_features_enabled" {
     environment                    = "prod"
     owner                          = "ml-engineering"
     cost_center                    = "CC-5678"
-    idle_session_ttl               = 1800
+    idle_session_ttl               = 900
     enable_code_interpreter        = true
     enable_memory                  = true
     memory_storage_days            = 14
