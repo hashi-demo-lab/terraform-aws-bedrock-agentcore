@@ -140,3 +140,64 @@ Contributions are welcome. Please open an issue to discuss proposed changes befo
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.14 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.50 |
+| <a name="requirement_opensearch"></a> [opensearch](#requirement\_opensearch) | >= 2.3 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.11 |
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_action_group_definitions"></a> [action\_group\_definitions](#input\_action\_group\_definitions) | Map of Lambda-backed action groups keyed by action group name. Each value provides description, target Lambda ARN, and either an OpenAPI schema (inline payload OR S3 location) or a function schema. The module creates one aws\_bedrockagent\_agent\_action\_group plus one aws\_lambda\_permission per entry. | <pre>map(object({<br/>    description = string<br/>    lambda_arn  = string<br/>    api_schema = optional(object({<br/>      payload = optional(string)<br/>      s3 = optional(object({<br/>        s3_bucket_name = string<br/>        s3_object_key  = string<br/>      }))<br/>    }))<br/>    function_schema = optional(object({<br/>      functions = list(object({<br/>        name        = string<br/>        description = string<br/>        parameters = optional(map(object({<br/>          type        = string<br/>          description = string<br/>          required    = optional(bool, false)<br/>        })))<br/>      }))<br/>    }))<br/>  }))</pre> | `{}` | no |
+| <a name="input_agent_alias_name"></a> [agent\_alias\_name](#input\_agent\_alias\_name) | Name of the stable invocation alias pinned to the prepared agent version. | `string` | `"live"` | no |
+| <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | Stable name for the Bedrock agent and the prefix for derived resource names (KMS alias, log groups, IAM roles, AOSS collection). | `string` | n/a | yes |
+| <a name="input_api_throttling_burst_limit"></a> [api\_throttling\_burst\_limit](#input\_api\_throttling\_burst\_limit) | Token-bucket burst limit on the API stage. | `number` | `200` | no |
+| <a name="input_api_throttling_rate_limit"></a> [api\_throttling\_rate\_limit](#input\_api\_throttling\_rate\_limit) | Steady-state requests-per-second throttle on the API stage. | `number` | `100` | no |
+| <a name="input_cors_configuration"></a> [cors\_configuration](#input\_cors\_configuration) | Optional CORS configuration for the HTTP API. Disabled when null (default). Setting allow\_origins = ["*"] is a security smell; document tradeoff in README. | <pre>object({<br/>    allow_origins = list(string)<br/>    allow_methods = list(string)<br/>    allow_headers = list(string)<br/>    max_age       = optional(number, 0)<br/>  })</pre> | `null` | no |
+| <a name="input_cost_center"></a> [cost\_center](#input\_cost\_center) | Required organizational tag identifying the cost center for chargeback. | `string` | n/a | yes |
+| <a name="input_enable_api_gateway"></a> [enable\_api\_gateway](#input\_enable\_api\_gateway) | When true, provision an HTTP API + invoker Lambda + access log group. The route is unauthenticated by default; consumer attaches authorizer using exposed outputs. | `bool` | `false` | no |
+| <a name="input_enable_code_interpreter"></a> [enable\_code\_interpreter](#input\_enable\_code\_interpreter) | Attach the AWS-managed AMAZON.CodeInterpreter action group. Region-restricted: us-east-1, us-west-2, eu-central-1 only. | `bool` | `true` | no |
+| <a name="input_enable_knowledge_base"></a> [enable\_knowledge\_base](#input\_enable\_knowledge\_base) | When true, provision the AOSS-backed knowledge base, IAM role, vector index, KB resource, S3 data source, and agent association. | `bool` | `false` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | Required organizational tag identifying deployment environment. Applied to every taggable resource via local.required\_tags. | `string` | n/a | yes |
+| <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | When true, sets skip\_resource\_in\_use\_check = true on action groups and the agent so terraform destroy can run while the alias references them. Off by default for safety. | `bool` | `false` | no |
+| <a name="input_foundation_model"></a> [foundation\_model](#input\_foundation\_model) | Bedrock foundation model ID. Default is Claude Sonnet 4. Consumer must verify model availability in target region. | `string` | `"anthropic.claude-sonnet-4-20250514"` | no |
+| <a name="input_guardrail_id"></a> [guardrail\_id](#input\_guardrail\_id) | Optional consumer-provided Bedrock Guardrail identifier to bind to the agent. Module does NOT create the guardrail in v1. | `string` | `""` | no |
+| <a name="input_guardrail_version"></a> [guardrail\_version](#input\_guardrail\_version) | Guardrail version to pin. Defaults to DRAFT (mutable); pin to a numbered version in production examples. | `string` | `"DRAFT"` | no |
+| <a name="input_idle_session_ttl_seconds"></a> [idle\_session\_ttl\_seconds](#input\_idle\_session\_ttl\_seconds) | Session idle timeout. Bedrock-allowed range 60-3600 seconds. | `number` | `600` | no |
+| <a name="input_instruction"></a> [instruction](#input\_instruction) | Natural-language instruction prompt that defines the agent's behavior. AWS API requires 40-20000 chars when prepare\_agent runs. | `string` | n/a | yes |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Bring-your-own KMS CMK ARN. When empty, the module creates one with rotation enabled. Encryption is non-negotiable; this only controls key ownership. | `string` | `""` | no |
+| <a name="input_knowledge_base_description"></a> [knowledge\_base\_description](#input\_knowledge\_base\_description) | Natural-language description used by the agent's planner to decide when to query the KB. This is functional, not cosmetic. | `string` | `"Use this knowledge base to retrieve relevant context from the customer document corpus."` | no |
+| <a name="input_knowledge_base_embedding_model_id"></a> [knowledge\_base\_embedding\_model\_id](#input\_knowledge\_base\_embedding\_model\_id) | Embedding model ID for vectorization. Default Titan v2 at 1024 dimensions. | `string` | `"amazon.titan-embed-text-v2:0"` | no |
+| <a name="input_knowledge_base_inclusion_prefixes"></a> [knowledge\_base\_inclusion\_prefixes](#input\_knowledge\_base\_inclusion\_prefixes) | Optional S3 key prefixes to restrict which objects in the bucket are ingested. When set, S3 IAM permissions are scoped via s3:prefix. | `list(string)` | `[]` | no |
+| <a name="input_knowledge_base_s3_bucket_arn"></a> [knowledge\_base\_s3\_bucket\_arn](#input\_knowledge\_base\_s3\_bucket\_arn) | ARN of the consumer-supplied S3 bucket containing source documents for the knowledge base. Module never creates the bucket. | `string` | `""` | no |
+| <a name="input_knowledge_base_s3_kms_key_arn"></a> [knowledge\_base\_s3\_kms\_key\_arn](#input\_knowledge\_base\_s3\_kms\_key\_arn) | Optional CMK ARN if the source S3 bucket uses a customer-managed key; the KB role is granted kms:Decrypt on this key. | `string` | `""` | no |
+| <a name="input_log_retention_days"></a> [log\_retention\_days](#input\_log\_retention\_days) | Retention for all CloudWatch log groups created by the module. Validated against CloudWatch Logs allowed values. | `number` | `90` | no |
+| <a name="input_owner"></a> [owner](#input\_owner) | Required organizational tag identifying the owning team or person (e.g., team-genai@example.com). | `string` | n/a | yes |
+| <a name="input_project"></a> [project](#input\_project) | Required organizational tag identifying the project for grouping and reporting. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Free-form additional tags merged with required tags and Name / ManagedBy = "terraform" defaults. Consumer-provided keys override module defaults. | `map(string)` | `{}` | no |
+| <a name="input_wait_after_prepare_seconds"></a> [wait\_after\_prepare\_seconds](#input\_wait\_after\_prepare\_seconds) | Delay between the final PrepareAgent and CreateAgentAlias to work around eventual-consistency on agent\_version. Set 0 to disable. | `number` | `10` | no |
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
