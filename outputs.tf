@@ -57,32 +57,27 @@ output "log_group_arn" {
 
 output "knowledge_base_id" {
   description = "Identifier of the Bedrock knowledge base, or null when disabled."
-  # TODO: wire to try(aws_bedrockagent_knowledge_base.this[0].id, null) in Item E
-  value = try(null, null)
+  value       = try(aws_bedrockagent_knowledge_base.this[0].id, null)
 }
 
 output "knowledge_base_arn" {
   description = "ARN of the Bedrock knowledge base, or null when disabled."
-  # TODO: wire to try(aws_bedrockagent_knowledge_base.this[0].arn, null) in Item E
-  value = try(null, null)
+  value       = try(aws_bedrockagent_knowledge_base.this[0].arn, null)
 }
 
 output "knowledge_base_role_arn" {
   description = "ARN of the KB execution role."
-  # TODO: wire to try(aws_iam_role.kb[0].arn, null) in Item E
-  value = try(null, null)
+  value       = try(aws_iam_role.kb[0].arn, null)
 }
 
 output "data_source_id" {
   description = "Identifier of the KB S3 data source — needed to trigger ingestion via the SDK (StartIngestionJob)."
-  # TODO: wire to try(aws_bedrockagent_data_source.this[0].data_source_id, null) in Item E
-  value = try(null, null)
+  value       = try(aws_bedrockagent_data_source.this[0].data_source_id, null)
 }
 
 output "opensearch_collection_arn" {
   description = "ARN of the AOSS vector collection."
-  # TODO: wire to try(aws_opensearchserverless_collection.kb[0].arn, null) in Item E
-  value = try(null, null)
+  value       = try(aws_opensearchserverless_collection.kb[0].arn, null)
 }
 
 ###############################################################################

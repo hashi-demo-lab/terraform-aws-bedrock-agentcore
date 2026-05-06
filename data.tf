@@ -247,3 +247,126 @@ data "aws_iam_policy_document" "kms" {
     }
   }
 }
+
+###############################################################################
+# Knowledge base execution role — trust policy.
+#
+# Mirrors the agent trust policy: bedrock.amazonaws.com service principal with
+# both confused-deputy guards (aws:SourceAccount = caller account, aws:SourceArn
+# ArnLike-pinned to any knowledge-base in the caller's region). Reference: AWS
+# Bedrock User Guide — kb-permissions.html.
+###############################################################################
+
+data "aws_iam_policy_document" "kb_assume" {
+  count = var.enable_knowledge_base ? 1 : 0
+
+  statement {
+    sid     = "BedrockKBAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["bedrock.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [local.account_id]
+    }
+
+    condition {
+      test     = "ArnLike"
+      variable = "aws:SourceArn"
+      values   = ["arn:${local.partition}:bedrock:${local.region}:${local.account_id}:knowledge-base/*"]
+    }
+  }
+}
+
+###############################################################################
+# Knowledge base execution role — inline policy (least-privilege).
+#
+# Statements:
+#   - InvokeEmbeddingModel : bedrock:InvokeModel on the embedding model ARN
+#                            (Titan v2 by default).
+#   - S3Read              : s3:GetObject on every object in the consumer-supplied
+#                            bucket. When var.knowledge_base_inclusion_prefixes
+#                            is non-empty, GetObject is scoped via object-level
+#                            ARNs and ListBucket is scoped via the s3:prefix
+#                            condition; otherwise both are bucket-wide.
+#   - UseKBKMS            : kms:Decrypt + kms:DescribeKey on the resolved CMK.
+#                            Used by Bedrock to decrypt KB-managed assets that
+#                            ride the same key as the agent log group / agent.
+#   - UseSourceBucketKMS  : kms:Decrypt + kms:DescribeKey on
+#                            var.knowledge_base_s3_kms_key_arn when the source
+#                            bucket uses a separate CMK (consumer responsibility
+#                            to also mirror the grant in the bucket key policy).
+#   - AOSSAPIAccess       : aoss:APIAccessAll on the AOSS collection ARN. AOSS
+#                            uses a SigV4 data-plane API; this is the IAM-side
+#                            grant; the data-access policy below is the AOSS
+#                            collection-side grant. BOTH are required.
+###############################################################################
+
+data "aws_iam_policy_document" "kb_inline" {
+  count = var.enable_knowledge_base ? 1 : 0
+
+  statement {
+    sid       = "InvokeEmbeddingModel"
+    effect    = "Allow"
+    actions   = ["bedrock:InvokeModel"]
+    resources = [local.embedding_model_arn]
+  }
+
+  # ListBucket is bucket-level; GetObject is object-level. Optional s3:prefix
+  # condition narrows ingestion to a known set of folders.
+  statement {
+    sid       = "S3ListBucket"
+    effect    = "Allow"
+    actions   = ["s3:ListBucket"]
+    resources = [var.knowledge_base_s3_bucket_arn]
+
+    dynamic "condition" {
+      for_each = length(var.knowledge_base_inclusion_prefixes) > 0 ? [1] : []
+      content {
+        test     = "StringLike"
+        variable = "s3:prefix"
+        values   = [for p in var.knowledge_base_inclusion_prefixes : "${p}*"]
+      }
+    }
+  }
+
+  statement {
+    sid     = "S3GetObject"
+    effect  = "Allow"
+    actions = ["s3:GetObject"]
+    resources = length(var.knowledge_base_inclusion_prefixes) > 0 ? [
+      for p in var.knowledge_base_inclusion_prefixes : "${var.knowledge_base_s3_bucket_arn}/${p}*"
+    ] : ["${var.knowledge_base_s3_bucket_arn}/*"]
+  }
+
+  statement {
+    sid       = "UseKBKMS"
+    effect    = "Allow"
+    actions   = ["kms:Decrypt", "kms:DescribeKey", "kms:GenerateDataKey"]
+    resources = [local.kms_key_arn_resolved]
+  }
+
+  # Optional: grant decrypt on a separate CMK that the source S3 bucket uses.
+  dynamic "statement" {
+    for_each = var.knowledge_base_s3_kms_key_arn == "" ? [] : [1]
+    content {
+      sid       = "UseSourceBucketKMS"
+      effect    = "Allow"
+      actions   = ["kms:Decrypt", "kms:DescribeKey"]
+      resources = [var.knowledge_base_s3_kms_key_arn]
+    }
+  }
+
+  statement {
+    sid       = "AOSSAPIAccess"
+    effect    = "Allow"
+    actions   = ["aoss:APIAccessAll"]
+    resources = [aws_opensearchserverless_collection.kb[0].arn]
+  }
+}

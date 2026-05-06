@@ -71,4 +71,16 @@ locals {
   # Derived role + alias names so the resource block stays terse.
   agent_role_name = "bedrock-agent-${var.agent_name}"
   kms_alias_name  = "alias/bedrock-agent-${var.agent_name}"
+
+  # Knowledge base derived names. AOSS collection names must be 3-32 chars,
+  # lowercase, and start with a letter; agent_name validation already constrains
+  # the character set so a simple suffix is safe.
+  kb_role_name             = "bedrock-kb-${var.agent_name}"
+  kb_collection_name       = "${var.agent_name}-kb"
+  kb_vector_index_name     = "bedrock-knowledge-base-default-index"
+  kb_vector_field          = "bedrock-knowledge-base-default-vector"
+  kb_text_field            = "AMAZON_BEDROCK_TEXT_CHUNK"
+  kb_metadata_field        = "AMAZON_BEDROCK_METADATA"
+  kb_embedding_dimensions  = 1024
+  kb_collection_arn_prefix = "arn:${local.partition}:aoss:${local.region}:${local.account_id}:collection"
 }
