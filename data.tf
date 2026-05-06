@@ -9,9 +9,23 @@ data "aws_partition" "current" {}
 
 data "aws_region" "current" {}
 
-# NOTE: archive_file.invoker_zip is intentionally deferred to checklist Item F,
-# which also creates files/invoker/index.py. Declaring the data source before
-# the source file exists would fail terraform validate.
+###############################################################################
+# Invoker Lambda source bundle (Item F).
+#
+# Zips the bundled Python 3.12 invoker (files/invoker/index.py) for upload to
+# Lambda. Only created when the API Gateway frontend is enabled — keeps the
+# .zip out of the working directory for consumers who only want the agent
+# itself. The output_base64sha256 attribute drives Lambda's source_code_hash
+# so updates to the .py file trigger a function update on the next apply.
+###############################################################################
+
+data "archive_file" "invoker_zip" {
+  count = var.enable_api_gateway ? 1 : 0
+
+  type        = "zip"
+  source_dir  = "${path.module}/files/invoker"
+  output_path = "${path.module}/files/invoker.zip"
+}
 
 ###############################################################################
 # Bedrock agent execution role — trust policy (assume-role).
@@ -368,5 +382,80 @@ data "aws_iam_policy_document" "kb_inline" {
     effect    = "Allow"
     actions   = ["aoss:APIAccessAll"]
     resources = [aws_opensearchserverless_collection.kb[0].arn]
+  }
+}
+
+###############################################################################
+# Invoker Lambda execution role — trust policy (Item F).
+#
+# Standard lambda.amazonaws.com sts:AssumeRole. The Lambda runs as a singleton
+# behind API Gateway and is not invoked by another AWS service that would
+# benefit from the SourceAccount/SourceArn confused-deputy guards (apigateway
+# invokes via the resource-policy permission, not via assume-role chaining).
+###############################################################################
+
+data "aws_iam_policy_document" "lambda_assume" {
+  count = var.enable_api_gateway ? 1 : 0
+
+  statement {
+    sid     = "LambdaAssumeRole"
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+  }
+}
+
+###############################################################################
+# Invoker Lambda execution role — inline policy (Item F).
+#
+# Statements:
+#   - WriteInvokerLogs    : logs:CreateLogStream/PutLogEvents on the invoker
+#                           log group ARN with stream wildcard.
+#   - InvokeBedrockAgent  : bedrock:InvokeAgent scoped to the agent alias ARN
+#                           created by this module (NOT a wildcard) — the only
+#                           runtime privilege the invoker needs.
+#   - XRayTracing         : xray:PutTraceSegments / PutTelemetryRecords on "*".
+#                           X-Ray does NOT support resource-level permissions
+#                           for these two actions; this is the same documented
+#                           wildcard exception that appears in the agent role
+#                           (see design.md §7).
+#   - UseCMK              : kms:Decrypt + kms:GenerateDataKey on the resolved
+#                           CMK so the invoker can read the agent-side
+#                           encrypted state and write KMS-encrypted log events.
+###############################################################################
+
+data "aws_iam_policy_document" "lambda_inline" {
+  count = var.enable_api_gateway ? 1 : 0
+
+  statement {
+    sid       = "WriteInvokerLogs"
+    effect    = "Allow"
+    actions   = ["logs:CreateLogStream", "logs:PutLogEvents"]
+    resources = ["${aws_cloudwatch_log_group.lambda[0].arn}:*"]
+  }
+
+  statement {
+    sid       = "InvokeBedrockAgent"
+    effect    = "Allow"
+    actions   = ["bedrock:InvokeAgent"]
+    resources = [aws_bedrockagent_agent_alias.this.agent_alias_arn]
+  }
+
+  statement {
+    sid       = "XRayTracing"
+    effect    = "Allow"
+    actions   = ["xray:PutTraceSegments", "xray:PutTelemetryRecords"]
+    resources = ["*"] # X-Ray does not support resource-level permissions; see AWS X-Ray IAM docs.
+  }
+
+  statement {
+    sid       = "UseCMK"
+    effect    = "Allow"
+    actions   = ["kms:Decrypt", "kms:GenerateDataKey"]
+    resources = [local.kms_key_arn_resolved]
   }
 }
