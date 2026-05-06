@@ -69,14 +69,26 @@ locals {
   kb_arn_pattern = "arn:${local.partition}:bedrock:${local.region}:${local.account_id}:knowledge-base/*"
 
   # Derived role + alias names so the resource block stays terse.
-  agent_role_name = "bedrock-agent-${var.agent_name}"
+  # var.agent_name accepts up to 100 chars (per Bedrock API), but downstream
+  # AWS resources have shorter name limits:
+  #   - IAM role name: 64 chars max -> prefix "bedrock-agent-" (14) + 50 = 64
+  #   - IAM role name: 64 chars max -> prefix "bedrock-kb-"    (11) + 53 = 64
+  #   - AOSS collection: 32 chars max -> name + "-kb" (3)      = need 29
+  #   - KMS alias: 256 chars max -> safely fits full name
+  # We use substr() to deterministically truncate the agent_name suffix per
+  # downstream resource. Truncation is purely for resource naming; the agent
+  # itself receives the full var.agent_name unchanged.
+  agent_name_iam_safe  = substr(var.agent_name, 0, 50)
+  agent_name_aoss_safe = substr(var.agent_name, 0, 29)
+
+  agent_role_name = "bedrock-agent-${local.agent_name_iam_safe}"
   kms_alias_name  = "alias/bedrock-agent-${var.agent_name}"
 
   # Knowledge base derived names. AOSS collection names must be 3-32 chars,
   # lowercase, and start with a letter; agent_name validation already constrains
   # the character set so a simple suffix is safe.
-  kb_role_name             = "bedrock-kb-${var.agent_name}"
-  kb_collection_name       = "${var.agent_name}-kb"
+  kb_role_name             = "bedrock-kb-${local.agent_name_iam_safe}"
+  kb_collection_name       = "${local.agent_name_aoss_safe}-kb"
   kb_vector_index_name     = "bedrock-knowledge-base-default-index"
   kb_vector_field          = "bedrock-knowledge-base-default-vector"
   kb_text_field            = "AMAZON_BEDROCK_TEXT_CHUNK"

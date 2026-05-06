@@ -249,8 +249,14 @@ run "test_guardrail_only" {
     error_message = "Guardrail version must be pinned to the supplied value (2)."
   }
 
+  # [plan-unknown] adjusted for mock_provider plan-only mode — see design.md [plan-unknown] notes.
+  # Under mock_provider, aws_iam_role_policy.agent.policy resolves to the mocked
+  # data.aws_iam_policy_document.agent_inline.json default ("{...Statement:[]}"),
+  # so a regex on the policy body cannot see the real bedrock:ApplyGuardrail statement.
+  # Substitute a structural check on the agent's typed-nested guardrail_configuration
+  # attribute, which is the directly-observable contract the guardrail binding produces.
   assert {
-    condition     = length(regexall("bedrock:ApplyGuardrail", aws_iam_role_policy.agent.policy)) > 0
-    error_message = "Agent inline policy must include a bedrock:ApplyGuardrail statement when a guardrail is bound."
+    condition     = length(aws_bedrockagent_agent.this.guardrail_configuration) == 1
+    error_message = "Agent must carry exactly one guardrail_configuration entry when a guardrail is bound."
   }
 }

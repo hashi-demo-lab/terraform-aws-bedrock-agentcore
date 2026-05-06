@@ -78,9 +78,12 @@ run "test_full_features" {
         api_schema  = { payload = "openapi: 3.0.0\ninfo:\n  title: Calendar\n  version: 1.0.0\npaths: {}" }
       }
     }
-    enable_knowledge_base             = true
-    knowledge_base_s3_bucket_arn      = "arn:aws:s3:::test-corpus-bucket"
-    knowledge_base_inclusion_prefixes = ["docs/", "policies/"]
+    enable_knowledge_base        = true
+    knowledge_base_s3_bucket_arn = "arn:aws:s3:::test-corpus-bucket"
+    # AWS Bedrock data source inclusion_prefixes is fixed-length 1 (set must contain
+    # at most 1 element); use a single prefix here. Multi-prefix coverage is exercised
+    # via aggregated patterns when needed.
+    knowledge_base_inclusion_prefixes = ["docs/"]
     knowledge_base_description        = "Use this KB when the user asks about company policy."
     enable_api_gateway                = true
     api_throttling_rate_limit         = 500
