@@ -140,3 +140,135 @@ Contributions are welcome. Please open an issue to discuss proposed changes befo
 ## License
 
 This project is licensed under the [Apache License 2.0](LICENSE).
+
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.14 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2.4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.50 |
+| <a name="requirement_opensearch"></a> [opensearch](#requirement\_opensearch) | >= 2.3 |
+| <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.11 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.7.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.43.0 |
+| <a name="provider_opensearch"></a> [opensearch](#provider\_opensearch) | 2.3.2 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.13.1 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_apigatewayv2_api.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_api) | resource |
+| [aws_apigatewayv2_integration.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_integration) | resource |
+| [aws_apigatewayv2_route.invoke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_route) | resource |
+| [aws_apigatewayv2_stage.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/apigatewayv2_stage) | resource |
+| [aws_bedrockagent_agent.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_agent) | resource |
+| [aws_bedrockagent_agent_action_group.code_interpreter](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_agent_action_group) | resource |
+| [aws_bedrockagent_agent_action_group.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_agent_action_group) | resource |
+| [aws_bedrockagent_agent_alias.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_agent_alias) | resource |
+| [aws_bedrockagent_agent_knowledge_base_association.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_agent_knowledge_base_association) | resource |
+| [aws_bedrockagent_data_source.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_data_source) | resource |
+| [aws_bedrockagent_knowledge_base.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_knowledge_base) | resource |
+| [aws_cloudwatch_log_group.agent](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_log_group.apigw_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_log_group.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_iam_role.agent](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.kb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.agent](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.kb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_kms_alias.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
+| [aws_kms_key.this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
+| [aws_lambda_function.invoker](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
+| [aws_lambda_permission.apigw_invoke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_lambda_permission.bedrock_invoke](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_opensearchserverless_access_policy.kb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/opensearchserverless_access_policy) | resource |
+| [aws_opensearchserverless_collection.kb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/opensearchserverless_collection) | resource |
+| [aws_opensearchserverless_security_policy.encryption](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/opensearchserverless_security_policy) | resource |
+| [aws_opensearchserverless_security_policy.network](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/opensearchserverless_security_policy) | resource |
+| [opensearch_index.kb](https://registry.terraform.io/providers/opensearch-project/opensearch/latest/docs/resources/index) | resource |
+| [time_sleep.wait_after_prepare](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [time_sleep.wait_aoss_dap](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
+| [archive_file.invoker_zip](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.agent_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.agent_inline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kb_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kb_inline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.kms](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.lambda_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.lambda_inline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_action_group_definitions"></a> [action\_group\_definitions](#input\_action\_group\_definitions) | Map of Lambda-backed action groups keyed by action group name. Each value provides description, target Lambda ARN, and either an OpenAPI schema (inline payload OR S3 location) or a function schema. The module creates one aws\_bedrockagent\_agent\_action\_group plus one aws\_lambda\_permission per entry. | <pre>map(object({<br/>    description = string<br/>    lambda_arn  = string<br/>    api_schema = optional(object({<br/>      payload = optional(string)<br/>      s3 = optional(object({<br/>        s3_bucket_name = string<br/>        s3_object_key  = string<br/>      }))<br/>    }))<br/>    function_schema = optional(object({<br/>      functions = list(object({<br/>        name        = string<br/>        description = string<br/>        parameters = optional(map(object({<br/>          type        = string<br/>          description = string<br/>          required    = optional(bool, false)<br/>        })))<br/>      }))<br/>    }))<br/>  }))</pre> | `{}` | no |
+| <a name="input_agent_alias_name"></a> [agent\_alias\_name](#input\_agent\_alias\_name) | Name of the stable invocation alias pinned to the prepared agent version. | `string` | `"live"` | no |
+| <a name="input_agent_name"></a> [agent\_name](#input\_agent\_name) | Stable name for the Bedrock agent and the prefix for derived resource names (KMS alias, log groups, IAM roles, AOSS collection). | `string` | n/a | yes |
+| <a name="input_api_throttling_burst_limit"></a> [api\_throttling\_burst\_limit](#input\_api\_throttling\_burst\_limit) | Token-bucket burst limit on the API stage. | `number` | `200` | no |
+| <a name="input_api_throttling_rate_limit"></a> [api\_throttling\_rate\_limit](#input\_api\_throttling\_rate\_limit) | Steady-state requests-per-second throttle on the API stage. | `number` | `100` | no |
+| <a name="input_cors_configuration"></a> [cors\_configuration](#input\_cors\_configuration) | Optional CORS configuration for the HTTP API. Disabled when null (default). Setting allow\_origins = ["*"] is a security smell; document tradeoff in README. | <pre>object({<br/>    allow_origins = list(string)<br/>    allow_methods = list(string)<br/>    allow_headers = list(string)<br/>    max_age       = optional(number, 0)<br/>  })</pre> | `null` | no |
+| <a name="input_cost_center"></a> [cost\_center](#input\_cost\_center) | Required organizational tag identifying the cost center for chargeback. | `string` | n/a | yes |
+| <a name="input_enable_api_gateway"></a> [enable\_api\_gateway](#input\_enable\_api\_gateway) | When true, provision an HTTP API + invoker Lambda + access log group. The route is unauthenticated by default; consumer attaches authorizer using exposed outputs. | `bool` | `false` | no |
+| <a name="input_enable_code_interpreter"></a> [enable\_code\_interpreter](#input\_enable\_code\_interpreter) | Attach the AWS-managed AMAZON.CodeInterpreter action group. Region-restricted: us-east-1, us-west-2, eu-central-1 only. | `bool` | `true` | no |
+| <a name="input_enable_knowledge_base"></a> [enable\_knowledge\_base](#input\_enable\_knowledge\_base) | When true, provision the AOSS-backed knowledge base, IAM role, vector index, KB resource, S3 data source, and agent association. | `bool` | `false` | no |
+| <a name="input_environment"></a> [environment](#input\_environment) | Required organizational tag identifying deployment environment. Applied to every taggable resource via local.required\_tags. | `string` | n/a | yes |
+| <a name="input_force_destroy"></a> [force\_destroy](#input\_force\_destroy) | When true, sets skip\_resource\_in\_use\_check = true on action groups and the agent so terraform destroy can run while the alias references them. Off by default for safety. | `bool` | `false` | no |
+| <a name="input_foundation_model"></a> [foundation\_model](#input\_foundation\_model) | Bedrock foundation model ID. Default is Claude Sonnet 4. Consumer must verify model availability in target region. | `string` | `"anthropic.claude-sonnet-4-20250514"` | no |
+| <a name="input_guardrail_id"></a> [guardrail\_id](#input\_guardrail\_id) | Optional consumer-provided Bedrock Guardrail identifier to bind to the agent. Module does NOT create the guardrail in v1. | `string` | `""` | no |
+| <a name="input_guardrail_version"></a> [guardrail\_version](#input\_guardrail\_version) | Guardrail version to pin. Defaults to DRAFT (mutable); pin to a numbered version in production examples. | `string` | `"DRAFT"` | no |
+| <a name="input_idle_session_ttl_seconds"></a> [idle\_session\_ttl\_seconds](#input\_idle\_session\_ttl\_seconds) | Session idle timeout. Bedrock-allowed range 60-3600 seconds. | `number` | `600` | no |
+| <a name="input_instruction"></a> [instruction](#input\_instruction) | Natural-language instruction prompt that defines the agent's behavior. AWS API requires 40-20000 chars when prepare\_agent runs. | `string` | n/a | yes |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | Bring-your-own KMS CMK ARN. When empty, the module creates one with rotation enabled. Encryption is non-negotiable; this only controls key ownership. | `string` | `""` | no |
+| <a name="input_knowledge_base_description"></a> [knowledge\_base\_description](#input\_knowledge\_base\_description) | Natural-language description used by the agent's planner to decide when to query the KB. This is functional, not cosmetic. | `string` | `"Use this knowledge base to retrieve relevant context from the customer document corpus."` | no |
+| <a name="input_knowledge_base_embedding_model_id"></a> [knowledge\_base\_embedding\_model\_id](#input\_knowledge\_base\_embedding\_model\_id) | Embedding model ID for vectorization. Default Titan v2 at 1024 dimensions. | `string` | `"amazon.titan-embed-text-v2:0"` | no |
+| <a name="input_knowledge_base_inclusion_prefixes"></a> [knowledge\_base\_inclusion\_prefixes](#input\_knowledge\_base\_inclusion\_prefixes) | Optional S3 key prefixes to restrict which objects in the bucket are ingested. When set, S3 IAM permissions are scoped via s3:prefix. | `list(string)` | `[]` | no |
+| <a name="input_knowledge_base_s3_bucket_arn"></a> [knowledge\_base\_s3\_bucket\_arn](#input\_knowledge\_base\_s3\_bucket\_arn) | ARN of the consumer-supplied S3 bucket containing source documents for the knowledge base. Module never creates the bucket. | `string` | `""` | no |
+| <a name="input_knowledge_base_s3_kms_key_arn"></a> [knowledge\_base\_s3\_kms\_key\_arn](#input\_knowledge\_base\_s3\_kms\_key\_arn) | Optional CMK ARN if the source S3 bucket uses a customer-managed key; the KB role is granted kms:Decrypt on this key. | `string` | `""` | no |
+| <a name="input_log_retention_days"></a> [log\_retention\_days](#input\_log\_retention\_days) | Retention for all CloudWatch log groups created by the module. Validated against CloudWatch Logs allowed values. | `number` | `90` | no |
+| <a name="input_owner"></a> [owner](#input\_owner) | Required organizational tag identifying the owning team or person (e.g., team-genai@example.com). | `string` | n/a | yes |
+| <a name="input_project"></a> [project](#input\_project) | Required organizational tag identifying the project for grouping and reporting. | `string` | n/a | yes |
+| <a name="input_tags"></a> [tags](#input\_tags) | Free-form additional tags merged with required tags and Name / ManagedBy = "terraform" defaults. Consumer-provided keys override module defaults. | `map(string)` | `{}` | no |
+| <a name="input_wait_after_prepare_seconds"></a> [wait\_after\_prepare\_seconds](#input\_wait\_after\_prepare\_seconds) | Delay between the final PrepareAgent and CreateAgentAlias to work around eventual-consistency on agent\_version. Set 0 to disable. | `number` | `10` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_agent_alias_arn"></a> [agent\_alias\_arn](#output\_agent\_alias\_arn) | Full ARN of the agent alias — the invocation target consumers should use with bedrock-agent-runtime:InvokeAgent. |
+| <a name="output_agent_alias_id"></a> [agent\_alias\_id](#output\_agent\_alias\_id) | Identifier of the stable invocation alias. |
+| <a name="output_agent_arn"></a> [agent\_arn](#output\_agent\_arn) | Full ARN of the Bedrock agent. |
+| <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Short identifier of the Bedrock agent (e.g., GGRRAED6JP). Use this in cross-resource references. |
+| <a name="output_agent_role_arn"></a> [agent\_role\_arn](#output\_agent\_role\_arn) | ARN of the agent execution role for downstream IAM policy references. |
+| <a name="output_agent_version"></a> [agent\_version](#output\_agent\_version) | Current prepared agent version (numeric, e.g., "1"). |
+| <a name="output_api_arn"></a> [api\_arn](#output\_api\_arn) | ARN of the API Gateway HTTP API for resource policies / WAFv2 association. |
+| <a name="output_api_endpoint"></a> [api\_endpoint](#output\_api\_endpoint) | Invoke URL of the HTTP API (https://<id>.execute-api.<region>.amazonaws.com). |
+| <a name="output_api_execution_arn"></a> [api\_execution\_arn](#output\_api\_execution\_arn) | Execution ARN of the API for aws\_lambda\_permission.source\_arn if the consumer adds more integrations. |
+| <a name="output_api_id"></a> [api\_id](#output\_api\_id) | API Gateway v2 HTTP API identifier. Use with aws\_apigatewayv2\_authorizer to attach an authorizer. |
+| <a name="output_data_source_id"></a> [data\_source\_id](#output\_data\_source\_id) | Identifier of the KB S3 data source — needed to trigger ingestion via the SDK (StartIngestionJob). |
+| <a name="output_default_route_key"></a> [default\_route\_key](#output\_default\_route\_key) | The default route key (POST /invoke) — used by consumers when overriding authorization\_type via aws\_apigatewayv2\_route. |
+| <a name="output_invoker_lambda_arn"></a> [invoker\_lambda\_arn](#output\_invoker\_lambda\_arn) | ARN of the bundled invoker Lambda function. |
+| <a name="output_invoker_lambda_name"></a> [invoker\_lambda\_name](#output\_invoker\_lambda\_name) | Name of the bundled invoker Lambda function. |
+| <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of the KMS CMK used for at-rest encryption (created by the module or passed in). |
+| <a name="output_knowledge_base_arn"></a> [knowledge\_base\_arn](#output\_knowledge\_base\_arn) | ARN of the Bedrock knowledge base, or null when disabled. |
+| <a name="output_knowledge_base_id"></a> [knowledge\_base\_id](#output\_knowledge\_base\_id) | Identifier of the Bedrock knowledge base, or null when disabled. |
+| <a name="output_knowledge_base_role_arn"></a> [knowledge\_base\_role\_arn](#output\_knowledge\_base\_role\_arn) | ARN of the KB execution role. |
+| <a name="output_log_group_arn"></a> [log\_group\_arn](#output\_log\_group\_arn) | ARN of the agent CloudWatch log group. |
+| <a name="output_log_group_name"></a> [log\_group\_name](#output\_log\_group\_name) | Name of the agent CloudWatch log group. |
+| <a name="output_opensearch_collection_arn"></a> [opensearch\_collection\_arn](#output\_opensearch\_collection\_arn) | ARN of the AOSS vector collection. |
+<!-- END_TF_DOCS -->
