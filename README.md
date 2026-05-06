@@ -154,7 +154,9 @@ This project is licensed under the [Apache License 2.0](LICENSE).
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.43.0 |
 
 ## Modules
 
@@ -162,7 +164,11 @@ No modules.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
+| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 
 ## Inputs
 
@@ -199,5 +205,27 @@ No resources.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_agent_alias_arn"></a> [agent\_alias\_arn](#output\_agent\_alias\_arn) | Full ARN of the agent alias — the invocation target consumers should use with bedrock-agent-runtime:InvokeAgent. |
+| <a name="output_agent_alias_id"></a> [agent\_alias\_id](#output\_agent\_alias\_id) | Identifier of the stable invocation alias. |
+| <a name="output_agent_arn"></a> [agent\_arn](#output\_agent\_arn) | Full ARN of the Bedrock agent. |
+| <a name="output_agent_id"></a> [agent\_id](#output\_agent\_id) | Short identifier of the Bedrock agent (e.g., GGRRAED6JP). Use this in cross-resource references. |
+| <a name="output_agent_role_arn"></a> [agent\_role\_arn](#output\_agent\_role\_arn) | ARN of the agent execution role for downstream IAM policy references. |
+| <a name="output_agent_version"></a> [agent\_version](#output\_agent\_version) | Current prepared agent version (numeric, e.g., "1"). |
+| <a name="output_api_arn"></a> [api\_arn](#output\_api\_arn) | ARN of the API Gateway HTTP API for resource policies / WAFv2 association. |
+| <a name="output_api_endpoint"></a> [api\_endpoint](#output\_api\_endpoint) | Invoke URL of the HTTP API (https://<id>.execute-api.<region>.amazonaws.com). |
+| <a name="output_api_execution_arn"></a> [api\_execution\_arn](#output\_api\_execution\_arn) | Execution ARN of the API for aws\_lambda\_permission.source\_arn if the consumer adds more integrations. |
+| <a name="output_api_id"></a> [api\_id](#output\_api\_id) | API Gateway v2 HTTP API identifier. Use with aws\_apigatewayv2\_authorizer to attach an authorizer. |
+| <a name="output_data_source_id"></a> [data\_source\_id](#output\_data\_source\_id) | Identifier of the KB S3 data source — needed to trigger ingestion via the SDK (StartIngestionJob). |
+| <a name="output_default_route_key"></a> [default\_route\_key](#output\_default\_route\_key) | The default route key (POST /invoke) — used by consumers when overriding authorization\_type via aws\_apigatewayv2\_route. |
+| <a name="output_invoker_lambda_arn"></a> [invoker\_lambda\_arn](#output\_invoker\_lambda\_arn) | ARN of the bundled invoker Lambda function. |
+| <a name="output_invoker_lambda_name"></a> [invoker\_lambda\_name](#output\_invoker\_lambda\_name) | Name of the bundled invoker Lambda function. |
+| <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of the KMS CMK used for at-rest encryption (created by the module or passed in). |
+| <a name="output_knowledge_base_arn"></a> [knowledge\_base\_arn](#output\_knowledge\_base\_arn) | ARN of the Bedrock knowledge base, or null when disabled. |
+| <a name="output_knowledge_base_id"></a> [knowledge\_base\_id](#output\_knowledge\_base\_id) | Identifier of the Bedrock knowledge base, or null when disabled. |
+| <a name="output_knowledge_base_role_arn"></a> [knowledge\_base\_role\_arn](#output\_knowledge\_base\_role\_arn) | ARN of the KB execution role. |
+| <a name="output_log_group_arn"></a> [log\_group\_arn](#output\_log\_group\_arn) | ARN of the agent CloudWatch log group. |
+| <a name="output_log_group_name"></a> [log\_group\_name](#output\_log\_group\_name) | Name of the agent CloudWatch log group. |
+| <a name="output_opensearch_collection_arn"></a> [opensearch\_collection\_arn](#output\_opensearch\_collection\_arn) | ARN of the AOSS vector collection. |
 <!-- END_TF_DOCS -->
