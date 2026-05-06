@@ -16,19 +16,58 @@
 # -----------------------------------------------------------------------------
 # KMS encryption key + alias  (Item B)
 # -----------------------------------------------------------------------------
-# aws_kms_key.this        — count = local.create_kms ? 1 : 0
-# aws_kms_alias.this      — count = local.create_kms ? 1 : 0
+# Module creates a customer-managed CMK only when the caller did NOT bring
+# their own (var.kms_key_arn == ""). Both at-rest encryption paths (the agent
+# resource and the agent log group) always use a CMK — there is no opt-out.
+resource "aws_kms_key" "this" {
+  count = local.create_kms ? 1 : 0
+
+  description             = "CMK for Bedrock agent ${var.agent_name} and its CloudWatch log group."
+  deletion_window_in_days = 30
+  enable_key_rotation     = true
+  policy                  = data.aws_iam_policy_document.kms[0].json
+
+  tags = local.tags
+}
+
+resource "aws_kms_alias" "this" {
+  count = local.create_kms ? 1 : 0
+
+  name          = local.kms_alias_name
+  target_key_id = aws_kms_key.this[0].key_id
+}
 
 # -----------------------------------------------------------------------------
 # CloudWatch log group for the agent  (Item B)
 # -----------------------------------------------------------------------------
-# aws_cloudwatch_log_group.agent — always
+# Always created (no opt-out). KMS encryption is mandatory and points at the
+# resolved CMK ARN (BYO or module-managed).
+resource "aws_cloudwatch_log_group" "agent" {
+  name              = local.agent_log_group_name
+  retention_in_days = var.log_retention_days
+  kms_key_id        = local.kms_key_arn_resolved
+
+  tags = local.tags
+}
 
 # -----------------------------------------------------------------------------
 # IAM execution role for the Bedrock agent  (Item B)
 # -----------------------------------------------------------------------------
-# aws_iam_role.agent          — always
-# aws_iam_role_policy.agent   — always
+# Trust policy uses bedrock.amazonaws.com with aws:SourceAccount + aws:SourceArn
+# confused-deputy guards built in data.aws_iam_policy_document.agent_assume.
+# Inline policy is least-privilege and dynamically composed; see agent_inline.
+resource "aws_iam_role" "agent" {
+  name               = local.agent_role_name
+  assume_role_policy = data.aws_iam_policy_document.agent_assume.json
+
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy" "agent" {
+  name   = "${local.agent_role_name}-inline"
+  role   = aws_iam_role.agent.id
+  policy = data.aws_iam_policy_document.agent_inline.json
+}
 
 # -----------------------------------------------------------------------------
 # Bedrock agent + alias + AWS-managed code interpreter action group  (Item C)

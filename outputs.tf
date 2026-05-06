@@ -34,8 +34,7 @@ output "agent_alias_arn" {
 
 output "agent_role_arn" {
   description = "ARN of the agent execution role for downstream IAM policy references."
-  # TODO: wire to aws_iam_role.agent.arn in Item B
-  value = null
+  value       = aws_iam_role.agent.arn
 }
 
 ###############################################################################
@@ -44,20 +43,17 @@ output "agent_role_arn" {
 
 output "kms_key_arn" {
   description = "ARN of the KMS CMK used for at-rest encryption (created by the module or passed in)."
-  # TODO: wire to local.kms_key_arn_resolved in Item B (resolves to BYO or self-created key)
-  value = null
+  value       = local.kms_key_arn_resolved
 }
 
 output "log_group_name" {
   description = "Name of the agent CloudWatch log group."
-  # TODO: wire to aws_cloudwatch_log_group.agent.name in Item B
-  value = null
+  value       = aws_cloudwatch_log_group.agent.name
 }
 
 output "log_group_arn" {
   description = "ARN of the agent CloudWatch log group."
-  # TODO: wire to aws_cloudwatch_log_group.agent.arn in Item B
-  value = null
+  value       = aws_cloudwatch_log_group.agent.arn
 }
 
 ###############################################################################
