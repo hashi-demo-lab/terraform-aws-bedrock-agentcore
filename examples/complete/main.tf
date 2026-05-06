@@ -4,9 +4,9 @@
 # End-to-end demonstration of the bedrock-agentcore module with every
 # optional feature enabled:
 #
-#   - Bring-your-own (BYO) consumer-managed KMS CMK
+#   - Bring-your-own (BYO) consumer-managed KMS CMK (see kms.tf)
 #   - Knowledge base backed by an OpenSearch Serverless vector collection
-#     pointed at a consumer-owned S3 bucket created in this example
+#     pointed at a consumer-owned S3 bucket created in this example (see s3.tf)
 #   - One Lambda-backed action group with bedrock invoke permission and a
 #     function-schema definition
 #   - HTTP API Gateway front door with an attached JWT authorizer (the
@@ -35,6 +35,16 @@
 # Per constitution §2.1, provider blocks live in EXAMPLES, not in the root
 # module. The aws + opensearch + archive providers are all the consumer's
 # responsibility to configure here.
+#
+# File layout
+# -----------
+# Per constitution §2.1 (no single file MAY exceed 500 lines), this example
+# is split across three files:
+#   - main.tf  : terraform/provider config, module call, consumer JWT
+#                authorizer, action-group Lambda, outputs (this file)
+#   - kms.tf   : consumer-managed (BYO) CMK + alias + key policy
+#   - s3.tf    : consumer-owned KB source bucket + versioning + SSE +
+#                public-access-block + bucket policy
 ###############################################################################
 
 terraform {
@@ -83,168 +93,12 @@ provider "opensearch" {
 }
 
 ###############################################################################
-# Caller identity (used in IAM policy conditions below)
+# Caller identity (used in IAM policy conditions in kms.tf and s3.tf)
 ###############################################################################
 
 data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 data "aws_region" "current" {}
-
-###############################################################################
-# Consumer-managed (BYO) KMS CMK — passed into the module via kms_key_arn.
-# Key policy must allow:
-#   - root account (full KMS admin)
-#   - bedrock.amazonaws.com (agent at-rest encryption)
-#   - logs.<region>.amazonaws.com (CloudWatch log group encryption)
-#   - aoss.amazonaws.com (OpenSearch Serverless collection at-rest encryption)
-###############################################################################
-
-data "aws_iam_policy_document" "byo_kms_key" {
-  statement {
-    sid       = "EnableRootAccountAdministration"
-    actions   = ["kms:*"]
-    resources = ["*"]
-
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
-  }
-
-  statement {
-    sid = "AllowBedrockAgentAndLogsAndAoss"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey",
-    ]
-    resources = ["*"]
-
-    principals {
-      type = "Service"
-      identifiers = [
-        "bedrock.amazonaws.com",
-        "logs.${data.aws_region.current.region}.amazonaws.com",
-        "aoss.amazonaws.com",
-      ]
-    }
-  }
-}
-
-resource "aws_kms_key" "byo" {
-  description             = "BYO CMK for bedrock-agentcore complete-example agent"
-  enable_key_rotation     = true
-  deletion_window_in_days = 30
-  policy                  = data.aws_iam_policy_document.byo_kms_key.json
-
-  tags = {
-    Name        = "complete-demo-byo"
-    Environment = "sandbox"
-    ManagedBy   = "terraform"
-  }
-}
-
-resource "aws_kms_alias" "byo" {
-  name          = "alias/complete-demo-byo"
-  target_key_id = aws_kms_key.byo.key_id
-}
-
-###############################################################################
-# Consumer-owned S3 bucket for knowledge base source documents.
-# Module never creates this bucket — the consumer brings it.
-# Secure defaults: versioning, public access blocked, SSE with the BYO CMK,
-# bucket policy denying non-TLS and granting bedrock.amazonaws.com read.
-###############################################################################
-
-resource "aws_s3_bucket" "kb" {
-  bucket_prefix = "complete-demo-kb-"
-  force_destroy = true
-
-  tags = {
-    Name        = "complete-demo-kb"
-    Environment = "sandbox"
-    ManagedBy   = "terraform"
-  }
-}
-
-resource "aws_s3_bucket_public_access_block" "kb" {
-  bucket = aws_s3_bucket.kb.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_versioning" "kb" {
-  bucket = aws_s3_bucket.kb.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "kb" {
-  bucket = aws_s3_bucket.kb.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm     = "aws:kms"
-      kms_master_key_id = aws_kms_key.byo.arn
-    }
-    bucket_key_enabled = true
-  }
-}
-
-data "aws_iam_policy_document" "kb_bucket" {
-  statement {
-    sid     = "DenyNonTLS"
-    effect  = "Deny"
-    actions = ["s3:*"]
-    resources = [
-      aws_s3_bucket.kb.arn,
-      "${aws_s3_bucket.kb.arn}/*",
-    ]
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "Bool"
-      variable = "aws:SecureTransport"
-      values   = ["false"]
-    }
-  }
-
-  statement {
-    sid    = "AllowBedrockKBRead"
-    effect = "Allow"
-    actions = [
-      "s3:GetObject",
-      "s3:ListBucket",
-    ]
-    resources = [
-      aws_s3_bucket.kb.arn,
-      "${aws_s3_bucket.kb.arn}/*",
-    ]
-    principals {
-      type        = "Service"
-      identifiers = ["bedrock.amazonaws.com"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceAccount"
-      values   = [data.aws_caller_identity.current.account_id]
-    }
-  }
-}
-
-resource "aws_s3_bucket_policy" "kb" {
-  bucket = aws_s3_bucket.kb.id
-  policy = data.aws_iam_policy_document.kb_bucket.json
-}
 
 ###############################################################################
 # Consumer Lambda function used as a Bedrock action group target.
