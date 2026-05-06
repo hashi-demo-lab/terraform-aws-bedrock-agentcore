@@ -76,6 +76,89 @@ resource "aws_iam_role_policy" "agent" {
 # aws_bedrockagent_agent_action_group.code_interpreter — count = var.enable_code_interpreter ? 1 : 0
 # time_sleep.wait_after_prepare                      — always
 # aws_bedrockagent_agent_alias.this                  — always
+#
+# prepare_agent is set to false on the agent itself; the action-group-level
+# prepare_agent (default true) drives the PrepareAgent API call so all attached
+# action groups land before the DRAFT is compiled. The alias then targets the
+# computed agent_version after a short time_sleep that papers over a known
+# eventual-consistency window between PrepareAgent reporting complete and the
+# new agent_version being addressable from CreateAgentAlias.
+#
+# guardrail_configuration is the modern typed-nested attribute (list of object)
+# in the AWS provider — it is set with a list literal, NOT a dynamic block.
+# Same shape for routing_configuration on the alias.
+resource "aws_bedrockagent_agent" "this" {
+  agent_name                  = var.agent_name
+  agent_resource_role_arn     = aws_iam_role.agent.arn
+  foundation_model            = var.foundation_model
+  instruction                 = var.instruction
+  idle_session_ttl_in_seconds = var.idle_session_ttl_seconds
+  customer_encryption_key_arn = local.kms_key_arn_resolved
+  description                 = "Bedrock agent ${var.agent_name} (managed by Terraform)."
+  prepare_agent               = false
+  skip_resource_in_use_check  = var.force_destroy
+
+  guardrail_configuration = var.guardrail_id == "" ? [] : [{
+    guardrail_identifier = var.guardrail_id
+    guardrail_version    = var.guardrail_version
+  }]
+
+  tags = local.tags
+
+  depends_on = [
+    aws_iam_role_policy.agent,
+    aws_cloudwatch_log_group.agent,
+  ]
+}
+
+resource "aws_bedrockagent_agent_action_group" "code_interpreter" {
+  count = var.enable_code_interpreter ? 1 : 0
+
+  agent_id                      = aws_bedrockagent_agent.this.agent_id
+  agent_version                 = "DRAFT"
+  action_group_name             = "CodeInterpreterAction"
+  parent_action_group_signature = "AMAZON.CodeInterpreter"
+  action_group_state            = "ENABLED"
+  prepare_agent                 = true
+  skip_resource_in_use_check    = var.force_destroy
+
+  # description, api_schema, action_group_executor are deliberately omitted —
+  # the AWS API rejects CreateAgentActionGroup when these fields accompany a
+  # parent_action_group_signature value.
+}
+
+resource "time_sleep" "wait_after_prepare" {
+  create_duration  = "${var.wait_after_prepare_seconds}s"
+  destroy_duration = "0s"
+
+  depends_on = [
+    aws_bedrockagent_agent.this,
+    aws_bedrockagent_agent_action_group.code_interpreter,
+  ]
+}
+
+resource "aws_bedrockagent_agent_alias" "this" {
+  agent_id         = aws_bedrockagent_agent.this.agent_id
+  agent_alias_name = var.agent_alias_name
+  description      = "Stable invocation alias for Bedrock agent ${var.agent_name}."
+
+  routing_configuration = [{
+    agent_version          = aws_bedrockagent_agent.this.agent_version
+    provisioned_throughput = null
+  }]
+
+  tags = local.tags
+
+  depends_on = [time_sleep.wait_after_prepare]
+
+  # Subsequent applies that touch the agent will bump agent_version; ignoring
+  # routing_configuration prevents the alias from churning on every plan and
+  # keeps the "stable invocation handle" promise. Re-targeting requires a
+  # deliberate taint or replacement.
+  lifecycle {
+    ignore_changes = [routing_configuration]
+  }
+}
 
 # -----------------------------------------------------------------------------
 # Lambda-backed action groups + permissions  (Item D)

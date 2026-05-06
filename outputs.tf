@@ -4,32 +4,27 @@
 
 output "agent_id" {
   description = "Short identifier of the Bedrock agent (e.g., GGRRAED6JP). Use this in cross-resource references."
-  # TODO: wire to aws_bedrockagent_agent.this.agent_id in Item C
-  value = null
+  value       = aws_bedrockagent_agent.this.agent_id
 }
 
 output "agent_arn" {
   description = "Full ARN of the Bedrock agent."
-  # TODO: wire to aws_bedrockagent_agent.this.agent_arn in Item C
-  value = null
+  value       = aws_bedrockagent_agent.this.agent_arn
 }
 
 output "agent_version" {
   description = "Current prepared agent version (numeric, e.g., \"1\")."
-  # TODO: wire to aws_bedrockagent_agent.this.agent_version in Item C
-  value = null
+  value       = aws_bedrockagent_agent.this.agent_version
 }
 
 output "agent_alias_id" {
   description = "Identifier of the stable invocation alias."
-  # TODO: wire to aws_bedrockagent_agent_alias.this.agent_alias_id in Item C
-  value = null
+  value       = aws_bedrockagent_agent_alias.this.agent_alias_id
 }
 
 output "agent_alias_arn" {
   description = "Full ARN of the agent alias — the invocation target consumers should use with bedrock-agent-runtime:InvokeAgent."
-  # TODO: wire to aws_bedrockagent_agent_alias.this.agent_alias_arn in Item C
-  value = null
+  value       = aws_bedrockagent_agent_alias.this.agent_alias_arn
 }
 
 output "agent_role_arn" {
