@@ -134,6 +134,7 @@ resource "time_sleep" "wait_after_prepare" {
   depends_on = [
     aws_bedrockagent_agent.this,
     aws_bedrockagent_agent_action_group.code_interpreter,
+    aws_bedrockagent_agent_action_group.lambda,
   ]
 }
 
@@ -163,8 +164,104 @@ resource "aws_bedrockagent_agent_alias" "this" {
 # -----------------------------------------------------------------------------
 # Lambda-backed action groups + permissions  (Item D)
 # -----------------------------------------------------------------------------
-# aws_bedrockagent_agent_action_group.lambda  — for_each = var.action_group_definitions
-# aws_lambda_permission.bedrock_invoke        — for_each = var.action_group_definitions
+# Each entry in var.action_group_definitions produces:
+#   - one aws_lambda_permission allowing bedrock.amazonaws.com to invoke the
+#     target Lambda, scoped to THIS agent's ARN via source_arn (prevents
+#     cross-agent invocation in shared-Lambda topologies) and to the caller's
+#     account via source_account.
+#   - one aws_bedrockagent_agent_action_group bound to the DRAFT version with
+#     either api_schema (payload OR s3 sub-block, mutually exclusive) or
+#     function_schema. The mutual-exclusion is enforced at the variable level
+#     (see variables.tf validations) so the resource block can use simple
+#     dynamic blocks driven by null/non-null detection.
+#
+# Schema note: action_group_executor, api_schema, function_schema, and the
+# nested s3 / member_functions / functions / parameters sub-blocks are all
+# block-typed (list or set nesting), NOT typed-nested attributes — they are
+# written with block syntax (no `=`) and emitted via dynamic blocks here.
+# Parameter names are carried via map_block_key on the (set-typed) parameters
+# block, a legacy schema artefact.
+#
+# depends_on on the action group references the entire bedrock_invoke map
+# rather than a per-key element. This is sufficient because Terraform tracks
+# dependencies on the whole map and avoids the for_each / each.key cycle that
+# arises when action groups try to depend on a permission keyed by their own
+# each.key while the permission resource also uses for_each.
+
+resource "aws_lambda_permission" "bedrock_invoke" {
+  for_each = {
+    for k, v in var.action_group_definitions : k => v
+    if try(v.lambda_arn, null) != null
+  }
+
+  statement_id   = "AllowBedrockAgentInvoke-${each.key}"
+  action         = "lambda:InvokeFunction"
+  function_name  = each.value.lambda_arn
+  principal      = "bedrock.amazonaws.com"
+  source_arn     = aws_bedrockagent_agent.this.agent_arn
+  source_account = local.account_id
+}
+
+resource "aws_bedrockagent_agent_action_group" "lambda" {
+  for_each = var.action_group_definitions
+
+  agent_id                   = aws_bedrockagent_agent.this.agent_id
+  agent_version              = "DRAFT"
+  action_group_name          = each.key
+  description                = try(each.value.description, null)
+  action_group_state         = try(each.value.state, "ENABLED")
+  prepare_agent              = true
+  skip_resource_in_use_check = var.force_destroy
+
+  dynamic "action_group_executor" {
+    for_each = try(each.value.lambda_arn, null) == null ? [] : [each.value.lambda_arn]
+    content {
+      lambda = action_group_executor.value
+    }
+  }
+
+  dynamic "api_schema" {
+    for_each = try(each.value.api_schema, null) == null ? [] : [each.value.api_schema]
+    content {
+      payload = try(api_schema.value.payload, null)
+
+      dynamic "s3" {
+        for_each = try(api_schema.value.s3, null) == null ? [] : [api_schema.value.s3]
+        content {
+          s3_bucket_name = s3.value.s3_bucket_name
+          s3_object_key  = s3.value.s3_object_key
+        }
+      }
+    }
+  }
+
+  dynamic "function_schema" {
+    for_each = try(each.value.function_schema, null) == null ? [] : [each.value.function_schema]
+    content {
+      member_functions {
+        dynamic "functions" {
+          for_each = function_schema.value.functions
+          content {
+            name        = functions.value.name
+            description = functions.value.description
+
+            dynamic "parameters" {
+              for_each = try(functions.value.parameters, null) == null ? {} : functions.value.parameters
+              content {
+                map_block_key = parameters.key
+                type          = parameters.value.type
+                description   = parameters.value.description
+                required      = try(parameters.value.required, false)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  depends_on = [aws_lambda_permission.bedrock_invoke]
+}
 
 # -----------------------------------------------------------------------------
 # Knowledge base: AOSS collection + IAM + KB + data source + association  (Item E)
